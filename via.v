@@ -41,22 +41,7 @@ pub fn run<T>(config &ViaConfig, ctx &T) {
 
 	mut done := false
 	for !done {
-		ev := SDL_Event{}
-		for 0 < C.SDL_PollEvent(&ev) {
-			match int(ev.@type) {
-				C.SDL_QUIT {
-					done = true
-					break
-				}
-				C.SDL_WINDOWEVENT {
-					if ev.window.event == C.SDL_WINDOWEVENT_CLOSE && ev.window.windowID == C.SDL_GetWindowID(v.sdl_window) {
-						done = true
-						break
-					}
-				}
-				else {}
-			}
-		}
+		done = v.poll_events()
 
 		ctx.update(v)
 		ctx.draw(v)
@@ -82,10 +67,10 @@ pub fn run<T>(config &ViaConfig, ctx &T) {
 fn (v mut Via) setup_sdl(config &ViaConfig) {
 	C.SDL_Init(C.SDL_INIT_VIDEO)
 
-    C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_FLAGS, C.SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
-    C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK, C.SDL_GL_CONTEXT_PROFILE_CORE)
-    C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
-    C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 3)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_FLAGS, C.SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK, C.SDL_GL_CONTEXT_PROFILE_CORE)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 3)
 
 	C.SDL_GL_SetAttribute(C.SDL_GL_DOUBLEBUFFER, 1)
 	C.SDL_GL_SetAttribute(C.SDL_GL_DEPTH_SIZE, 24)
@@ -99,6 +84,25 @@ fn (v mut Via) setup_sdl(config &ViaConfig) {
 	C.SDL_GL_SetSwapInterval(1) // Enable vsync
 
 	flextgl.flext_init()
+}
+
+fn (v mut Via) poll_events() bool {
+	ev := SDL_Event{}
+	for 0 < C.SDL_PollEvent(&ev) {
+		match int(ev.@type) {
+			C.SDL_QUIT {
+				return true
+			}
+			C.SDL_WINDOWEVENT {
+				if ev.window.windowID == C.SDL_GetWindowID(v.sdl_window) && ev.window.event == C.SDL_WINDOWEVENT_CLOSE {
+					return true
+				}
+			}
+			else {}
+		}
+	}
+
+	return false
 }
 
 fn (v &Via) free() {
