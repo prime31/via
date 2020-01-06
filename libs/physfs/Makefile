@@ -31,7 +31,8 @@ else ifeq ($(UNAME_S), Darwin)
 	TARGET += copy_static_lib
 endif
 
-TARGET += physfsrwops.o
+# only useful when using SDL to load textures
+# TARGET += physfsrwops.o
 
 
 all: $(TARGET) clean
@@ -49,10 +50,10 @@ copy_dll:
 	cp physfs_hg/src/physfs.h $(MODULE_FOLDER)
 	cp physfs_hg/build/libphysfs.dll $(MODULE_FOLDER)
 
-# physfsrwops.o: physfs_hg/extras/physfsrwops.c
-# 	$(CC) $(CFLAGS) -c -o physfs_hg/build/$@ $<
-# 	cp physfs_hg/extras/physfsrwops.h $(MODULE_FOLDER)
-# 	cp physfs_hg/build/physfsrwops.o $(MODULE_FOLDER)
+physfsrwops.o: physfs_hg/extras/physfsrwops.c
+	$(CC) $(CFLAGS) -c -o physfs_hg/build/$@ $<
+	cp physfs_hg/extras/physfsrwops.h $(MODULE_FOLDER)
+	cp physfs_hg/build/physfsrwops.o $(MODULE_FOLDER)
 
 clean:
 	rm -rf physfs_hg
