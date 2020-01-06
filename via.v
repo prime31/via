@@ -1,8 +1,8 @@
 module via
-import via.sokol
-import via.sokol.gfx
-import prime31.flextgl
-import prime31.sdl2
+import via.libs.flextgl
+import via.libs.sokol
+import via.libs.sokol.gfx
+import via.libs.sdl2
 
 pub struct Via {
 mut:

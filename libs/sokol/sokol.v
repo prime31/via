@@ -1,7 +1,7 @@
 module sokol
 
-#flag -I @VMOD/via/sokol/thirdparty
-#flag -I @VMOD/via/sokol/thirdparty/util
+#flag -I @VMOD/via/libs/sokol/thirdparty
+#flag -I @VMOD/via/libs/sokol/thirdparty/util
 
 #flag darwin -fobjc-arc
 #flag linux -lX11 -lGL
@@ -28,7 +28,7 @@ module sokol
 
 
 // for the gfx_helper, as long as we need it for setting subimage[x][y]
-#flag -I @VMOD/via/sokol/gfx
+#flag -I @VMOD/via/libs/sokol/gfx
 
 #define SOKOL_IMPL
 #define SOKOL_NO_DEPRECATED

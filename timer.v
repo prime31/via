@@ -1,5 +1,5 @@
 module via
-import prime31.sdl2
+import via.libs.sdl2
 
 struct Timer {
 mut:

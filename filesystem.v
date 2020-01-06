@@ -1,7 +1,7 @@
 module via
 import os
 import filepath
-import prime31.physfs
+import via.libs.physfs
 
 struct FileSystem {
 	tmp int

@@ -7,27 +7,28 @@ imgui.ini
 **/generator/obj
 
 # per module ignores
-flecs/thirdparty
-flecs/flecs_git
+libs/flecs/thirdparty
+libs/flecs/flecs_git
 
-flextgl/thirdparty/flextGL.o
+libs/flextgl/thirdparty/flextGL.o
 
-fmod/generator/obj
-fmod/generator/bin
-fmod/core/*gen.v
-fmod/studio/*gen.v
-fmod/fmodstudioapi
-fmod/core/c
-fmod/studio/c
+libs/fmod/generator/obj
+libs/fmod/generator/bin
+libs/fmod/core/*gen.v
+libs/fmod/studio/*gen.v
+libs/fmod/fmodstudioapi
+libs/fmod/core/c
+libs/fmod/studio/c
 
-imgui/thirdparty
-imgui/cimgui_git
+libs/imgui/thirdparty
+libs/imgui/cimgui_git
 
-physfs/physfs_hg
-physfs/thirdparty
+libs/physfs/physfs_hg
+libs/physfs/thirdparty
 
-sokol/cimgui_git
-sokol/thirdparty/cimgui
+libs/sokol/cimgui_git
+libs/sokol/thirdparty/cimgui
 
-yoga/yoga_git
-yoga/thirdparty
+libs/yoga/yoga_git
+libs/yoga/thirdparty
+
