@@ -7,39 +7,30 @@ fn C.PHYSFS_getLinkedVersion(version &C.PHYSFS_Version)
 fn C.PHYSFS_init(argv0 byteptr) int
 fn C.PHYSFS_deinit() int
 fn C.PHYSFS_supportedArchiveTypes() voidptr
-fn C.PHYSFS_freeList(list voidptr) // not in physfs.v
-fn C.PHYSFS_getLastError() byteptr // not in physfs.v
+fn C.PHYSFS_freeList(list voidptr)
 fn C.PHYSFS_getDirSeparator() byteptr
 fn C.PHYSFS_permitSymbolicLinks(allow int)
 //char **PHYSFS_getCdRomDirs(void)
 fn C.PHYSFS_getBaseDir() byteptr
-fn C.PHYSFS_getUserDir() byteptr // not in physfs.v
 fn C.PHYSFS_getWriteDir() byteptr
 fn C.PHYSFS_setWriteDir(newDir byteptr) int
-fn C.PHYSFS_addToSearchPath(newDir byteptr, appendToPath int) int // not in physfs.v
-fn C.PHYSFS_removeFromSearchPath(oldDir byteptr) int // not in physfs.v
-fn C.PHYSFS_getSearchPath() voidptr /* char** */ // not in physfs.v
-fn C.PHYSFS_setSaneConfig(organization byteptr, appName byteptr, archiveExt byteptr, includeCdRoms int, archivesFirst int) int // not in physfs.v
-fn C.PHYSFS_mkdir(dirName byteptr) int // not in physfs.v
-fn C.PHYSFS_delete(filename byteptr) int // not in physfs.v
-fn C.PHYSFS_getRealDir(filename byteptr) byteptr // not in physfs.v
-fn C.PHYSFS_enumerateFiles(dir byteptr) voidptr /* char** */ // not in physfs.v
+fn C.PHYSFS_getSearchPath() voidptr /* char** */
+fn C.PHYSFS_setSaneConfig(organization byteptr, appName byteptr, archiveExt byteptr, includeCdRoms int, archivesFirst int) int
+fn C.PHYSFS_mkdir(dirName byteptr) int
+fn C.PHYSFS_delete(filename byteptr) int
+fn C.PHYSFS_getRealDir(filename byteptr) byteptr
+fn C.PHYSFS_enumerateFiles(dir byteptr) voidptr /* char** */
 fn C.PHYSFS_exists(fname byteptr) int
-fn C.PHYSFS_isDirectory(fname byteptr) int // not in physfs.v
-fn C.PHYSFS_isSymbolicLink(fname byteptr) int // not in physfs.v
-fn C.PHYSFS_getLastModTime(filename byteptr) i64 // not in physfs.v
-fn C.PHYSFS_openWrite(filename byteptr) &C.PHYSFS_File // not in physfs.v
-fn C.PHYSFS_openAppend(filename byteptr) &C.PHYSFS_File // not in physfs.v
+fn C.PHYSFS_openWrite(filename byteptr) &C.PHYSFS_File
+fn C.PHYSFS_openAppend(filename byteptr) &C.PHYSFS_File
 fn C.PHYSFS_openRead(filename byteptr) &C.PHYSFS_File
 fn C.PHYSFS_close(handle &C.PHYSFS_File) int
-fn C.PHYSFS_read(handle &PHYSFS_File, buffer voidptr, objSize u32, objCount u32) i64 // not in physfs.v
-fn C.PHYSFS_write(handle &PHYSFS_File, buffer voidptr, objSize u32, objCount u32) i64 // not in physfs.v
-fn C.PHYSFS_eof(handle &PHYSFS_File) int // not in physfs.v
-fn C.PHYSFS_tell(handle &PHYSFS_File) i64 // not in physfs.v
-fn C.PHYSFS_seek(handle &C.PHYSFS_File, pos u64) int // not in physfs.v
+fn C.PHYSFS_eof(handle &PHYSFS_File) int
+fn C.PHYSFS_tell(handle &PHYSFS_File) i64
+fn C.PHYSFS_seek(handle &C.PHYSFS_File, pos u64) int
 fn C.PHYSFS_fileLength(handle &PHYSFS_File) i64
-fn C.PHYSFS_setBuffer(handle &PHYSFS_File, bufsize u64) int // not in physfs.v
-fn C.PHYSFS_flush(handle &PHYSFS_File) int // not in physfs.v
+fn C.PHYSFS_setBuffer(handle &PHYSFS_File, bufsize u64) int
+fn C.PHYSFS_flush(handle &PHYSFS_File) int
 
 fn C.PHYSFS_swapSLE16(val i16) i16
 fn C.PHYSFS_swapULE16(val u16) u16
@@ -99,8 +90,8 @@ fn C.PHYSFS_readBytes(handle &PHYSFS_File, buffer voidptr, len u64) i64
 fn C.PHYSFS_writeBytes(handle &PHYSFS_File, buffer voidptr, len u64) i64
 fn C.PHYSFS_mountMemory(buf voidptr, len u64, del fn(voidptr), newDir byteptr, mountPoint byteptr, appendToPath int) int
 fn C.PHYSFS_mountHandle(file &PHYSFS_File, newDir byteptr, mountPoint byteptr, appendToPath int) int
-fn C.PHYSFS_getLastErrorCode() PhysfsErrorCode
-fn C.PHYSFS_getErrorByCode(code PhysfsErrorCode) byteptr
-fn C.PHYSFS_setErrorCode(code PhysfsErrorCode)
+fn C.PHYSFS_getLastErrorCode() ErrorCode
+fn C.PHYSFS_getErrorByCode(code ErrorCode) byteptr
+fn C.PHYSFS_setErrorCode(code ErrorCode)
 fn C.PHYSFS_getPrefDir(org byteptr, app byteptr) byteptr
 fn C.PHYSFS_setRoot(archive byteptr, subdir byteptr) int

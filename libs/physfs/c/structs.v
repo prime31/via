@@ -38,6 +38,6 @@ pub:
 	modtime i64
 	createtime i64
 	accesstime i64
-	filetype PhysfsFileType
+	filetype FileType
 	readonly int
 }

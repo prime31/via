@@ -1,19 +1,19 @@
 module c
 
-pub enum PhysfsEnumerateCallbackResult {
+pub enum EnumerateCallbackResult {
 	error = -1
 	stop = 0
 	ok = 1
 }
 
-pub enum PhysfsFileType {
+pub enum FileType {
 	regular
 	directory
 	symlink
 	other
 }
 
-pub enum PhysfsErrorCode {
+pub enum ErrorCode {
 	ok
 	other_error
 	out_of_memory
