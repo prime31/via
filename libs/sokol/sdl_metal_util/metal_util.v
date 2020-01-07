@@ -1,6 +1,6 @@
 module sdl_metal_util
 
-#flag -I @VMOD/prime31/sokol/sdl_metal_util
+#flag -I @VMOD/via/libs/sokol/sdl_metal_util
 #flag darwin -framework Metal -framework Cocoa -framework MetalKit -framework QuartzCore
 
 #include "metal_util.h"
