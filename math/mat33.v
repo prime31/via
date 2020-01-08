@@ -112,7 +112,7 @@ pub fn mat33_rotate(angle f32, unnormalizedAxis Vec3) Mat33 {
     s := sinf(angle)
 
     axis := unnormalizedAxis.normalize()
-    temp := axis.scale(1.0-c)
+    temp := axis.scale(1.0 - c)
 
     mut result := mat33_identity()
     result.set(0,0,c + temp.x * axis.x)
@@ -130,10 +130,10 @@ pub fn mat33_rotate(angle f32, unnormalizedAxis Vec3) Mat33 {
     return result
 }
 
-pub fn mat33_scale(sx f32, sy f32 sz f32) Mat33 {
+pub fn mat33_scale(sx f32, sy f32, sz f32) Mat33 {
     mut result := mat33_identity()
     result.data[0] = sx
-    result.data[4] = sx
-    result.data[8] = sx
+    result.data[4] = sy
+    result.data[8] = sz
     return result
 }
