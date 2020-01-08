@@ -168,6 +168,11 @@ pub struct C.sg_buffer {
     id u32
 }
 
+pub union DepthLayers {
+    depth int
+    layers int
+}
+
 pub struct C.sg_image_desc {
 pub mut:
     _start_canary u32
@@ -175,7 +180,9 @@ pub mut:
     render_target bool
     width int
     height int
-    depth int
+
+    depth DepthLayers
+    // depth int
     // union {
     //     int depth;
     //     int layers;
@@ -220,9 +227,6 @@ pub struct C.sg_image_content {
 pub mut:
     subimage [6][16]sg_subimage_content
 }
-// pub fn (ic  C.sg_image_content) set_shit() {
-//     wtf := ic.subimage[0]
-// }
 
 pub struct C.sg_subimage_content {
 pub mut:
