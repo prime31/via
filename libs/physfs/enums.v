@@ -1,4 +1,4 @@
-module c
+module physfs
 
 pub enum EnumerateCallbackResult {
 	error = -1

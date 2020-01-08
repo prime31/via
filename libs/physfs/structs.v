@@ -1,4 +1,4 @@
-module c
+module physfs
 
 pub struct C.PHYSFS_File {
 	opaque voidptr

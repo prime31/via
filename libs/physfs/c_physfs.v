@@ -1,4 +1,4 @@
-module c
+module physfs
 
 #flag -I @VMOD/via/libs/physfs/thirdparty
 

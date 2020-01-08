@@ -1,4 +1,4 @@
-module c
+module physfs
 
 // - commented out methods are not implemented
 // - some methods are not wrapped in physfs.v

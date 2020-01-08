@@ -1,7 +1,4 @@
 module physfs
-import via.libs.physfs.c
-
-const ( version = c.version )
 
 [inline]
 pub fn initialize() int {
@@ -14,14 +11,14 @@ pub fn deinit() int {
 }
 
 [inline]
-pub fn get_linked_version() PHYSFS_Version {
+pub fn get_linked_version() C.PHYSFS_Version {
 	version := PHYSFS_Version{}
 	C.PHYSFS_getLinkedVersion(&version)
 	return version
 }
 
 [inline]
-pub fn supported_archive_types() []PHYSFS_ArchiveInfo {
+pub fn supported_archive_types() []C.PHYSFS_ArchiveInfo {
 	ptr := C.PHYSFS_supportedArchiveTypes()
 
 	mut arr := []PHYSFS_ArchiveInfo
@@ -128,12 +125,12 @@ pub fn exists(fname string) bool {
 }
 
 [inline]
-pub fn open_write(filename string) &PHYSFS_File {
+pub fn open_write(filename string) &C.PHYSFS_File {
 	return C.PHYSFS_openWrite(filename.str)
 }
 
 [inline]
-pub fn open_append(filename string) &PHYSFS_File {
+pub fn open_append(filename string) &C.PHYSFS_File {
 	return C.PHYSFS_openAppend(filename.str)
 }
 
@@ -143,37 +140,37 @@ pub fn open_read(fname charptr) &C.PHYSFS_File {
 }
 
 [inline]
-pub fn close(handle &PHYSFS_File) int {
+pub fn close(handle &C.PHYSFS_File) int {
 	return C.PHYSFS_close(handle)
 }
 
 [inline]
-pub fn eof(handle &PHYSFS_File) int {
+pub fn eof(handle &C.PHYSFS_File) int {
 	return C.PHYSFS_eof(handle)
 }
 
 [inline]
-pub fn tell(handle &PHYSFS_File) i64 {
+pub fn tell(handle &C.PHYSFS_File) i64 {
 	return C.PHYSFS_tell(handle)
 }
 
 [inline]
-pub fn seek(handle &PHYSFS_File, pos u64) int {
+pub fn seek(handle &C.PHYSFS_File, pos u64) int {
 	return C.PHYSFS_seek(handle, pos)
 }
 
 [inline]
-pub fn file_length(handle &PHYSFS_File) i64 {
+pub fn file_length(handle &C.PHYSFS_File) i64 {
 	return PHYSFS_fileLength(handle)
 }
 
 [inline]
-pub fn set_buffer(handle &PHYSFS_File, bufsize u64) int {
+pub fn set_buffer(handle &C.PHYSFS_File, bufsize u64) int {
 	return C.PHYSFS_setBuffer(handle, bufsize)
 }
 
 [inline]
-pub fn flush(handle &PHYSFS_File) int {
+pub fn flush(handle &C.PHYSFS_File) int {
 	return C.PHYSFS_flush(handle)
 }
 
@@ -215,22 +212,22 @@ pub fn unmount(old_dir string) bool {
 }
 
 [inline]
-pub fn read_bytes(handle &PHYSFS_File, buffer voidptr, len u64) i64 {
+pub fn read_bytes(handle &C.PHYSFS_File, buffer voidptr, len u64) i64 {
 	return PHYSFS_readBytes(handle, buffer, len)
 }
 
 [inline]
-pub fn write_bytes(handle &PHYSFS_File, buffer voidptr, len u64) i64 {
+pub fn write_bytes(handle &C.PHYSFS_File, buffer voidptr, len u64) i64 {
 	return C.PHYSFS_writeBytes(handle, buffer, len)
 }
 
 [inline]
-pub fn get_last_error_code() c.ErrorCode {
+pub fn get_last_error_code() ErrorCode {
 	return C.PHYSFS_getLastErrorCode()
 }
 
 [inline]
-pub fn get_error_by_code(code c.ErrorCode) string {
+pub fn get_error_by_code(code ErrorCode) string {
 	return string(C.PHYSFS_getErrorByCode(code))
 }
 
