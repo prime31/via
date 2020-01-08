@@ -132,7 +132,7 @@ pub fn smoothstep(a, b, x f32) f32 {
 [inline]
 pub fn modf(x f32) (f32, f32) {
 	i := trunc(x)
-	return i,  x - i
+	return i, x - i
 }
 
 // Returns b if c is true, a otherwise

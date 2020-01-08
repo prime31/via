@@ -62,6 +62,14 @@ pub mut:
     _end_canary u32
 }
 
+pub fn (b &C.sg_bindings) update_buffer(index int, data voidptr, element_size int, element_count int) {
+    sg_update_buffer(b.vertex_buffers[index], data, element_size * element_count)
+}
+
+pub fn (b &C.sg_bindings) append_buffer(index int, data voidptr, element_size int, element_count int) int {
+    return sg_append_buffer(b.vertex_buffers[index], data, element_size * element_count)
+}
+
 pub struct C.sg_shader_desc {
 pub mut:
     _start_canary u32
@@ -75,7 +83,7 @@ pub mut:
 pub struct C.sg_shader_attr_desc {
     name byteptr           /* GLSL vertex attribute name (only required for GLES2) */
     sem_name byteptr       /* HLSL semantic name */
-    sem_index int              /* HLSL semantic index */
+    sem_index int          /* HLSL semantic index */
 }
 
 pub struct C.sg_shader_stage_desc {
@@ -145,6 +153,7 @@ pub struct C.sg_pass {
 }
 
 pub struct C.sg_buffer_desc {
+pub mut:
     _start_canary u32
     size int
     @type BufferType
