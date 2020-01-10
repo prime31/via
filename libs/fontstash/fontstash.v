@@ -1,11 +1,9 @@
 module fontstash
 
-// not sure why this include needs to be here. sgl should be included before this in the main file...
-#include "util/sokol_gl.h"
+#flag -I @VMOD/via/libs/fontstash/thirdparty
+
 #define FONTSTASH_IMPLEMENTATION
-#include "fontstash/fontstash.h"
-#define SOKOL_FONTSTASH_IMPL
-#include "util/sokol_fontstash.h"
+#include "fontstash.h"
 
 // Contructor and destructor.
 [inline]
