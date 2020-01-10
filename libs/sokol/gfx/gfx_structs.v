@@ -229,6 +229,7 @@ pub mut:
 }
 
 pub struct C.sg_image {
+pub:
     id u32
 }
 
