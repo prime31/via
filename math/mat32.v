@@ -62,11 +62,19 @@ pub fn mat32_scale(sx f32, sy f32) Mat32 {
 pub fn mat32_ortho(left f32, right f32, bottom f32, top f32) Mat32 {
     mut result := mat32_identity()
     result.data[0] = 2.0 / (right - left)
-    result.data[1] = 0.0
-    result.data[2] = 0.0
     result.data[3] = 2.0 / (top - bottom)
     result.data[4] = (left + right) / (left - right)
     result.data[5] = (bottom + top) / (bottom - top)
+    return result
+}
+
+pub fn (self Mat32) to_mat44_orth() Mat44 {
+    mut result := mat44_identity()
+
+    result.data[0] = self.data[0]
+    result.data[5] = self.data[3]
+    result.data[12] = self.data[4]
+    result.data[13] = self.data[5]
     return result
 }
 
