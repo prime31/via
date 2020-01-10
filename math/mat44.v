@@ -23,6 +23,13 @@ pub fn (m Mat44) * (other Mat44) Mat44 {
     return m.mult(other)
 }
 
+pub fn (m Mat44) mult_vec2(v Vec2) Vec2 {
+    return Vec2{
+        x: m.data[0]*v.x + m.data[4]*v.y
+        y: m.data[1]*v.x + m.data[5]*v.y
+    }
+}
+
 pub fn (m Mat44) mult_vec3(v Vec3) Vec3 {
     return Vec3{
         x: m.data[0]*v.x + m.data[4]*v.y + m.data[8]*v.z

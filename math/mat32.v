@@ -8,7 +8,7 @@ module math
  * 0: scaleX	2: sin		4: transX
  * 1: cos		3: scaleY	5: transY
  */
-struct Mat32 {
+pub struct Mat32 {
 pub:
     data [6]f32
 }
@@ -56,6 +56,17 @@ pub fn mat32_scale(sx f32, sy f32) Mat32 {
     mut result := mat32_identity()
     result.data[0] = sx
     result.data[3] = sy
+    return result
+}
+
+pub fn mat32_ortho(left f32, right f32, bottom f32, top f32) Mat32 {
+    mut result := mat32_identity()
+    result.data[0] = 2.0 / (right - left)
+    result.data[1] = 0.0
+    result.data[2] = 0.0
+    result.data[3] = 2.0 / (top - bottom)
+    result.data[4] = (left + right) / (left - right)
+    result.data[5] = (bottom + top) / (bottom - top)
     return result
 }
 
