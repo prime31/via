@@ -77,9 +77,10 @@ pub fn (m mut Mesh) draw() {
 	m.i_buffer_safe_to_update = true
 }
 
-[unsafe_fn]
 pub fn (m &Mesh) free() {
-	free(m.verts)
-	free(m.indices)
-	free(m)
+	unsafe {
+		free(m.verts)
+		free(m.indices)
+		free(m)
+	}
 }

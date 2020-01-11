@@ -42,6 +42,7 @@ fn C.SDL_DestroyRenderer(renderer voidptr)
 fn C.SDL_RenderGetMetalLayer(renderer voidptr) voidptr
 fn C.SDL_GetRendererOutputSize(renderer voidptr, w &int, h &int) int
 fn C.SDL_GetWindowSize(window voidptr, w &int, h &int)
+fn C.SDL_SetWindowSize(window voidptr, w int, h int)
 fn C.SDL_SetHint(name byteptr, value byteptr) C.SDL_bool
 fn C.SDL_GetWindowFlags(window voidptr) u32
 fn C.SDL_VideoQuit()

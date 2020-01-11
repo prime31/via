@@ -1,4 +1,5 @@
 module math
+import rand as unused
 
 [inline]
 pub fn rand() f32 {
@@ -7,7 +8,7 @@ pub fn rand() f32 {
 
 [inline]
 pub fn rand_between(min, max f32) f32 {
-	return f32(f32(C.rand()) / C.RAND_MAX) * (max - min) + min
+	return f32(C.rand()) / C.RAND_MAX * (max - min) + min
 }
 
 [inline]

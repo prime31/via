@@ -45,3 +45,25 @@ pub fn (fs &FileSystem) unmount(archive string) bool {
 pub fn (fs &FileSystem) exists(fname string) bool {
 	return physfs.exists(fname)
 }
+
+pub fn (fs &FileSystem) read_text(fname string) string { return fs.read_text_c(charptr(fname.str)) }
+
+pub fn (fs &FileSystem) read_text_c(fname charptr) string {
+	buf := fs.read_bytes_c(fname)
+	str := tos(buf.data, buf.len)
+	unsafe { buf.free() }
+	return str
+}
+
+pub fn (fs &FileSystem) read_bytes(fname string) []byte { return fs.read_bytes_c(charptr(fname.str)) }
+
+pub fn (fs &FileSystem) read_bytes_c(fname charptr) []byte {
+	fp := PHYSFS_openRead(fname)
+	len := fp.get_length()
+
+	buf := [`0`].repeat(int(len))
+	fp.read_bytes(buf.data, u64(len))
+	fp.close()
+
+	return buf
+}

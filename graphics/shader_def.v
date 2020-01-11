@@ -68,15 +68,16 @@ fn (sd &ShaderDef) get_frag() byteptr {
 	return (default_frag + sd.frag).str
 }
 
-[unsafe_fn]
 fn (sd &ShaderDef) free() {
-	for block in sd.uniform_blocks {
-		block.uniforms.free()
-	}
+	unsafe {
+		for block in sd.uniform_blocks {
+			block.uniforms.free()
+		}
 
-	if sd.vert.len > 0 { sd.vert.free() }
-	if sd.frag.len > 0 { sd.frag.free() }
-	sd.vert_images.free()
-	sd.frag_images.free()
-	sd.uniform_blocks.free()
+		if sd.vert.len > 0 { sd.vert.free() }
+		if sd.frag.len > 0 { sd.frag.free() }
+		sd.vert_images.free()
+		sd.frag_images.free()
+		sd.uniform_blocks.free()
+	}
 }

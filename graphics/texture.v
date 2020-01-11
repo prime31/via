@@ -14,18 +14,20 @@ pub fn (t Texture) str() string {
 	return 'w: $t.width, h: $t.height, id: $t.id.id, channels: $t.channels'
 }
 
-[unsafe_fn]
 pub fn (t Texture) free() {
 	sg_destroy_image(t.id)
 }
 
 
-pub fn texture_load(bytes []byte) Texture {
+pub fn texture_load(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 	img := image.load_from_memory(bytes.data, bytes.len) or { panic(err) }
 
 	mut img_desc := sg_image_desc{
 		width: img.width
 		height: img.height
+		num_mipmaps: 0
+		min_filter: min_filter
+		mag_filter: mag_filter
 		wrap_u: .clamp_to_edge
 		wrap_v: .clamp_to_edge
 	}

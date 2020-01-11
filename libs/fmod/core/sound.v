@@ -1,6 +1,6 @@
 module core
 
-struct Sound {
+pub struct Sound {
 pub:
 	sound &FMOD_SOUND
 mut:
@@ -19,7 +19,7 @@ pub fn (s &Sound) get_length(unit TimeUnit) u32 {
 	return len
 }
 
-pub fn (s &Sound) release() int {
+pub fn (s &Sound) free() int {
 	return FMOD_Sound_Release(s.sound)
 }
 

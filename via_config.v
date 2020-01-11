@@ -1,4 +1,5 @@
 module via
+import via.libs.sokol.gfx
 
 pub struct ViaConfig {
 pub mut:
@@ -8,7 +9,8 @@ pub mut:
 	window_title string = 'V is for via'	/* the window title as UTF-8 encoded string */
 	window_width int = 1024					/* the preferred width of the window / canvas */
 	window_height int = 768					/* the preferred height of the window / canvas */
+	window_resizable bool = true			/* whether the window should be allowed to be resized */
 	window_fullscreen bool = false			/* whether the window should be created in fullscreen mode */
 	window_vsync bool = true
-	window_highdpi bool = false				/* whether the rendering canvas is full-resolution on HighDPI displays */
+	window_highdpi bool = true				/* whether the rendering canvas is full-resolution on HighDPI displays */
 }

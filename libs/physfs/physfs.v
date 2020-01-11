@@ -135,8 +135,8 @@ pub fn open_append(filename string) &C.PHYSFS_File {
 }
 
 [inline]
-pub fn open_read(fname charptr) &C.PHYSFS_File {
-	return PHYSFS_openRead(fname)
+pub fn open_read(fname string) &C.PHYSFS_File {
+	return PHYSFS_openRead(fname.str)
 }
 
 [inline]
