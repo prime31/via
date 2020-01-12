@@ -31,6 +31,31 @@ pub fn (s &Sound) play_in_group(channelgroup ChannelGroup, paused int) (int, Cha
 	return s.sys.play_sound(s.sound, channelgroup, paused)
 }
 
+pub fn (s &Sound) set_user_data(userdata voidptr) int {
+	return C.FMOD_Sound_SetUserData(s.sound, userdata)
+}
+
+pub fn (s &Sound) get_user_data(userdata voidptr) int {
+	return C.FMOD_Sound_GetUserData(s.sound, userdata)
+}
+
+pub fn (s &Sound) set_mode(mode int) int {
+	return C.FMOD_Sound_SetMode(s.sound, mode)
+}
+
+pub fn (s &Sound) get_mode(mode &int) int {
+	return C.FMOD_Sound_GetMode(s.sound, mode)
+}
+
+pub fn (s &Sound) set_loop_count(loopcount int) int {
+	s.set_mode(C.FMOD_LOOP_NORMAL)
+	return C.FMOD_Sound_SetLoopCount(s.sound, loopcount)
+}
+
+pub fn (s &Sound) get_loop_count(loopcount &int) int {
+	return C.FMOD_Sound_GetLoopCount(s.sound, loopcount)
+}
+
 pub fn (s &Sound) get_open_state() (int, OpenState, u32, int, int) {
 	openstate := 0
 	percent_buffered := u32(0)

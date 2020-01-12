@@ -28,3 +28,11 @@ pub fn (a &Audio) new_sound(fname string) fmod.Sound {
 	}
 	return snd
 }
+
+pub fn (a &Audio) new_stream(fname string) fmod.Sound {
+	res, snd := a.sys.create_sound(fname.str, C.FMOD_CREATESTREAM)
+	if res != 0 {
+		println('new_stream error. Result enum value: $res')
+	}
+	return snd
+}
