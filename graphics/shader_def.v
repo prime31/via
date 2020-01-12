@@ -4,7 +4,7 @@ import via.libs.sokol.gfx
 import os
 
 pub struct ShaderDef {
-pub mut:
+mut:
 	vert string
 	frag string
 	vert_images []string
@@ -12,30 +12,50 @@ pub mut:
 	uniform_blocks []ShaderUniformBlockDef
 }
 
-pub struct ShaderUniformBlockDef {
-pub mut:
+struct ShaderUniformBlockDef {
+mut:
 	size int
 	uniforms []ShaderUniformDef
 }
 
-pub struct ShaderUniformDef {
-pub mut:
+struct ShaderUniformDef {
+mut:
 	name string
 	@type gfx.UniformType
 	array_count int
 }
 
-pub fn (sd mut ShaderDef) apply_defaults() {
-	sd.frag_images << 'MainTex'
+pub fn (sd mut ShaderDef) add_vert_image(name string) &ShaderDef {
+	sd.vert_images << name
+	return sd
+}
 
+pub fn (sd mut ShaderDef) add_frag_image(name string) &ShaderDef {
+	sd.frag_images << name
+	return sd
+}
+
+pub fn (sd mut ShaderDef) add_uniform_block(size int) &ShaderDef {
 	sd.uniform_blocks << ShaderUniformBlockDef{
-		size: sizeof(math.Mat44)
+		size: size
 	}
+	return sd
+}
 
-	sd.uniform_blocks[0].uniforms << ShaderUniformDef {
-		name: 'TransformProjectionMatrix'
-		@type: .mat4
+pub fn (sd mut ShaderDef) set_uniform(block_index int, name string, @type gfx.UniformType, array_count int) &ShaderDef {
+	assert(sd.uniform_blocks.len > block_index)
+	sd.uniform_blocks[block_index].uniforms << ShaderUniformDef{
+		name: name
+		@type: @type
 	}
+	return sd
+}
+
+pub fn (sd mut ShaderDef) apply_defaults() &ShaderDef {
+	sd.add_frag_image('MainTex')
+		.add_uniform_block(sizeof(math.Mat44))
+		.set_uniform(0, 'TransformProjectionMatrix', .mat4, 0)
+	return sd
 }
 
 fn (sd &ShaderDef) get_vert() byteptr {

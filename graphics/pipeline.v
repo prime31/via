@@ -31,6 +31,13 @@ pub fn layout_desc_make_default() sg_layout_desc {
 	return layout
 }
 
+pub fn bindings_create(verts []Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) sg_bindings {
+	mut bindings := sg_bindings{}
+	bindings.vertex_buffers[0] = vert_buffer_create(verts, vert_usage)
+	bindings.index_buffer = index_buffer_create(indices, indices_usage)
+	return bindings
+}
+
 pub fn vert_buffer_create(verts []Vertex, usage gfx.Usage) sg_buffer {
 	mut vert_buff_desc := sg_buffer_desc{
 		@type: .vertexbuffer
@@ -57,11 +64,4 @@ pub fn index_buffer_create(indices []u16, usage gfx.Usage) sg_buffer {
 		index_buff_desc.content = indices.data
 	}
 	return sg_make_buffer(&index_buff_desc)
-}
-
-pub fn bindings_create(verts []Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) sg_bindings {
-	mut bindings := sg_bindings{}
-	bindings.vertex_buffers[0] = vert_buffer_create(verts, vert_usage)
-	bindings.index_buffer = index_buffer_create(indices, indices_usage)
-	return bindings
 }

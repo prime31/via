@@ -58,7 +58,7 @@ pub fn (m mut Mesh) update_indices() {
 	}
 }
 
-pub fn (m mut Mesh) bind_image(image sg_image, index int) {
+pub fn (m mut Mesh) bind_image(index int, image sg_image) {
 	m.bindings.fs_images[index] = image
 }
 

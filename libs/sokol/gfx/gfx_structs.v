@@ -14,8 +14,6 @@ pub struct C.sg_desc {
     mtl_device voidptr
     mtl_renderpass_descriptor_cb fn() voidptr
     mtl_drawable_cb fn() voidptr
-    // (*mtl_renderpass_descriptor_cb)(void) voidptr
-    // (*mtl_drawable_cb)(void) voidptr
     mtl_global_uniform_buffer_size int
     mtl_sampler_cache_size int
     /* D3D11-specific */
@@ -23,8 +21,6 @@ pub struct C.sg_desc {
     d3d11_device_context voidptr
     d3d11_render_target_view_cb fn() voidptr
     d3d11_depth_stencil_view_cb fn() voidptr
-    // (*d3d11_render_target_view_cb)(void) voidptr
-    // (*d3d11_depth_stencil_view_cb)(void) voidptr
     _end_canary u32
 }
 
@@ -62,13 +58,30 @@ pub mut:
     _end_canary u32
 }
 
-pub fn (b &C.sg_bindings) update_buffer(index int, data voidptr, element_size int, element_count int) {
+pub fn (b mut sg_bindings) set_vert_image(index int, img C.sg_image) {
+    b.vs_images[index] = img
+}
+
+pub fn (b mut sg_bindings) set_frag_image(index int, img C.sg_image) {
+    b.fs_images[index] = img
+}
+
+pub fn (b &C.sg_bindings) update_vert_buffer(index int, data voidptr, element_size int, element_count int) {
     sg_update_buffer(b.vertex_buffers[index], data, element_size * element_count)
 }
 
-pub fn (b &C.sg_bindings) append_buffer(index int, data voidptr, element_size int, element_count int) int {
+pub fn (b &C.sg_bindings) append_vert_buffer(index int, data voidptr, element_size int, element_count int) int {
     return sg_append_buffer(b.vertex_buffers[index], data, element_size * element_count)
 }
+
+pub fn (b &C.sg_bindings) update_index_buffer(data voidptr, element_size int, element_count int) {
+    sg_update_buffer(b.index_buffer, data, element_size * element_count)
+}
+
+pub fn (b &C.sg_bindings) append_index_buffer(data voidptr, element_size int, element_count int) int {
+    return sg_append_buffer(b.index_buffer, data, element_size * element_count)
+}
+
 
 pub struct C.sg_shader_desc {
 pub mut:
@@ -80,7 +93,57 @@ pub mut:
     _end_canary u32
 }
 
+pub fn (desc mut C.sg_shader_desc) set_vert_src(src string) &C.sg_shader_desc {
+    desc.vs.source = src.str
+    return desc
+}
+
+pub fn (desc mut C.sg_shader_desc) set_frag_src(src string) &C.sg_shader_desc {
+    desc.fs.source = src.str
+    return desc
+}
+
+pub fn (desc mut C.sg_shader_desc) set_vert_image(index int, name string) &C.sg_shader_desc {
+    desc.vs.images[index].name = name.str
+    desc.vs.images[index].@type = ._2d
+    return desc
+}
+
+pub fn (desc mut C.sg_shader_desc) set_frag_image(index int, name string) &C.sg_shader_desc {
+    desc.fs.images[index].name = name.str
+    desc.fs.images[index].@type = ._2d
+    return desc
+}
+
+pub fn (desc mut C.sg_shader_desc) set_vert_uniform_block_size(block_index, size int) &C.sg_shader_desc {
+    desc.vs.uniform_blocks[block_index].size = size
+    return desc
+}
+
+pub fn (desc mut C.sg_shader_desc) set_frag_uniform_block_size(block_index, size int) &C.sg_shader_desc {
+    desc.fs.uniform_blocks[block_index].size = size
+    return desc
+}
+
+pub fn (desc mut C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
+    desc.vs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
+	desc.vs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
+    return desc
+}
+
+pub fn (desc mut C.sg_shader_desc) set_frag_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
+    desc.fs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
+	desc.fs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
+    return desc
+}
+
+pub fn (desc &C.sg_shader_desc) make_shader() C.sg_shader {
+    return sg_make_shader(desc)
+}
+
+
 pub struct C.sg_shader_attr_desc {
+pub mut:
     name byteptr           /* GLSL vertex attribute name (only required for GLES2) */
     sem_name byteptr       /* HLSL semantic name */
     sem_index int          /* HLSL semantic index */
@@ -96,6 +159,13 @@ pub mut:
     images [12]sg_shader_image_desc
 }
 
+pub fn (desc mut C.sg_shader_stage_desc) set_image(index int, name string) C.sg_shader_stage_desc {
+    desc.images[index].name = name.str
+    desc.images[index].@type = ._2d
+    return desc
+}
+
+
 pub struct C.sg_shader_uniform_block_desc {
 pub mut:
     size int
@@ -110,6 +180,7 @@ pub mut:
 }
 
 pub struct C.sg_shader_image_desc {
+pub mut:
     name byteptr
     @type ImageType
 }
@@ -123,6 +194,7 @@ pub struct C.sg_context {
 }
 
 pub struct C.sg_shader {
+pub:
     id u32
 }
 
