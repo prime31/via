@@ -5,11 +5,11 @@ import via.libs.fmod.studio.c as c_studio
 #flag -I @VMOD/via/libs/fmod/thirdparty/core
 #flag -I @VMOD/via/libs/fmod/thirdparty/studio
 
-#flag darwin -L @VMOD/via/libs/fmod/thirdparty -lfmod -lfmodstudio
-#flag darwin -rpath @VMOD/via/libs/fmod/thirdparty
+#flag darwin -L @VMOD/via/libs/fmod/thirdparty/macos -lfmod -lfmodstudio
+#flag darwin -rpath @VMOD/via/libs/fmod/thirdparty/macos
 
-#flag linux -L @VMOD/via/libs/fmod/thirdparty
-#flag linux -Wl,-rpath,@VMOD/via/libs/fmod/thirdparty
+#flag linux -L @VMOD/via/libs/fmod/thirdparty/linux
+#flag linux -Wl,-rpath,@VMOD/via/libs/fmod/thirdparty/linux
 #flag linux -lfmod -lfmodstudio
 
 #include "fmod.h"

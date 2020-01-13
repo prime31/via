@@ -34,14 +34,18 @@ copy_files:
 	rsync -rpE --include="*/" --include="*.h" --exclude="*" '$(FMOD_FOLDER)/api/studio/inc/' $(MODULE_FOLDER)/studio
 
 copy_files_linux:
-	rsync -rpEl '$(FMOD_FOLDER)/api/core/lib/x86_64/' $(MODULE_FOLDER)
-	rsync -rpEl '$(FMOD_FOLDER)/api/studio/lib/x86_64/' $(MODULE_FOLDER)
-	rsync -rpEl '$(FMOD_FOLDER)/api/core/lib/x86_64/' /usr/local/lib
-	rsync -rpEl '$(FMOD_FOLDER)/api/studio/lib/x86_64/' /usr/local/libcd
+	[ -d $(MODULE_FOLDER)/linux ] || mkdir $(MODULE_FOLDER)/linux
+	rsync -rpEl '$(FMOD_FOLDER)/api/core/lib/x86_64/' $(MODULE_FOLDER)/linux/
+	rsync -rpEl '$(FMOD_FOLDER)/api/studio/lib/x86_64/' $(MODULE_FOLDER)/linux/
+	rsync -rpEl '$(FMOD_FOLDER)/api/core/lib/x86_64/' /usr/local/lib/linux/
+	rsync -rpEl '$(FMOD_FOLDER)/api/studio/lib/x86_64/' /usr/local/libcd/linux/
 
 copy_files_macos:
-	cp '$(FMOD_FOLDER)/api/core/lib/libfmod.dylib' $(MODULE_FOLDER)
-	cp '$(FMOD_FOLDER)/api/core/lib/libfmodL.dylib' $(MODULE_FOLDER)
+	[ -d $(MODULE_FOLDER)/macos ] || mkdir $(MODULE_FOLDER)/macos
+	cp '$(FMOD_FOLDER)/api/core/lib/libfmod.dylib' $(MODULE_FOLDER)/macos/
+	cp '$(FMOD_FOLDER)/api/core/lib/libfmodL.dylib' $(MODULE_FOLDER)/macos/
+	cp '$(FMOD_FOLDER)/api/studio/lib/libfmodstudio.dylib' $(MODULE_FOLDER)/macos/
+	cp '$(FMOD_FOLDER)/api/studio/lib/libfmodstudioL.dylib' $(MODULE_FOLDER)/macos/
 
 clean:
 	rm -rf '$(FMOD_FOLDER)'
