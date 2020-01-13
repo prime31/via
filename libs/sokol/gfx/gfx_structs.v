@@ -45,6 +45,8 @@ pub struct C.sg_pipeline_info {
 pub struct C.sg_pipeline {
     id u32
 }
+pub fn (p C.sg_pipeline) free() { sg_destroy_pipeline(p) }
+
 
 pub struct C.sg_bindings {
 pub mut:
@@ -185,9 +187,7 @@ pub mut:
     @type ImageType
 }
 
-pub struct C.sg_shader_info {
-
-}
+pub struct C.sg_shader_info {}
 
 pub struct C.sg_context {
     id u32
@@ -197,6 +197,8 @@ pub struct C.sg_shader {
 pub:
     id u32
 }
+pub fn (s C.sg_shader) free() { sg_destroy_shader(s) }
+
 
 pub struct C.sg_pass_desc {
 pub mut:
@@ -223,6 +225,8 @@ pub mut:
 pub struct C.sg_pass {
     id u32
 }
+pub fn (p C.sg_pass) free() { sg_destroy_pass(p) }
+
 
 pub struct C.sg_buffer_desc {
 pub mut:
@@ -241,13 +245,13 @@ pub mut:
     _end_canary u32
 }
 
-pub struct C.sg_buffer_info {
-
-}
+pub struct C.sg_buffer_info {}
 
 pub struct C.sg_buffer {
     id u32
 }
+pub fn (b C.sg_buffer) free() { sg_destroy_buffer(b) }
+
 
 pub union DepthLayers {
     depth int
@@ -304,6 +308,8 @@ pub struct C.sg_image {
 pub:
     id u32
 }
+pub fn (i C.sg_image) free() { sg_destroy_image(i) }
+
 
 pub struct C.sg_image_content {
 pub mut:

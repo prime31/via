@@ -15,7 +15,7 @@ pub fn (t Texture) str() string {
 }
 
 pub fn (t Texture) free() {
-	sg_destroy_image(t.id)
+	t.id.free()
 }
 
 

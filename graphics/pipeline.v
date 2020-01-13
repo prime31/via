@@ -2,9 +2,17 @@ module graphics
 import via.libs.sokol.gfx
 
 pub fn pipeline_make_default() sg_pipeline {
-	pipeline_desc := sg_pipeline_desc{
+	mut shader_desc := shader_get_default_desc()
+	shader := shader_make(null_str, null_str, mut shader_desc)
+
+	pipeline_desc := pipeline_desc_make_default(shader)
+	return sg_make_pipeline(&pipeline_desc)
+}
+
+pub fn pipeline_desc_make_default(shader sg_shader) sg_pipeline_desc {
+	return sg_pipeline_desc{
 		layout: layout_desc_make_default()
-		shader: shader_make_default()
+		shader: shader
 		index_type: .uint16
 		blend: sg_blend_state{
 			enabled: true
@@ -14,19 +22,18 @@ pub fn pipeline_make_default() sg_pipeline {
 			dst_factor_alpha: .one_minus_src_alpha
 		}
 	}
-	return sg_make_pipeline(&pipeline_desc)
 }
 
 pub fn layout_desc_make_default() sg_layout_desc {
 	mut layout := sg_layout_desc{}
 	layout.attrs[0] = sg_vertex_attr_desc{
-		format: .float2
+		format: .float2 // position
 	}
 	layout.attrs[1] = sg_vertex_attr_desc{
-		format: .float2
+		format: .float2 // tex coords
 	}
 	layout.attrs[2] = sg_vertex_attr_desc{
-		format: .ubyte4n
+		format: .ubyte4n // color
 	}
 	return layout
 }

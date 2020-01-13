@@ -32,3 +32,34 @@ pub fn (g &Graphics) new_texture(src string) graphics.Texture {
 	unsafe { buf.free() }
 	return tex
 }
+
+pub fn (g &Graphics) new_shader(vert, frag string, shader_desc mut sg_shader_desc) C.sg_shader {
+	mut vert_needs_free := false
+	vert_src := if vert.len > 0 && vert.ends_with('.vert') {
+		g.fs.read_text(vert)
+	} else {
+		vert
+	}
+
+	mut frag_needs_free := false
+	frag_src := if frag.len > 0 && vert.ends_with('.frag') {
+		g.fs.read_text(frag)
+	} else {
+		frag
+	}
+
+	shader := shader_make(vert_src, frag_src, shader_desc)
+
+	if vert_needs_free {
+		unsafe{ vert_src.free() }
+	}
+	if frag_needs_free {
+		unsafe{ frag_src.free() }
+	}
+
+	return shader
+}
+
+pub fn (g &Graphics) new_pipeline(pipeline_desc &sg_pipeline_desc) sg_pipeline {
+	return sg_make_pipeline(&pipeline_desc)
+}
