@@ -38,7 +38,7 @@ fn (v &Via) free() {
 	unsafe { free(v) }
 }
 
-pub fn run<T>(config &ViaConfig, ctx &T) {
+pub fn run<T>(config &ViaConfig, ctx mut T) {
 	mut v := create_via(config)
 	C.SDL_Init(C.SDL_INIT_VIDEO)
 	v.window.create(config)
@@ -48,18 +48,16 @@ pub fn run<T>(config &ViaConfig, ctx &T) {
 
 	ctx.initialize(v)
 
-	mut done := false
-	for !done {
-		done = v.poll_events()
+	for !v.poll_events() {
 
 		ctx.update(v)
 		ctx.draw(v)
 
-		pass_action := gfx.create_clear_pass(1.0, 0.3, 1.0, 1.0)
-		w, h := v.window.get_drawable_size()
-		sg_begin_default_pass(&pass_action, w, h)
-		sg_end_pass()
-		sg_commit()
+		// pass_action := gfx.create_clear_pass(1.0, 0.3, 1.0, 1.0)
+		// w, h := v.window.get_drawable_size()
+		// sg_begin_default_pass(&pass_action, w, h)
+		// sg_end_pass()
+		// sg_commit()
 
 		v.window.swap()
 	}

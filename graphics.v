@@ -33,7 +33,7 @@ pub fn (g &Graphics) new_texture(src string) graphics.Texture {
 	return tex
 }
 
-pub fn (g &Graphics) new_shader(vert, frag string, shader_desc mut sg_shader_desc) C.sg_shader {
+pub fn (g &Graphics) new_shader(vert, frag string, shader_desc sg_shader_desc) C.sg_shader {
 	mut vert_needs_free := false
 	vert_src := if vert.len > 0 && vert.ends_with('.vert') {
 		g.fs.read_text(vert)
@@ -48,7 +48,7 @@ pub fn (g &Graphics) new_shader(vert, frag string, shader_desc mut sg_shader_des
 		frag
 	}
 
-	shader := shader_make(vert_src, frag_src, shader_desc)
+	shader := graphics.shader_make(vert_src, frag_src, mut shader_desc)
 
 	if vert_needs_free {
 		unsafe{ vert_src.free() }
@@ -61,5 +61,9 @@ pub fn (g &Graphics) new_shader(vert, frag string, shader_desc mut sg_shader_des
 }
 
 pub fn (g &Graphics) new_pipeline(pipeline_desc &sg_pipeline_desc) sg_pipeline {
-	return sg_make_pipeline(&pipeline_desc)
+	return sg_make_pipeline(pipeline_desc)
+}
+
+pub fn (gg &Graphics) new_clear_pass(r, g, b, a f32) sg_pass_action {
+	return gfx.create_clear_pass(r, g, b, a)
 }

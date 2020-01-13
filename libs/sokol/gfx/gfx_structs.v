@@ -43,6 +43,7 @@ pub struct C.sg_pipeline_info {
 }
 
 pub struct C.sg_pipeline {
+pub:
     id u32
 }
 pub fn (p C.sg_pipeline) free() { sg_destroy_pipeline(p) }

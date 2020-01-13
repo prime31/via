@@ -1,5 +1,6 @@
 module graphics
 import via.libs.sokol.gfx
+import via.math
 
 pub struct Mesh {
 	vert_usage gfx.Usage
@@ -13,7 +14,7 @@ pub mut:
 	indices []u16
 }
 
-pub fn mesh_create_dynamic(verts []Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) &Mesh {
+pub fn mesh_new_dynamic(verts []Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) &Mesh {
 	assert(vert_usage == .dynamic || vert_usage == .stream)
 	assert(indices_usage == .dynamic || indices_usage == .stream)
 
@@ -31,7 +32,19 @@ pub fn mesh_create_dynamic(verts []Vertex, vert_usage gfx.Usage, indices []u16, 
 	return mesh
 }
 
-pub fn mesh_create_immutable(verts []Vertex, indices []u16) &Mesh {
+// TODO: take in width/height
+pub fn mesh_new_quad() &Mesh {
+	verts := [
+		Vertex{ math.Vec2{-1,-1}, 	math.Vec2{0,0},	math.Color{} },
+		Vertex{ math.Vec2{1,-1}, 	math.Vec2{1,0},	math.Color{} },
+		Vertex{ math.Vec2{1,1}, 	math.Vec2{1,1},	math.Color{} },
+		Vertex{ math.Vec2{-1,1}, 	math.Vec2{0,1},	math.Color{} }
+	]!
+	indices := [u16(0), 1, 2, 0, 2, 3]!
+	return mesh_new_dynamic(verts, .dynamic, indices, .dynamic)
+}
+
+pub fn mesh_new_immutable(verts []Vertex, indices []u16) &Mesh {
 	return &Mesh{
 		vert_usage: .immutable
 		indices_usage: .immutable
@@ -78,6 +91,10 @@ pub fn (m mut Mesh) draw() {
 }
 
 pub fn (m &Mesh) free() {
+	m.bindings.vertex_buffers[0].free()
+	// m.bindings.index_buffer.free() // V bug cant find sg_buffer
+	sg_destroy_buffer(m.bindings.index_buffer)
+
 	unsafe {
 		free(m.verts)
 		free(m.indices)

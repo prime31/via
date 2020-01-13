@@ -8,7 +8,7 @@ pub const (
 
 pub fn shader_make(vert, frag string, shader_desc mut sg_shader_desc) C.sg_shader {
 	vert_main := if vert.len == 0 { default_vert_main } else { vert }
-	frag_main := if frag.len == 0 { default_frag_main } else { vert }
+	frag_main := if frag.len == 0 { default_frag_main } else { frag }
 
 	mut vert_src := default_vert + vert_main
 	mut frag_src := default_frag + frag_main
