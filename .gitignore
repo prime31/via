@@ -19,11 +19,6 @@ libs/imgui/thirdparty
 libs/imgui/cimgui_git
 
 libs/physfs/physfs_hg
-libs/physfs/thirdparty
-
-libs/sokol/cimgui_git
-libs/sokol/thirdparty/cimgui
 
 libs/yoga/yoga_git
-libs/yoga/thirdparty
 

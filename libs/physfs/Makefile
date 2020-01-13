@@ -24,11 +24,14 @@ TARGET = fetch_and_build
 ## BUILD FLAGS PER PLATFORM
 ##---------------------------------------------------------------------
 UNAME_S := $(shell uname -s)
+LIB_FOLDER :=
 
 ifeq ($(UNAME_S), Linux)
 	TARGET += copy_static_lib
+	LIB_FOLDER = linux
 else ifeq ($(UNAME_S), Darwin)
 	TARGET += copy_static_lib
+	LIB_FOLDER = macos
 endif
 
 # only useful when using SDL to load textures
@@ -43,17 +46,18 @@ fetch_and_build:
 	cp physfs_hg/src/physfs.h $(MODULE_FOLDER)
 
 copy_static_lib:
+	[ -d $(MODULE_FOLDER)/$(LIB_FOLDER) ] || mkdir $(MODULE_FOLDER)/$(LIB_FOLDER)
 	cp physfs_hg/src/physfs.h $(MODULE_FOLDER)
-	cp physfs_hg/build/libphysfs.a $(MODULE_FOLDER)
+	cp physfs_hg/build/libphysfs.a $(MODULE_FOLDER)/$(LIB_FOLDER)
 
 copy_dll:
 	cp physfs_hg/src/physfs.h $(MODULE_FOLDER)
-	cp physfs_hg/build/libphysfs.dll $(MODULE_FOLDER)
+	cp physfs_hg/build/libphysfs.dll $(MODULE_FOLDER)/$(LIB_FOLDER)
 
 physfsrwops.o: physfs_hg/extras/physfsrwops.c
 	$(CC) $(CFLAGS) -c -o physfs_hg/build/$@ $<
 	cp physfs_hg/extras/physfsrwops.h $(MODULE_FOLDER)
-	cp physfs_hg/build/physfsrwops.o $(MODULE_FOLDER)
+	cp physfs_hg/build/physfsrwops.o $(MODULE_FOLDER)/$(LIB_FOLDER)
 
 clean:
 	rm -rf physfs_hg
