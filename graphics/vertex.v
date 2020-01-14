@@ -7,6 +7,6 @@ pub mut:
 	texcoords math.Vec2
 	color math.Color
 }
-pub fn (v &Vertex) str() string {
+pub fn (v Vertex) str() string {
 	return 'pos: $v.pos, texcoords: $v.texcoords, color: $v.color'
 }

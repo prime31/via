@@ -67,3 +67,7 @@ pub fn (g &Graphics) new_pipeline(pipeline_desc &sg_pipeline_desc) sg_pipeline {
 pub fn (gg &Graphics) new_clear_pass(r, g, b, a f32) sg_pass_action {
 	return gfx.create_clear_pass(r, g, b, a)
 }
+
+pub fn (g &Graphics) new_spritebatch(tex graphics.Texture, max_sprites int) &graphics.SpriteBatch {
+	return graphics.spritebatch_new(tex, max_sprites)
+}

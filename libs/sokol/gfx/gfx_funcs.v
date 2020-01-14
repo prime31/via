@@ -27,7 +27,7 @@ fn C.sg_apply_viewport(x int, y int, width int, height int, origin_top_left bool
 fn C.sg_apply_scissor_rect(x int, y int, width int, height int, origin_top_left bool)
 fn C.sg_apply_pipeline(pip C.sg_pipeline)
 fn C.sg_apply_bindings(bindings &C.sg_bindings)
-fn C.sg_apply_uniforms(stage int /*sg_shader_stage*/, ub_index int, data voidptr, num_bytes int)
+fn C.sg_apply_uniforms(stage ShaderStage, ub_index int, data voidptr, num_bytes int)
 fn C.sg_draw(base_element int, num_elements int, num_instances int)
 fn C.sg_end_pass()
 fn C.sg_commit()

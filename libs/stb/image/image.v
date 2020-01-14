@@ -69,7 +69,7 @@ pub fn get_info(filename string) (int, int, int) {
 	return w, h, comp
 }
 
-pub fn load_from_memory(buffer voidptr, len int) ?Image { return load_channels_from_memory(buffer, len, .default) }
+pub fn load_from_memory(buffer voidptr, len int) ?Image { return load_channels_from_memory(buffer, len, .rgb_alpha) }
 
 pub fn load_channels_from_memory(buffer voidptr, len int, channels Channels) ?Image {
 	mut img := Image{data: 0}

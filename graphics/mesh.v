@@ -35,10 +35,10 @@ pub fn mesh_new_dynamic(verts []Vertex, vert_usage gfx.Usage, indices []u16, ind
 // TODO: take in width/height
 pub fn mesh_new_quad() &Mesh {
 	verts := [
-		Vertex{ math.Vec2{-1,-1}, 	math.Vec2{0,0},	math.Color{} },
-		Vertex{ math.Vec2{1,-1}, 	math.Vec2{1,0},	math.Color{} },
-		Vertex{ math.Vec2{1,1}, 	math.Vec2{1,1},	math.Color{} },
-		Vertex{ math.Vec2{-1,1}, 	math.Vec2{0,1},	math.Color{} }
+		Vertex{ math.Vec2{-1,-1}, 	math.Vec2{0,0},	math.Color{} }, // tl
+		Vertex{ math.Vec2{1,-1}, 	math.Vec2{1,0},	math.Color{} }, // tr
+		Vertex{ math.Vec2{1,1}, 	math.Vec2{1,1},	math.Color{} }, // br
+		Vertex{ math.Vec2{-1,1}, 	math.Vec2{0,1},	math.Color{} }  // bl
 	]!
 	indices := [u16(0), 1, 2, 0, 2, 3]!
 	return mesh_new_dynamic(verts, .dynamic, indices, .dynamic)
@@ -71,8 +71,8 @@ pub fn (m mut Mesh) update_indices() {
 	}
 }
 
-pub fn (m mut Mesh) bind_image(index int, image sg_image) {
-	m.bindings.fs_images[index] = image
+pub fn (m mut Mesh) bind_texture(index int, tex Texture) {
+	m.bindings.set_frag_image(index, tex.id)
 }
 
 // drawing
@@ -96,8 +96,8 @@ pub fn (m &Mesh) free() {
 	sg_destroy_buffer(m.bindings.index_buffer)
 
 	unsafe {
-		free(m.verts)
-		free(m.indices)
+		m.verts.free()
+		m.indices.free()
 		free(m)
 	}
 }
