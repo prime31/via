@@ -1,4 +1,5 @@
 module graphics
+import via.math
 import via.libs.sokol.gfx
 
 pub fn pipeline_make_default() sg_pipeline {
@@ -38,18 +39,18 @@ pub fn layout_desc_make_default() sg_layout_desc {
 	return layout
 }
 
-pub fn bindings_create(verts []Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) sg_bindings {
+pub fn bindings_create(verts []math.Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) sg_bindings {
 	mut bindings := sg_bindings{}
 	bindings.vertex_buffers[0] = vert_buffer_create(verts, vert_usage)
 	bindings.index_buffer = index_buffer_create(indices, indices_usage)
 	return bindings
 }
 
-pub fn vert_buffer_create(verts []Vertex, usage gfx.Usage) sg_buffer {
+pub fn vert_buffer_create(verts []math.Vertex, usage gfx.Usage) sg_buffer {
 	mut vert_buff_desc := sg_buffer_desc{
 		@type: .vertexbuffer
 		usage: usage
-		size: sizeof(Vertex) * verts.len
+		size: sizeof(math.Vertex) * verts.len
 	}
 
 	// dynamic and stream needs to be set some time after init

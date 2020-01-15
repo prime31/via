@@ -10,11 +10,11 @@ mut:
 	v_buffer_safe_to_update bool = true
 	i_buffer_safe_to_update bool = true
 pub mut:
-	verts []Vertex
+	verts []math.Vertex
 	indices []u16
 }
 
-pub fn mesh_new_dynamic(verts []Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) &Mesh {
+pub fn mesh_new_dynamic(verts []math.Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) &Mesh {
 	assert(vert_usage == .dynamic || vert_usage == .stream)
 	assert(indices_usage == .dynamic || indices_usage == .stream)
 
@@ -35,16 +35,16 @@ pub fn mesh_new_dynamic(verts []Vertex, vert_usage gfx.Usage, indices []u16, ind
 // TODO: take in width/height
 pub fn mesh_new_quad() &Mesh {
 	verts := [
-		Vertex{ math.Vec2{-1,-1}, 	math.Vec2{0,0},	math.Color{} }, // tl
-		Vertex{ math.Vec2{1,-1}, 	math.Vec2{1,0},	math.Color{} }, // tr
-		Vertex{ math.Vec2{1,1}, 	math.Vec2{1,1},	math.Color{} }, // br
-		Vertex{ math.Vec2{-1,1}, 	math.Vec2{0,1},	math.Color{} }  // bl
+		math.Vertex{ math.Vec2{-1,-1}, 	math.Vec2{0,0},	math.Color{} }, // tl
+		math.Vertex{ math.Vec2{1,-1}, 	math.Vec2{1,0},	math.Color{} }, // tr
+		math.Vertex{ math.Vec2{1,1}, 	math.Vec2{1,1},	math.Color{} }, // br
+		math.Vertex{ math.Vec2{-1,1}, 	math.Vec2{0,1},	math.Color{} }  // bl
 	]!
 	indices := [u16(0), 1, 2, 0, 2, 3]!
 	return mesh_new_dynamic(verts, .dynamic, indices, .dynamic)
 }
 
-pub fn mesh_new_immutable(verts []Vertex, indices []u16) &Mesh {
+pub fn mesh_new_immutable(verts []math.Vertex, indices []u16) &Mesh {
 	return &Mesh{
 		vert_usage: .immutable
 		indices_usage: .immutable
@@ -58,7 +58,7 @@ pub fn mesh_new_immutable(verts []Vertex, indices []u16) &Mesh {
 pub fn (m mut Mesh) update_verts() {
 	assert(m.vert_usage != .immutable)
 	if m.v_buffer_safe_to_update {
-		sg_update_buffer(m.bindings.vertex_buffers[0], m.verts.data, sizeof(Vertex) * m.verts.len)
+		sg_update_buffer(m.bindings.vertex_buffers[0], m.verts.data, sizeof(math.Vertex) * m.verts.len)
 		m.v_buffer_safe_to_update = false
 	}
 }

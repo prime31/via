@@ -7,14 +7,16 @@ mut:
 	bindings sg_bindings
 	v_buffer_safe_to_update bool = true
 	v_buffer_dirty bool
-	verts []Vertex
+	verts []math.Vertex
 	sprite_cnt int
+	max_sprites int
 	tex Texture
 }
 
 pub fn spritebatch_new(tex Texture, max_sprites int) &SpriteBatch {
 	mut sb := &SpriteBatch{
-		verts: [Vertex{math.Vec2{},math.Vec2{0,0},math.Color{}}].repeat(max_sprites * 4)
+		verts: [math.Vertex{math.Vec2{},math.Vec2{0,0},math.Color{}}].repeat(max_sprites * 4)
+		max_sprites: max_sprites
 	}
 
 	indices := vert_quad_index_buffer_make(max_sprites)
@@ -29,7 +31,7 @@ pub fn spritebatch_new(tex Texture, max_sprites int) &SpriteBatch {
 // update methods
 pub fn (sb mut SpriteBatch) update_verts() {
 	if sb.v_buffer_safe_to_update {
-		sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(Vertex) * sb.verts.len)
+		sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(math.Vertex) * sb.verts.len)
 		sb.v_buffer_safe_to_update = false
 		sb.v_buffer_dirty = false
 	}
@@ -45,7 +47,7 @@ pub fn (sb mut SpriteBatch) clear() {
 }
 
 fn (sb &SpriteBatch) check_can_add() bool {
-	if sb.sprite_cnt + 1 == sb.verts.len / 4 {
+	if sb.sprite_cnt == sb.max_sprites {
 		println('Error: sprite batch full. Aborting Add.')
 		return false
 	}
@@ -61,22 +63,35 @@ pub fn (sb mut SpriteBatch) set(index, x, y int) {
 	sb.verts[base_vert].texcoords.y = 0
 	// tr
 	base_vert++
-	sb.verts[base_vert].pos.x = x + int(f32(sb.tex.width) * 0.05)
+	sb.verts[base_vert].pos.x = x + sb.tex.width
 	sb.verts[base_vert].pos.y = y
 	sb.verts[base_vert].texcoords.x = 1
 	sb.verts[base_vert].texcoords.y = 0
 	// br
 	base_vert++
-	sb.verts[base_vert].pos.x = x + int(f32(sb.tex.width) * 0.05)
-	sb.verts[base_vert].pos.y = y + int(f32(sb.tex.height) * 0.05)
+	sb.verts[base_vert].pos.x = x + sb.tex.width
+	sb.verts[base_vert].pos.y = y + sb.tex.height
 	sb.verts[base_vert].texcoords.x = 1
 	sb.verts[base_vert].texcoords.y = 1
 	// bl
 	base_vert++
 	sb.verts[base_vert].pos.x = x
-	sb.verts[base_vert].pos.y = y + int(f32(sb.tex.height) * 0.05)
+	sb.verts[base_vert].pos.y = y + sb.tex.height
 	sb.verts[base_vert].texcoords.x = 0
 	sb.verts[base_vert].texcoords.y = 1
+
+	sb.v_buffer_dirty = true
+}
+
+pub fn (sb mut SpriteBatch) set_q(index int) {
+	mut base_vert := index * 4
+
+	// matrix.transform_vec2_arr(&sb.verts[base_vert], &quad.vert_positions, 4)
+
+	// for i in 0..4 {
+	// 	sb.verts[base_vert + i].texcoords.x = quad.texcoords.x
+	// 	sb.verts[base_vert + i].texcoords.y = quad.texcoords.y
+	// }
 
 	sb.v_buffer_dirty = true
 }
@@ -87,6 +102,18 @@ pub fn (sb mut SpriteBatch) add(x, y int) int {
 	}
 
 	sb.set(sb.sprite_cnt, x, y)
+
+	sb.v_buffer_dirty = true
+	sb.sprite_cnt++
+	return sb.sprite_cnt - 1
+}
+
+pub fn (sb mut SpriteBatch) add_q() int {
+	if !sb.check_can_add() {
+		return -1
+	}
+
+	sb.set_q(sb.sprite_cnt)
 
 	sb.v_buffer_dirty = true
 	sb.sprite_cnt++

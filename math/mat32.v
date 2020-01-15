@@ -40,22 +40,34 @@ pub fn mat32_identity() Mat32 {
 }
 
 pub fn mat32_rotate(angle f32) Mat32 {
-	mut result := mat32_identity()
+	mut result := mat32_zero()
     c := cosf(angle)
     s := sinf(angle)
 
 	result.data[0] = c
 	result.data[1] = s
-	result.data[2] = s
+	result.data[2] = -s
 	result.data[3] = c
 
     return result
 }
 
 pub fn mat32_scale(sx f32, sy f32) Mat32 {
-    mut result := mat32_identity()
+    mut result := mat32_zero()
     result.data[0] = sx
     result.data[3] = sy
+    return result
+}
+
+pub fn mat32_skew(x_rad f32, y_rad f32) Mat32 {
+    x_tan := tan(x_rad)
+    y_tan := tan(y_rad)
+
+    mut result := mat32_zero()
+    result.data[0] = 1
+    result.data[1] = x_tan
+    result.data[2] = y_tan
+    result.data[3] = 1
     return result
 }
 
@@ -79,7 +91,7 @@ pub fn (self Mat32) to_mat44_orth() Mat44 {
 }
 
 pub fn (self Mat32) det() f32 {
-    return self.data[0] * self.data[3] - self.data[1] * self.data[2]
+    return self.data[0] * self.data[3] - self.data[2] * self.data[1]
 }
 
 pub fn (self Mat32) get_translation() Vec2 {
@@ -96,4 +108,24 @@ pub fn (self Mat32) get_degrees() f32 {
 
 pub fn (self Mat32) get_scale() Vec2 {
 	return Vec2{self.data[0], self.data[3]}
+}
+
+pub fn (self Mat32) transform_vec2(pos Vec2) Vec2 {
+    return Vec2{
+        x: pos.x * self.data[0] + pos.y * self.data[2] + self.data[4]
+        y: pos.x * self.data[1] + pos.y * self.data[3] + self.data[5]
+    }
+}
+
+// transforms an array of positions (src) and writes them into the Vertex array (dst)
+pub fn (self Mat32) transform_vec2_arr(dst &Vertex, src &Vec2, size int) {
+    mut mut_dst := dst
+
+    for i in 0..size {
+        x := src[i].x * self.data[0] + src[i].y * self.data[2] + self.data[4]
+        y := src[i].x * self.data[1] + src[i].y * self.data[3] + self.data[5]
+
+        mut_dst[i].pos.x = x
+        mut_dst[i].pos.y = y
+    }
 }
