@@ -1,6 +1,7 @@
 module via
 import os
 import filepath
+import via.utils
 import via.libs.physfs
 
 struct FileSystem {
@@ -61,7 +62,7 @@ pub fn (fs &FileSystem) read_bytes_c(fname charptr) []byte {
 	fp := PHYSFS_openRead(fname)
 	len := fp.get_length()
 
-	buf := [`0`].repeat(int(len))
+	buf := utils.make_array<int>(int(len), int(len))
 	fp.read_bytes(buf.data, u64(len))
 	fp.close()
 

@@ -1,5 +1,6 @@
 module graphics
 import via.math
+import via.utils
 import via.libs.sokol.gfx
 
 pub struct SpriteBatch {
@@ -15,7 +16,8 @@ mut:
 
 pub fn spritebatch_new(tex Texture, max_sprites int) &SpriteBatch {
 	mut sb := &SpriteBatch{
-		verts: [math.Vertex{math.Vec2{},math.Vec2{0,0},math.Color{}}].repeat(max_sprites * 4)
+		// we use repeat here so that we can set default colors to white
+		verts: utils.make_arrray_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{math.Vec2{},math.Vec2{},math.Color{}})
 		max_sprites: max_sprites
 	}
 
