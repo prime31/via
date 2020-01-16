@@ -80,6 +80,14 @@ pub fn (sb mut SpriteBatch) set(index, x, y int) {
 	sb.verts[base_vert].texcoords.x = 0
 	sb.verts[base_vert].texcoords.y = 1
 
+	if index == 5 {
+		mat := math.mat32_transform(x + 16, y + 16, math.radians(45), 1, 1, 16, 16)
+		sb.verts[base_vert-3].pos = mat.transform_vec2(math.Vec2{0,0})
+		sb.verts[base_vert-2].pos = mat.transform_vec2(math.Vec2{32,0})
+		sb.verts[base_vert-1].pos = mat.transform_vec2(math.Vec2{32,32})
+		sb.verts[base_vert].pos = mat.transform_vec2(math.Vec2{0,32})
+	}
+
 	sb.v_buffer_dirty = true
 }
 
