@@ -71,13 +71,35 @@ pub fn mat32_skew(x_rad f32, y_rad f32) Mat32 {
     return result
 }
 
-pub fn mat32_ortho(left f32, right f32, bottom f32, top f32) Mat32 {
+pub fn mat32_ortho(left, right, bottom, top f32) Mat32 {
     mut result := mat32_identity()
     result.data[0] = 2.0 / (right - left)
     result.data[3] = 2.0 / (top - bottom)
     result.data[4] = (left + right) / (left - right)
     result.data[5] = (bottom + top) / (bottom - top)
     return result
+}
+
+pub fn mat32_transform(x, y, angle, sx, sy, ox, oy f32) Mat32 {
+	mut result := mat32_zero()
+    result.set_transform(x, y, angle, sx, sy, ox, oy)
+    return result
+}
+
+pub fn (m mut Mat32) set_transform(x, y, angle, sx, sy, ox, oy f32) {
+    c := cosf(angle)
+    s := sinf(angle)
+
+	// matrix multiplication carried out on paper:
+	// |1    x| |c -s  | |sx     | |1   -ox|
+	// |  1  y| |s  c  | |   sy  | |  1 -oy|
+	//   move    rotate    scale     origin
+	m.data[0] = c * sx
+	m.data[1] = s * sx
+	m.data[2] = -s * sy
+	m.data[3] = c * sy
+	m.data[4] = x - ox * m.data[0] - oy * m.data[2]
+	m.data[5] = y - ox * m.data[1] - oy * m.data[3]
 }
 
 pub fn (self Mat32) to_mat44_orth() Mat44 {
