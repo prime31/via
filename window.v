@@ -10,7 +10,7 @@ mut:
 	gl_context voidptr
 }
 
-fn create_window(config ViaConfig) &Window {
+fn new_window(config ViaConfig) &Window {
 	return &Window{
 		sdl_window: voidptr(0)
 		gl_context: voidptr(0)

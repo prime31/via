@@ -17,11 +17,11 @@ mut:
 pub fn spritebatch_new(tex Texture, max_sprites int) &SpriteBatch {
 	mut sb := &SpriteBatch{
 		// we use repeat here so that we can set default colors to white
-		verts: utils.make_arrray_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{math.Vec2{},math.Vec2{},math.Color{}})
+		verts: utils.new_arrray_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{math.Vec2{},math.Vec2{},math.Color{}})
 		max_sprites: max_sprites
 	}
 
-	indices := vert_quad_index_buffer_make(max_sprites)
+	indices := new_vert_quad_index_buffer(max_sprites)
 	sb.bindings = bindings_create(sb.verts, .dynamic, indices, .immutable)
 	sb.set_texture(tex)
 	sb.update_verts()

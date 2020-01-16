@@ -1,6 +1,6 @@
 module utils
 
-pub fn make_array<T>(len int, cap int) []T {
+pub fn new_array<T>(len int, cap int) []T {
 	assert(len <= cap)
 	cap_ := if cap == 0 { 1 } else { cap }
 	elm_size := sizeof(T)
@@ -13,7 +13,7 @@ pub fn make_array<T>(len int, cap int) []T {
 	return arr
 }
 
-pub fn make_arrray_with_default<T>(len int, cap int, default_val T) []T {
+pub fn new_arrray_with_default<T>(len int, cap int, default_val T) []T {
 	assert(len <= cap)
 	cap_ := if cap == 0 { 1 } else { cap }
 	elm_size := sizeof(T)

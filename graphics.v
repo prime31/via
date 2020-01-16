@@ -9,7 +9,7 @@ mut:
 	mag_filter gfx.Filter
 }
 
-fn create_graphics(config &ViaConfig, filesystem &FileSystem) &Graphics {
+fn new_graphics(config &ViaConfig, filesystem &FileSystem) &Graphics {
 	return &Graphics{
 		fs: filesystem
 		min_filter: .nearest

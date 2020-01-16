@@ -8,7 +8,7 @@ struct FileSystem {
 	tmp int
 }
 
-fn create_filesystem(config ViaConfig) &FileSystem {
+fn new_filesystem(config ViaConfig) &FileSystem {
 	if physfs.initialize() != 1 { panic('could not initialize PhysFS') }
 
 	physfs.permit_symbolic_links(1)
@@ -62,7 +62,7 @@ pub fn (fs &FileSystem) read_bytes_c(fname charptr) []byte {
 	fp := PHYSFS_openRead(fname)
 	len := fp.get_length()
 
-	buf := utils.make_array<int>(int(len), int(len))
+	buf := utils.new_array<int>(int(len), int(len))
 	fp.read_bytes(buf.data, u64(len))
 	fp.close()
 
