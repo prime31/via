@@ -13,4 +13,8 @@ pub mut:
 	window_fullscreen bool = false			/* whether the window should be created in fullscreen mode */
 	window_vsync bool = true
 	window_highdpi bool = true				/* whether the rendering canvas is full-resolution on HighDPI displays */
+
+	imgui_enabled bool = false				/* whether imgui should be enabled */
+	imgui_viewports_enabled bool = true		/* whether imgui viewports should be enabled */
+	imgui_docking_enabled bool = true		/* whether imgui docking should be enabled */
 }

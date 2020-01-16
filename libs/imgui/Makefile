@@ -48,7 +48,9 @@ TARGET += imgui_impl_opengl3.o
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM
 ##---------------------------------------------------------------------
+
 UNAME_S := $(shell uname -s)
+LIB_FOLDER :=
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	LIBS += -lGL -ldl `sdl2-config --libs`
@@ -56,6 +58,7 @@ ifeq ($(UNAME_S), Linux) #LINUX
 
 	SED := sed -i
 	#TARGET += cimgui.so not yet supported
+	LIB_FOLDER = linux
 else ifeq ($(UNAME_S), Darwin) #APPLE
 	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
 	LIBS += -L/usr/local/lib
@@ -65,8 +68,10 @@ else ifeq ($(UNAME_S), Darwin) #APPLE
 
 	SED := sed -i ''
 	TARGET += cimgui.dylib
+	LIB_FOLDER = macos
 endif
 
+$(shell mkdir -p $(MODULE_FOLDER)/$(LIB_FOLDER))
 
 
 ##---------------------------------------------------------------------
@@ -79,7 +84,7 @@ all: $(TARGET)
 
 cimgui.dylib: cimgui_git/build/cimgui.dylib
 	$(CP) cimgui_git/cimgui.h $(MODULE_FOLDER)/cimgui.h
-	$(CP) cimgui_git/build/cimgui.dylib $(MODULE_FOLDER)/cimgui.dylib
+	$(CP) cimgui_git/build/cimgui.dylib $(MODULE_FOLDER)/$(LIB_FOLDER)/cimgui.dylib
 
 cimgui_git/build/cimgui.dylib:
 	[ -d cimgui_git ] || git clone --recursive --depth 1 $(IMGUI_BRANCH) https://github.com/cimgui/cimgui.git cimgui_git
@@ -87,21 +92,21 @@ cimgui_git/build/cimgui.dylib:
 
 cimgui.a: cimgui_git/build/cimgui.a
 	$(CP) cimgui_git/cimgui.h $(MODULE_FOLDER)/cimgui.h
-	$(CP) cimgui_git/build/cimgui.a $(MODULE_FOLDER)/cimgui.a
+	$(CP) cimgui_git/build/cimgui.a $(MODULE_FOLDER)/$(LIB_FOLDER)/cimgui.a
 
 cimgui_git/build/cimgui.a:
 	[ -d cimgui_git ] || git clone --recursive --depth 1 $(IMGUI_BRANCH) https://github.com/cimgui/cimgui.git cimgui_git
 	(export CFLAGS= CXXFLAGS= ; cd cimgui_git ; mkdir build ; cd build ; cmake -DIMGUI_STATIC=ON .. ; make)
 
 imgui_impl_sdl.o: $(IMGUI)/examples/imgui_impl_sdl.cpp
-	$(CXX) -fPIC -c -o $(MODULE_FOLDER)/$@ $^ -I$(IMGUI) `sdl2-config --cflags` -DIMGUI_IMPL_API=extern\ \"C\" -fno-threadsafe-statics
+	$(CXX) -fPIC -c -o $(MODULE_FOLDER)/$(LIB_FOLDER)/$@ $^ -I$(IMGUI) `sdl2-config --cflags` -DIMGUI_IMPL_API=extern\ \"C\" -fno-threadsafe-statics
 	$(CP) $(IMGUI)/examples/imgui_impl_sdl.h $(MODULE_FOLDER)/imgui_impl_sdl.h
 ifdef SED
 	$(SED) "s/(SDL_Window/(struct SDL_Window/g" $(MODULE_FOLDER)/imgui_impl_sdl.h
 endif
 
 imgui_impl_opengl3.o: $(IMGUI)/examples/imgui_impl_opengl3.cpp
-	$(CXX) -fPIC -c -o $(MODULE_FOLDER)/$@ $^ -I$(IMGUI) $(CFLAGS) $(LIBS) -DIMGUI_IMPL_API=extern\ \"C\" -fno-threadsafe-statics
+	$(CXX) -fPIC -c -o $(MODULE_FOLDER)/$(LIB_FOLDER)/$@ $^ -I$(IMGUI) $(CFLAGS) $(LIBS) -DIMGUI_IMPL_API=extern\ \"C\" -fno-threadsafe-statics
 	$(CP) $(IMGUI)/examples/imgui_impl_opengl3.h $(MODULE_FOLDER)/imgui_impl_opengl3.h
 ifdef SED
 	$(SED) "s/glsl_version = NULL/glsl_version/g" $(MODULE_FOLDER)/imgui_impl_opengl3.h

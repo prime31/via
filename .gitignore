@@ -15,7 +15,6 @@ libs/flextgl/thirdparty/flextGL.o
 libs/fmod/fmodstudioapi
 libs/fmod/FMOD Programmers API
 
-libs/imgui/thirdparty
 libs/imgui/cimgui_git
 
 libs/physfs/physfs_hg
