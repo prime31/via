@@ -11,7 +11,7 @@ pub fn shader_make(vert, frag string, shader_desc mut sg_shader_desc) C.sg_shade
 	frag_main := if frag.len == 0 { default_frag_main } else { frag }
 
 	mut vert_src := default_vert + vert_main
-	mut frag_src := default_frag + frag_main
+	frag_src := default_frag + frag_main
 
 	shader := shader_desc.set_vert_src(vert_src)
 		.set_frag_src(frag_src)
