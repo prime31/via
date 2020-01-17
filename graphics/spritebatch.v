@@ -17,7 +17,7 @@ mut:
 pub fn spritebatch_new(tex Texture, max_sprites int) &SpriteBatch {
 	mut sb := &SpriteBatch{
 		// we use repeat here so that we can set default colors to white
-		verts: utils.new_arrray_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{math.Vec2{},math.Vec2{},math.Color{}})
+		verts: utils.new_array_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
 		max_sprites: max_sprites
 	}
 
@@ -59,35 +59,44 @@ fn (sb &SpriteBatch) check_can_add() bool {
 pub fn (sb mut SpriteBatch) set(index, x, y int) {
 	mut base_vert := index * 4
 	// tl
-	sb.verts[base_vert].pos.x = x
-	sb.verts[base_vert].pos.y = y
-	sb.verts[base_vert].texcoords.x = 0
-	sb.verts[base_vert].texcoords.y = 0
+	sb.verts[base_vert].x = x
+	sb.verts[base_vert].y = y
+	sb.verts[base_vert].s = 0
+	sb.verts[base_vert].t = 0
 	// tr
 	base_vert++
-	sb.verts[base_vert].pos.x = x + sb.tex.width
-	sb.verts[base_vert].pos.y = y
-	sb.verts[base_vert].texcoords.x = 1
-	sb.verts[base_vert].texcoords.y = 0
+	sb.verts[base_vert].x = x + sb.tex.width
+	sb.verts[base_vert].y = y
+	sb.verts[base_vert].s = 1
+	sb.verts[base_vert].t = 0
 	// br
 	base_vert++
-	sb.verts[base_vert].pos.x = x + sb.tex.width
-	sb.verts[base_vert].pos.y = y + sb.tex.height
-	sb.verts[base_vert].texcoords.x = 1
-	sb.verts[base_vert].texcoords.y = 1
+	sb.verts[base_vert].x = x + sb.tex.width
+	sb.verts[base_vert].y = y + sb.tex.height
+	sb.verts[base_vert].s = 1
+	sb.verts[base_vert].t = 1
 	// bl
 	base_vert++
-	sb.verts[base_vert].pos.x = x
-	sb.verts[base_vert].pos.y = y + sb.tex.height
-	sb.verts[base_vert].texcoords.x = 0
-	sb.verts[base_vert].texcoords.y = 1
+	sb.verts[base_vert].x = x
+	sb.verts[base_vert].y = y + sb.tex.height
+	sb.verts[base_vert].s = 0
+	sb.verts[base_vert].t = 1
 
 	if index == 5 {
 		mat := math.mat32_transform(x + 16, y + 16, math.radians(45), 1, 1, 16, 16)
-		sb.verts[base_vert-3].pos = mat.transform_vec2(math.Vec2{0,0})
-		sb.verts[base_vert-2].pos = mat.transform_vec2(math.Vec2{32,0})
-		sb.verts[base_vert-1].pos = mat.transform_vec2(math.Vec2{32,32})
-		sb.verts[base_vert].pos = mat.transform_vec2(math.Vec2{0,32})
+
+		mut pos := mat.transform_vec2(math.Vec2{0,0})
+		sb.verts[base_vert-3].x = pos.x
+		sb.verts[base_vert-3].y = pos.y
+		pos = mat.transform_vec2(math.Vec2{32,0})
+		sb.verts[base_vert-2].x = pos.x
+		sb.verts[base_vert-2].y = pos.y
+		pos = mat.transform_vec2(math.Vec2{32,32})
+		sb.verts[base_vert-1].x = pos.x
+		sb.verts[base_vert-1].y = pos.y
+		pos = mat.transform_vec2(math.Vec2{0,32})
+		sb.verts[base_vert].x = pos.x
+		sb.verts[base_vert].y = pos.y
 	}
 
 	sb.v_buffer_dirty = true

@@ -147,7 +147,8 @@ pub fn (self Mat32) transform_vec2_arr(dst &Vertex, src &Vec2, size int) {
         x := src[i].x * self.data[0] + src[i].y * self.data[2] + self.data[4]
         y := src[i].x * self.data[1] + src[i].y * self.data[3] + self.data[5]
 
-        mut_dst[i].pos.x = x
-        mut_dst[i].pos.y = y
+        // we defer setting in case src and dst are the same
+        mut_dst[i].x = x
+        mut_dst[i].y = y
     }
 }
