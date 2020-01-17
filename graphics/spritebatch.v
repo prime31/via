@@ -56,7 +56,7 @@ fn (sb &SpriteBatch) check_can_add() bool {
 	return true
 }
 
-pub fn (sb mut SpriteBatch) set(index, x, y int) {
+pub fn (sb mut SpriteBatch) set(index int, x, y f32) {
 	mut base_vert := index * 4
 	// tl
 	sb.verts[base_vert].x = x
@@ -82,40 +82,23 @@ pub fn (sb mut SpriteBatch) set(index, x, y int) {
 	sb.verts[base_vert].s = 0
 	sb.verts[base_vert].t = 1
 
-	if index == 5 {
-		mat := math.mat32_transform(x + 16, y + 16, math.radians(45), 1, 1, 16, 16)
+	sb.v_buffer_dirty = true
+}
 
-		mut pos := mat.transform_vec2(math.Vec2{0,0})
-		sb.verts[base_vert-3].x = pos.x
-		sb.verts[base_vert-3].y = pos.y
-		pos = mat.transform_vec2(math.Vec2{32,0})
-		sb.verts[base_vert-2].x = pos.x
-		sb.verts[base_vert-2].y = pos.y
-		pos = mat.transform_vec2(math.Vec2{32,32})
-		sb.verts[base_vert-1].x = pos.x
-		sb.verts[base_vert-1].y = pos.y
-		pos = mat.transform_vec2(math.Vec2{0,32})
-		sb.verts[base_vert].x = pos.x
-		sb.verts[base_vert].y = pos.y
+pub fn (sb mut SpriteBatch) set_q(index int, quad &math.Quad, matrix math.Mat32) {
+	base_vert := index * 4
+
+	matrix.transform_vec2_arr(&sb.verts[base_vert], &quad.positions[0], 4)
+
+	for i in 0..4 {
+		sb.verts[base_vert + i].s = quad.texcoords[i].x
+		sb.verts[base_vert + i].t = quad.texcoords[i].y
 	}
 
 	sb.v_buffer_dirty = true
 }
 
-pub fn (sb mut SpriteBatch) set_q(index int) {
-	mut base_vert := index * 4
-
-	// matrix.transform_vec2_arr(&sb.verts[base_vert], &quad.vert_positions, 4)
-
-	// for i in 0..4 {
-	// 	sb.verts[base_vert + i].texcoords.x = quad.texcoords.x
-	// 	sb.verts[base_vert + i].texcoords.y = quad.texcoords.y
-	// }
-
-	sb.v_buffer_dirty = true
-}
-
-pub fn (sb mut SpriteBatch) add(x, y int) int {
+pub fn (sb mut SpriteBatch) add(x, y f32) int {
 	if !sb.check_can_add() {
 		return -1
 	}
@@ -127,12 +110,21 @@ pub fn (sb mut SpriteBatch) add(x, y int) int {
 	return sb.sprite_cnt - 1
 }
 
-pub fn (sb mut SpriteBatch) add_q() int {
+pub fn (sb mut SpriteBatch) add_q(quad &math.Quad, x, y f32) int {
+	return sb.add_q_trso(quad, x, y, 0, 1, 1, 0, 0)
+}
+
+pub fn (sb mut SpriteBatch) add_q_trs(quad &math.Quad, x, y, rot, scale_x, scale_y f32) int {
+	return sb.add_q_trso(quad, x, y, rot, scale_x, scale_y, 0, 0)
+}
+
+pub fn (sb mut SpriteBatch) add_q_trso(quad &math.Quad, x, y, rot, scale_x, scale_y, origin_x, origin_y f32) int {
 	if !sb.check_can_add() {
 		return -1
 	}
 
-	sb.set_q(sb.sprite_cnt)
+	mat := math.mat32_transform(x, y, math.radians(rot), scale_x, scale_y, origin_x, origin_y)
+	sb.set_q(sb.sprite_cnt, quad, mat)
 
 	sb.v_buffer_dirty = true
 	sb.sprite_cnt++
