@@ -1,4 +1,5 @@
 module via
+import filepath
 import via.graphics
 import via.libs.sokol.gfx
 
@@ -31,6 +32,14 @@ pub fn (g &Graphics) new_texture(src string) graphics.Texture {
 	tex := graphics.texture_load(buf, g.min_filter, g.mag_filter)
 	unsafe { buf.free() }
 	return tex
+}
+
+pub fn (g &Graphics) new_texture_atlas(src string) graphics.TextureAtlas {
+	tex_src := src.replace(filepath.ext(src), '.png')
+	tex := g.new_texture(tex_src)
+
+	buf := g.fs.read_bytes(src)
+	return graphics.new_texture_atlas(tex, buf)
 }
 
 pub fn (g &Graphics) new_shader(vert, frag string, shader_desc sg_shader_desc) C.sg_shader {

@@ -1,6 +1,6 @@
 module utils
 
-pub fn new_array<T>(len int, cap int) []T {
+pub fn new_arr<T>(len int, cap int) []T {
 	assert(len <= cap)
 	cap_ := if cap == 0 { 1 } else { cap }
 	elm_size := sizeof(T)
