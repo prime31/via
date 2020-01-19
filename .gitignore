@@ -1,5 +1,4 @@
 *.dSYM
-*.so
 .DS_Store
 imgui.ini
 

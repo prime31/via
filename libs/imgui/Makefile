@@ -19,6 +19,10 @@ CFLAGS += -DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1
 CFLAGS += -DIMGUI_IMPL_API=
 CFLAGS += `sdl2-config --cflags`
 
+# for cross compiling windows we need the SDL include dir. just download it and stick it in an SDL2 folder
+# on the Desktop temporarily.
+HOME := $(shell echo $$HOME)
+SDL_WIN_INCLUDE_DIR := $(HOME)/Desktop/SDL2/include
 
 ##---------------------------------------------------------------------
 ## OPEN GL FUNCTION LOADER
@@ -57,8 +61,10 @@ ifeq ($(UNAME_S), Linux) #LINUX
 	CFLAGS += `sdl2-config --cflags`
 
 	SED := sed -i
-	#TARGET += cimgui.so not yet supported
+	TARGET += cimgui.so # not yet supported
 	LIB_FOLDER = linux
+	TARGET += cross_compile_win
+	TARGET += cross_compile_win_impl
 else ifeq ($(UNAME_S), Darwin) #APPLE
 	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
 	LIBS += -L/usr/local/lib
@@ -82,21 +88,41 @@ all: $(TARGET)
 	$(info $(MESSAGE))
 	@echo build complete
 
-cimgui.dylib: cimgui_git/build/cimgui.dylib
-	$(CP) cimgui_git/cimgui.h $(MODULE_FOLDER)/cimgui.h
-	$(CP) cimgui_git/build/cimgui.dylib $(MODULE_FOLDER)/$(LIB_FOLDER)/cimgui.dylib
-
-cimgui_git/build/cimgui.dylib:
+fetch_and_build:
 	[ -d cimgui_git ] || git clone --recursive --depth 1 $(IMGUI_BRANCH) https://github.com/cimgui/cimgui.git cimgui_git
 	(export CFLAGS= CXXFLAGS= ; cd cimgui_git ; mkdir build ; cd build ; cmake -DIMGUI_STATIC=OFF .. ; make)
 
+cimgui.dylib: cimgui_git/build/cimgui.dylib
+	$(CP) cimgui_git/cimgui.h $(MODULE_FOLDER)/cimgui.h
+	$(CP) cimgui_git/build/cimgui.dylib $(MODULE_FOLDER)/$(LIB_FOLDER)
+
+cimgui.so: cimgui_git/build/cimgui.so
+	$(CP) cimgui_git/build/cimgui.so $(MODULE_FOLDER)/$(LIB_FOLDER)
+
+cimgui_git/build/cimgui.so:
+	[ -d cimgui_git ] || git clone --recursive --depth 1 $(IMGUI_BRANCH) https://github.com/cimgui/cimgui.git cimgui_git
+	(export CFLAGS= CXXFLAGS= ; cd cimgui_git ; mkdir -p build ; cd build ; cmake -DIMGUI_STATIC=OFF .. ; make)
+
+cimgui_git/build/cimgui.dylib:
+	[ -d cimgui_git ] || git clone --recursive --depth 1 $(IMGUI_BRANCH) https://github.com/cimgui/cimgui.git cimgui_git
+	(export CFLAGS= CXXFLAGS= ; cd cimgui_git ; mkdir -p build ; cd build ; cmake -DIMGUI_STATIC=OFF .. ; make)
+
 cimgui.a: cimgui_git/build/cimgui.a
 	$(CP) cimgui_git/cimgui.h $(MODULE_FOLDER)/cimgui.h
-	$(CP) cimgui_git/build/cimgui.a $(MODULE_FOLDER)/$(LIB_FOLDER)/cimgui.a
+	$(CP) cimgui_git/build/cimgui.a $(MODULE_FOLDER)/$(LIB_FOLDER)
 
 cimgui_git/build/cimgui.a:
 	[ -d cimgui_git ] || git clone --recursive --depth 1 $(IMGUI_BRANCH) https://github.com/cimgui/cimgui.git cimgui_git
 	(export CFLAGS= CXXFLAGS= ; cd cimgui_git ; mkdir build ; cd build ; cmake -DIMGUI_STATIC=ON .. ; make)
+
+cross_compile_win:
+	(cd cimgui_git ; rm -rf build ; mkdir build ; cd build ; cmake -DCMAKE_TOOLCHAIN_FILE=../../../win_build/mingw-w64-x86_64.cmake .. ; make)
+	[ -d $(MODULE_FOLDER)/win64 ] || mkdir $(MODULE_FOLDER)/win64
+	cp cimgui_git/build/cimgui.dll $(MODULE_FOLDER)/win64
+
+cross_compile_win_impl:
+	i686-w64-mingw32-g++ -fPIC -c -o $(MODULE_FOLDER)/win64/imgui_impl_sdl.o $(IMGUI)/examples/imgui_impl_sdl.cpp -I$(IMGUI) -I$(SDL_WIN_INCLUDE_DIR) -DIMGUI_IMPL_API=extern\ \"C\" -fno-threadsafe-statics
+	i686-w64-mingw32-g++ -fPIC -c -o $(MODULE_FOLDER)/win64/imgui_impl_opengl3.o $(IMGUI)/examples/imgui_impl_opengl3.cpp -I$(IMGUI) $(CFLAGS) -DIMGUI_IMPL_API=extern\ \"C\" -fno-threadsafe-statics
 
 imgui_impl_sdl.o: $(IMGUI)/examples/imgui_impl_sdl.cpp
 	$(CXX) -fPIC -c -o $(MODULE_FOLDER)/$(LIB_FOLDER)/$@ $^ -I$(IMGUI) `sdl2-config --cflags` -DIMGUI_IMPL_API=extern\ \"C\" -fno-threadsafe-statics
