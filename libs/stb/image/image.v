@@ -69,14 +69,14 @@ pub fn get_info(filename string) (int, int, int) {
 	return w, h, comp
 }
 
-pub fn load_from_memory(buffer voidptr, len int) ?Image { return load_channels_from_memory(buffer, len, .rgb_alpha) }
+pub fn load_from_memory(buffer voidptr, len int) Image { return load_channels_from_memory(buffer, len, .rgb_alpha) }
 
-pub fn load_channels_from_memory(buffer voidptr, len int, channels Channels) ?Image {
+pub fn load_channels_from_memory(buffer voidptr, len int, channels Channels) Image {
 	mut img := Image{data: 0}
 
 	img.data = C.stbi_load_from_memory(buffer, len, &img.width, &img.height, &img.channels, int(channels))
 	if isnil(img.data) {
-		return error('failed to load image')
+		panic('failed to load image')
 	}
 	return img
 }

@@ -19,8 +19,9 @@ pub fn (t Texture) free() {
 }
 
 
-pub fn texture_load(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
-	img := image.load_from_memory(bytes.data, bytes.len) or { panic(err) }
+pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
+	img := image.load_from_memory(bytes.data, bytes.len)
+	defer { img.free() }
 
 	mut img_desc := sg_image_desc{
 		width: img.width
@@ -43,6 +44,5 @@ pub fn texture_load(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 		channels: img.channels
 	}
 
-	img.free()
 	return tex
 }

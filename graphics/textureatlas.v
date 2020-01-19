@@ -15,7 +15,7 @@ enum AtlasParserState {
 	quad_origin
 }
 
-pub fn new_texture_atlas(tex Texture, bytes []byte) TextureAtlas {
+pub fn texture_atlas(tex Texture, bytes []byte) TextureAtlas {
 	mut atlas := TextureAtlas{
 		tex: tex
 	}
@@ -26,6 +26,7 @@ pub fn new_texture_atlas(tex Texture, bytes []byte) TextureAtlas {
 	mut vp_i := 0
 
 	mut buf := utils.new_parser_buffer(150)
+	defer { unsafe { buf.free() } }
 	for i in 0..bytes.len {
 		b := bytes[i]
 
@@ -74,7 +75,6 @@ pub fn new_texture_atlas(tex Texture, bytes []byte) TextureAtlas {
 		buf.write_b(b)
 	}
 
-	buf.free()
 	return atlas
 }
 

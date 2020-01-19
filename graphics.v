@@ -29,7 +29,7 @@ pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
 
 pub fn (g &Graphics) new_texture(src string) graphics.Texture {
 	buf := g.fs.read_bytes(src)
-	tex := graphics.texture_load(buf, g.min_filter, g.mag_filter)
+	tex := graphics.texture(buf, g.min_filter, g.mag_filter)
 	unsafe { buf.free() }
 	return tex
 }
@@ -39,12 +39,13 @@ pub fn (g &Graphics) new_texture_atlas(src string) graphics.TextureAtlas {
 	tex := g.new_texture(tex_src)
 
 	buf := g.fs.read_bytes(src)
-	return graphics.new_texture_atlas(tex, buf)
+	return graphics.texture_atlas(tex, buf)
 }
 
 pub fn (g &Graphics) new_shader(vert, frag string, shader_desc sg_shader_desc) C.sg_shader {
 	mut vert_needs_free := false
 	vert_src := if vert.len > 0 && vert.ends_with('.vert') {
+		vert_needs_free = true
 		g.fs.read_text(vert)
 	} else {
 		vert
@@ -52,6 +53,7 @@ pub fn (g &Graphics) new_shader(vert, frag string, shader_desc sg_shader_desc) C
 
 	mut frag_needs_free := false
 	frag_src := if frag.len > 0 && vert.ends_with('.frag') {
+		frag_needs_free = true
 		g.fs.read_text(frag)
 	} else {
 		frag
@@ -78,5 +80,5 @@ pub fn (gg &Graphics) new_clear_pass(r, g, b, a f32) sg_pass_action {
 }
 
 pub fn (g &Graphics) new_atlasbatch(tex graphics.Texture, max_sprites int) &graphics.AtlasBatch {
-	return graphics.atlasbatch_new(tex, max_sprites)
+	return graphics.atlasbatch(tex, max_sprites)
 }

@@ -14,7 +14,7 @@ mut:
 	tex Texture
 }
 
-pub fn atlasbatch_new(tex Texture, max_sprites int) &AtlasBatch {
+pub fn atlasbatch(tex Texture, max_sprites int) &AtlasBatch {
 	mut sb := &AtlasBatch{
 		// we use repeat here so that we can set default colors to white
 		verts: utils.new_array_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
