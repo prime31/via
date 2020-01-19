@@ -2,12 +2,12 @@ module graphics
 import via.math
 import via.libs.sokol.gfx
 
-pub fn pipeline_make_default() sg_pipeline {
+pub fn pipeline_make_default() (sg_pipeline, sg_shader) {
 	mut shader_desc := shader_get_default_desc()
 	shader := shader_make(null_str, null_str, mut shader_desc)
 
 	pipeline_desc := pipeline_desc_make_default(shader)
-	return sg_make_pipeline(&pipeline_desc)
+	return sg_make_pipeline(&pipeline_desc), shader
 }
 
 pub fn pipeline_desc_make_default(shader sg_shader) sg_pipeline_desc {

@@ -34,13 +34,11 @@ pub mut:
     depth_stencil C.sg_depth_stencil_state
     blend C.sg_blend_state
     rasterizer C.sg_rasterizer_state
-    label byteptr
+    label byteptr = &byte(0)
     _end_canary u32
 }
 
-pub struct C.sg_pipeline_info {
-
-}
+pub struct C.sg_pipeline_info {}
 
 pub struct C.sg_pipeline {
 pub:
@@ -92,7 +90,7 @@ pub mut:
     attrs [16]sg_shader_attr_desc
     vs C.sg_shader_stage_desc
     fs C.sg_shader_stage_desc
-    label byteptr
+    label byteptr = &byte(0)
     _end_canary u32
 }
 
@@ -206,7 +204,7 @@ pub mut:
     _start_canary u32
     color_attachments [4]sg_attachment_desc
     depth_stencil_attachment C.sg_attachment_desc
-    label byteptr
+    label byteptr = &byte(0)
     _end_canary u32
 }
 
@@ -236,7 +234,7 @@ pub mut:
     @type BufferType
     usage Usage
     content byteptr
-    label byteptr
+    label byteptr = &byte(0)
     /* GL specific */
     gl_buffers [2]u32
     /* Metal specific */
@@ -287,7 +285,7 @@ pub mut:
     min_lod f32
     max_lod f32
     content C.sg_image_content
-    label byteptr
+    label byteptr = &byte(0)
     /* GL specific */
     gl_textures [2]u32
     /* Metal specific */

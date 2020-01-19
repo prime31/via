@@ -46,11 +46,9 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	mut v := create_via(config)
 	C.SDL_Init(C.SDL_INIT_VIDEO)
 	v.win.create(config)
+	v.g.init_defaults()
 
 	if v.imgui { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports_enabled, config.imgui_docking_enabled) }
-
-	desc := sg_desc{}
-	sg_setup(&desc)
 
 	ctx.initialize(v)
 

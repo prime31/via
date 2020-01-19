@@ -8,6 +8,8 @@ struct Graphics {
 mut:
 	min_filter gfx.Filter
 	mag_filter gfx.Filter
+	def_shader sg_shader
+	def_pip sg_pipeline
 }
 
 fn new_graphics(config &ViaConfig, filesystem &FileSystem) &Graphics {
@@ -19,7 +21,22 @@ fn new_graphics(config &ViaConfig, filesystem &FileSystem) &Graphics {
 }
 
 fn (g &Graphics) free() {
+	g.def_shader.free()
+	g.def_pip.free()
 	unsafe { free(g) }
+}
+
+fn (g mut Graphics) init_defaults() {
+	desc := sg_desc{}
+	sg_setup(&desc)
+
+	pip, shader := graphics.pipeline_make_default()
+	g.def_pip = pip
+	g.def_shader = shader
+}
+
+pub fn (g &Graphics) get_default_pipeline() sg_pipeline {
+	return g.def_pip
 }
 
 pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
@@ -42,7 +59,7 @@ pub fn (g &Graphics) new_texture_atlas(src string) graphics.TextureAtlas {
 	return graphics.texture_atlas(tex, buf)
 }
 
-pub fn (g &Graphics) new_shader(vert, frag string, shader_desc sg_shader_desc) C.sg_shader {
+pub fn (g &Graphics) new_shader(vert, frag string, shader_desc &sg_shader_desc) C.sg_shader {
 	mut vert_needs_free := false
 	vert_src := if vert.len > 0 && vert.ends_with('.vert') {
 		vert_needs_free = true

@@ -13,7 +13,7 @@ pub fn new_arr<T>(len int, cap int) []T {
 	return arr
 }
 
-pub fn new_array_with_default<T>(len int, cap int, default_val T) []T {
+pub fn new_arr_with_default<T>(len int, cap int, default_val T) []T {
 	assert(len <= cap)
 	cap_ := if cap == 0 { 1 } else { cap }
 	elm_size := sizeof(T)
