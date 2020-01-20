@@ -2,9 +2,9 @@ module math
 
 // TODO: when fixed sized arrays are fixed these should be fixed
 pub struct Quad {
+pub mut:
 	img_width int
 	img_height int
-pub mut:
 	positions []Vec2
 	texcoords []Vec2
 }
@@ -13,7 +13,7 @@ pub fn (q Quad) str() string {
 	return 'pos: $q.positions\ntexcoords: $q.texcoords\nimage size: $q.img_width, $q.img_height'
 }
 
-pub fn quad_make(x, y, width, height f32, img_width, img_height int) Quad {
+pub fn quad(x, y, width, height f32, img_width, img_height int) Quad {
 	mut q := Quad{
 		img_width: img_width
 		img_height: img_height
@@ -22,6 +22,11 @@ pub fn quad_make(x, y, width, height f32, img_width, img_height int) Quad {
 	}
 	q.set_viewport(x, y, width, height)
 	return q
+}
+
+pub fn (q mut Quad) set_image_dimensions(img_width, img_height int) {
+	q.img_width = img_width
+	q.img_height = img_height
 }
 
 pub fn (q mut Quad) set_viewport(x, y, width, height f32) {

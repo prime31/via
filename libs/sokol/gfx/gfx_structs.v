@@ -304,7 +304,7 @@ pub mut:
 }
 
 pub struct C.sg_image {
-pub:
+pub mut:
     id u32
 }
 pub fn (i C.sg_image) free() { sg_destroy_image(i) }

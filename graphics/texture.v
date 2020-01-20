@@ -3,19 +3,28 @@ import via.libs.stb.image
 import via.libs.sokol.gfx
 
 pub struct Texture {
+pub mut:
+	img sg_image
 pub:
-	id sg_image
 	width int
 	height int
 	channels image.Channels
 }
 
 pub fn (t Texture) str() string {
-	return 'w: $t.width, h: $t.height, id: $t.id.id, channels: $t.channels'
+	return 'w: $t.width, h: $t.height, id: $t.img.id, channels: $t.channels'
+}
+
+pub fn (t Texture) eq(other Texture) bool {
+	return t.img.id == other.img.id
+}
+
+pub fn (t Texture) ne(other Texture) bool {
+	return !t.eq(other)
 }
 
 pub fn (t Texture) free() {
-	t.id.free()
+	t.img.free()
 }
 
 
@@ -38,7 +47,7 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
     }
 
 	tex := Texture{
-		id: sg_make_image(&img_desc)
+		img: sg_make_image(&img_desc)
 		width: img.width
 		height: img.height
 		channels: img.channels

@@ -72,7 +72,7 @@ pub fn (m mut Mesh) update_indices() {
 }
 
 pub fn (m mut Mesh) bind_texture(index int, tex Texture) {
-	m.bindings.set_frag_image(index, tex.id)
+	m.bindings.set_frag_image(index, tex.img)
 }
 
 // drawing

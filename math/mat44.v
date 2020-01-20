@@ -133,6 +133,12 @@ pub fn mat44_ortho2d(left f32, right f32, bottom f32, top f32) Mat44 {
     return mat44_ortho(left, right, bottom, top, -1.0, 1.0)
 }
 
+pub fn mat44_ortho2d_off_center(width, height int) Mat44 {
+	half_w := int(f32(width) / 2)
+	half_h := int(f32(height) / 2)
+    return mat44_ortho(-half_w, half_w, half_h, -half_h, -1.0, 1.0)
+}
+
 pub fn mat44_ortho(left f32, right f32, bottom f32, top f32, z_near f32, z_far f32) Mat44 {
     mut result := mat44_identity()
 
