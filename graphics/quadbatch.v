@@ -33,7 +33,7 @@ pub fn quadbatch(max_sprites int) &QuadBatch {
 
 fn (qb &QuadBatch) ensure_capacity() bool {
 	if qb.quad_cnt == qb.max_sprites {
-		println('Error: sprite batch full. Aborting daw.')
+		println('Error: quadbatch full. Aborting daw.')
 		return false
 	}
 	return true
@@ -78,14 +78,6 @@ pub fn (qb mut QuadBatch) draw(tex Texture, config DrawSpriteConfig) {
 	qb.quad.set_viewport(0, 0, tex.width, tex.height)
 
 	qb.draw_q_m(tex, qb.quad, config.get_matrix())
-}
-
-fn (qb mut QuadBatch) update_verts() {
-	total_quads := (qb.quad_cnt - qb.last_appended_quad_cnt)
-	total_verts := total_quads * 4
-	println('total_verts: $total_verts')
-	qb.bindings.vertex_buffer_offsets[0] = sg_append_buffer(qb.bindings.vertex_buffers[0], &qb.verts.data[qb.last_appended_quad_cnt * 4], sizeof(math.Vertex) * total_verts)
-	qb.last_appended_quad_cnt = qb.quad_cnt
 }
 
 pub fn (qb mut QuadBatch) flush() {

@@ -52,6 +52,34 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 		height: img.height
 		channels: img.channels
 	}
-
 	return tex
+}
+
+fn new_checker_texture() Texture {
+    pixels := [
+        u32(0xFFFFFFFF), 0x00000000, 0xFFFFFFFF, 0x00000000,
+        0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+        0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
+        0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+	]!
+
+	mut img_desc := sg_image_desc{
+		width: 4
+		height: 4
+		pixel_format: .rgba8
+		min_filter: .nearest
+		mag_filter: .nearest
+	}
+	img_desc.content.subimage[0][0] = sg_subimage_content{
+		ptr: pixels.data
+		size: sizeof(u32) * pixels.len
+    }
+
+	tex := Texture{
+		img: sg_make_image(&img_desc)
+		width: img_desc.width
+		height: img_desc.height
+		channels: .rgb_alpha
+	}
+    return tex
 }
