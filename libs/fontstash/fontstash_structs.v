@@ -45,8 +45,7 @@ pub struct C.FONSparams {
 	renderDelete fn(uptr voidptr)
 }
 
-pub struct C.FONSquad
-{
+pub struct C.FONSquad {
 	x0 f32
 	y0 f32
 	s0 f32

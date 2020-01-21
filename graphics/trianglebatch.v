@@ -31,8 +31,8 @@ pub fn trianglebatch(max_tris int) &TriangleBatch {
 	return tb
 }
 
-fn (tb &TriangleBatch) ensure_capacity() bool {
-	if tb.tri_cnt == tb.max_tris {
+fn (tb &TriangleBatch) ensure_capacity(tris int) bool {
+	if tb.tri_cnt + tris > tb.max_tris {
 		println('Error: TriangleBatch full. Aborting daw.')
 		return false
 	}
@@ -51,8 +51,8 @@ pub fn (tb mut TriangleBatch) end() {
 	tb.tex.img.id = 0
 }
 
-pub fn (tb mut TriangleBatch) set_tri_verts(x1, y1, x2, y2, x3, y3 f32) {
-	if !tb.ensure_capacity() { return }
+pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32) {
+	if !tb.ensure_capacity(1) { return }
 
 	base_vert := tb.tri_cnt * 3
 	tb.tri_cnt++
@@ -63,6 +63,49 @@ pub fn (tb mut TriangleBatch) set_tri_verts(x1, y1, x2, y2, x3, y3 f32) {
 	tb.verts[base_vert + 1].y = y2
 	tb.verts[base_vert + 2].x = x3
 	tb.verts[base_vert + 2].y = y3
+}
+
+pub fn (tb mut TriangleBatch) draw_rectangle(x, y, width, height f32) {
+	tb.draw_polygon([math.Vec2{x, y}, math.Vec2{x + width, y}, math.Vec2{x + width, y + height}, math.Vec2{x, y + height}]!)
+}
+
+pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2) {
+	for i in 1..verts.len - 1 {
+		tb.draw_triangle(verts[0].x, verts[0].y, verts[i].x, verts[i].y, verts[i + 1].x, verts[i + 1].y)
+	}
+}
+
+pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int) {
+	if !tb.ensure_capacity(segments) { return }
+
+	center := math.Vec2{x, y}
+	increment := math.pi * 2.0 / segments
+	mut theta := 0.0
+
+	mut sin_cos := math.Vec2{math.cos(theta), math.sin(theta)}
+	v0 := center + sin_cos.scale(radius)
+	theta += increment
+
+	// for (int i = 1; i < circleSegments - 1; i++) {
+	for i in 1..segments - 1 {
+		sin_cos = math.Vec2{math.cos(theta), math.sin(theta)}
+		v1 := center + sin_cos.scale(radius)
+
+		sin_cos = math.Vec2{math.cos(theta + increment), math.sin(theta + increment)}
+		v2 := center + sin_cos.scale(radius)
+
+		tb.draw_triangle(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y)
+
+		// v1 := center + radius * new Vector2((float) Math.Cos(theta), (float) Math.Sin(theta));
+		// var v2 = center + radius * new Vector2((float) Math.Cos(theta + increment),
+		// 				(float) Math.Sin(theta + increment));
+
+		// AddVertex(v0, color, PrimitiveType.TriangleList)
+		// AddVertex(v1, color, PrimitiveType.TriangleList)
+		// AddVertex(v2, color, PrimitiveType.TriangleList)
+
+		theta += increment
+	}
 }
 
 pub fn (tb mut TriangleBatch) flush() {
