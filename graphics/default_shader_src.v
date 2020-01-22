@@ -44,4 +44,9 @@ void main() {
 vec4 effect(vec4 vcolor, sampler2D tex, vec2 texcoord) {
 	return texture(tex, texcoord) * vcolor;
 }'
+
+	default_text_frag_main = '
+vec4 effect(vec4 vcolor, sampler2D tex, vec2 texcoord) {
+	return texture(tex, texcoord).r * vcolor;
+}'
 )

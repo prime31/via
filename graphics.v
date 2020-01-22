@@ -11,6 +11,8 @@ mut:
 	mag_filter gfx.Filter
 	def_shader sg_shader
 	def_pip sg_pipeline
+	def_text_shader sg_shader
+	def_text_pip sg_pipeline
 }
 
 fn new_graphics(config &ViaConfig) &Graphics {
@@ -23,6 +25,8 @@ fn new_graphics(config &ViaConfig) &Graphics {
 fn (g &Graphics) free() {
 	g.def_shader.free()
 	g.def_pip.free()
+	g.def_text_shader.free()
+	g.def_text_pip.free()
 	unsafe { free(g) }
 }
 
@@ -33,6 +37,10 @@ fn (g mut Graphics) init_defaults() {
 	pip, shader := graphics.pipeline_make_default()
 	g.def_pip = pip
 	g.def_shader = shader
+
+	text_pip, text_shader := graphics.pipeline_make_default_text()
+	g.def_text_pip = text_pip
+	g.def_text_shader = text_shader
 }
 
 pub fn (g &Graphics) get_default_pipeline() sg_pipeline {

@@ -10,6 +10,14 @@ pub fn pipeline_make_default() (sg_pipeline, sg_shader) {
 	return sg_make_pipeline(&pipeline_desc), shader
 }
 
+pub fn pipeline_make_default_text() (sg_pipeline, sg_shader) {
+	mut shader_desc := shader_get_default_desc()
+	shader := shader_make(null_str, default_text_frag_main, mut shader_desc)
+
+	pipeline_desc := pipeline_desc_make_default(shader)
+	return sg_make_pipeline(&pipeline_desc), shader
+}
+
 pub fn pipeline_desc_make_default(shader sg_shader) sg_pipeline_desc {
 	return sg_pipeline_desc{
 		layout: layout_desc_make_default()
