@@ -4,7 +4,7 @@ import via.libs.sokol.gfx
 import via.libs.sdl2
 
 pub struct Via {
-pub:
+pub mut:
 	audio &Audio
 	fs &FileSystem
 	g &Graphics
@@ -14,20 +14,40 @@ pub:
 	imgui bool
 }
 
+pub const (
+	v = &Via{
+		audio: 0
+		fs: 0
+		g: 0
+		clock: 0
+		win: 0
+		input: 0
+	}
+)
+
 fn create_via(config &ViaConfig) &Via {
 	fs := new_filesystem(config)
 
-	via := &Via {
-		audio: new_audio(config, fs)
-		fs: fs
-		g: new_graphics(config, fs)
-		clock: new_clock(config)
-		win: new_window(config)
-		input: new_input(config)
-		imgui: config.imgui_enabled
-	}
+	// via := &Via {
+	// 	audio: new_audio(config, fs)
+	// 	fs: fs
+	// 	g: new_graphics(config, fs)
+	// 	clock: new_clock(config)
+	// 	win: new_window(config)
+	// 	input: new_input(config)
+	// 	imgui: config.imgui_enabled
+	// }
 
-	return via
+	mut vv := v
+	vv.audio = new_audio(config, fs)
+	vv.fs = fs
+	vv.g = new_graphics(config, fs)
+	vv.clock = new_clock(config)
+	vv.win = new_window(config)
+	vv.input = new_input(config)
+	vv.imgui = config.imgui_enabled
+
+	return vv
 }
 
 fn (v &Via) free() {
@@ -60,6 +80,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 		if v.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
 		v.win.swap()
+		v.clock.tick()
 	}
 
 	if v.imgui { imgui_shutdown() }

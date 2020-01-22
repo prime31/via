@@ -11,6 +11,7 @@ pub mut:
 	dt f32
 	average_dt f32
 	fps f32
+	frame_count u32 = u32(1)
 }
 
 fn new_clock(config ViaConfig) &Clock {
@@ -22,6 +23,7 @@ fn (c &Clock) free() {
 }
 
 fn (c mut Clock) tick() {
+	c.frame_count++
 	c.frames++
 	c.prev_time = c.curr_time
 	c.curr_time = SDL_GetTicks()
@@ -42,4 +44,8 @@ pub fn (c &Clock) sleep(seconds f32) {
 
 pub fn (c &Clock) get_time() u64 {
 	return SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency()
+}
+
+pub fn (c &Clock) get_frame_count() u32 {
+	return c.frame_count
 }

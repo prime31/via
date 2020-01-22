@@ -55,6 +55,9 @@ pub struct C.FONSquad {
 	s1 f32
 	t1 f32
 }
+pub fn (q C.FONSquad) str() string {
+	return 'xy: ($q.x0, $q.y0) - ($q.x1, $q.y1) st: ($q.s0, $q.t0) - ($q.s1, $q.t1)'
+}
 
 pub struct C.FONStextIter {
 	x f32
@@ -76,4 +79,10 @@ pub struct C.FONStextIter {
 
 pub struct C.FONSfont {}
 
-pub struct C.FONScontext {}
+pub struct C.FONScontext {
+pub:
+	params C.FONSparams
+	itw f32
+	ith f32
+	texData byteptr
+}

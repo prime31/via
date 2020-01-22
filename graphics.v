@@ -1,5 +1,6 @@
 module via
 import filepath
+import via.fonts
 import via.graphics
 import via.libs.sokol.gfx
 
@@ -98,4 +99,8 @@ pub fn (gg &Graphics) new_clear_pass(r, g, b, a f32) sg_pass_action {
 
 pub fn (g &Graphics) new_atlasbatch(tex graphics.Texture, max_sprites int) &graphics.AtlasBatch {
 	return graphics.atlasbatch(tex, max_sprites)
+}
+
+pub fn (g &Graphics) new_fontstash(width, height int) &fonts.FontStash {
+	return fonts.fontstash(width, height, g.min_filter, g.mag_filter)
 }
