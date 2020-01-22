@@ -2,10 +2,10 @@ module via
 import filepath
 import via.fonts
 import via.graphics
+import via.libs.physfs
 import via.libs.sokol.gfx
 
 struct Graphics {
-	fs &FileSystem
 mut:
 	min_filter gfx.Filter
 	mag_filter gfx.Filter
@@ -13,9 +13,8 @@ mut:
 	def_pip sg_pipeline
 }
 
-fn new_graphics(config &ViaConfig, filesystem &FileSystem) &Graphics {
+fn new_graphics(config &ViaConfig) &Graphics {
 	return &Graphics{
-		fs: filesystem
 		min_filter: .nearest
  		mag_filter: .nearest
 	}
@@ -46,7 +45,7 @@ pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
 }
 
 pub fn (g &Graphics) new_texture(src string) graphics.Texture {
-	buf := g.fs.read_bytes(src)
+	buf := physfs.read_bytes(src)
 	tex := graphics.texture(buf, g.min_filter, g.mag_filter)
 	unsafe { buf.free() }
 	return tex
@@ -56,7 +55,7 @@ pub fn (g &Graphics) new_texture_atlas(src string) graphics.TextureAtlas {
 	tex_src := src.replace(filepath.ext(src), '.png')
 	tex := g.new_texture(tex_src)
 
-	buf := g.fs.read_bytes(src)
+	buf := physfs.read_bytes(src)
 	return graphics.texture_atlas(tex, buf)
 }
 
@@ -64,7 +63,7 @@ pub fn (g &Graphics) new_shader(vert, frag string, shader_desc &sg_shader_desc) 
 	mut vert_needs_free := false
 	vert_src := if vert.len > 0 && vert.ends_with('.vert') {
 		vert_needs_free = true
-		g.fs.read_text(vert)
+		physfs.read_text(vert)
 	} else {
 		vert
 	}
@@ -72,7 +71,7 @@ pub fn (g &Graphics) new_shader(vert, frag string, shader_desc &sg_shader_desc) 
 	mut frag_needs_free := false
 	frag_src := if frag.len > 0 && vert.ends_with('.frag') {
 		frag_needs_free = true
-		g.fs.read_text(frag)
+		physfs.read_text(frag)
 	} else {
 		frag
 	}

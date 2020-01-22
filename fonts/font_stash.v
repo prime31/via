@@ -2,6 +2,7 @@ module fonts
 import via
 import via.math
 import via.libs.fontstash
+import via.libs.physfs
 import via.libs.sokol.gfx
 
 pub struct FontStash {
@@ -122,7 +123,7 @@ pub fn (font mut FontStash) update_texture() {
 
 // Add fonts
 pub fn (font &FontStash) add_font(src string) int {
-	bytes := via.v.fs.read_bytes(src)
+	bytes := physfs.read_bytes(src)
 	return C.fonsAddFontMem(font.stash, src.str, bytes.data, bytes.len, true)
 }
 

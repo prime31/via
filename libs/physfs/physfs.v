@@ -212,8 +212,30 @@ pub fn unmount(old_dir string) bool {
 }
 
 [inline]
-pub fn read_bytes(handle &C.PHYSFS_File, buffer voidptr, len u64) i64 {
-	return PHYSFS_readBytes(handle, buffer, len)
+pub fn read_text(fname string) string {
+	return read_text_c(charptr(fname.str))
+}
+
+pub fn read_text_c(fname charptr) string {
+	buf := read_bytes_c(fname)
+	str := tos(buf.data, buf.len)
+	unsafe { buf.free() }
+	return str
+}
+
+pub fn read_bytes(fname string) []byte {
+	return read_bytes_c(charptr(fname.str))
+}
+
+pub fn read_bytes_c(fname charptr) []byte {
+	fp := PHYSFS_openRead(fname)
+	len := fp.get_length()
+
+	buf := make(int(len), int(len), sizeof(byte))
+	fp.read_bytes(buf.data, u64(len))
+	fp.close()
+
+	return buf
 }
 
 [inline]

@@ -39,9 +39,9 @@ fn create_via(config &ViaConfig) &Via {
 	// }
 
 	mut vv := v
-	vv.audio = new_audio(config, fs)
+	vv.audio = new_audio(config)
 	vv.fs = fs
-	vv.g = new_graphics(config, fs)
+	vv.g = new_graphics(config)
 	vv.clock = new_clock(config)
 	vv.win = new_window(config)
 	vv.input = new_input(config)
