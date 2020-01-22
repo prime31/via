@@ -1,6 +1,7 @@
 module graphics
 import via.math
 import via.utils
+import via.fonts
 import via.libs.sokol.gfx
 
 pub struct TextBatch {
@@ -10,7 +11,7 @@ mut:
 	max_chars int
 	char_cnt int = 0
 	last_appended_char_cnt int = 0
-	tex Texture
+	img C.sg_image
 	quad math.Quad
 	trans_mat math.Mat44
 	uniform_set bool
@@ -31,8 +32,8 @@ pub fn textbatch(max_chars int) &TextBatch {
 	return tb
 }
 
-fn (tb &TextBatch) ensure_capacity() bool {
-	if tb.char_cnt == tb.max_chars {
+fn (tb &TextBatch) ensure_capacity(chars int) bool {
+	if tb.char_cnt + chars > tb.max_chars {
 		println('Error: textbatch full. Aborting daw.')
 		return false
 	}
@@ -48,17 +49,10 @@ pub fn (tb mut TextBatch) end() {
 	tb.flush()
 	tb.last_appended_char_cnt = 0
 	tb.char_cnt = 0
-	tb.tex.img.id = 0
+	tb.img.id = 0
 }
 
-pub fn (tb mut TextBatch) draw_q_m(tex Texture, quad &math.Quad, matrix &math.Mat32) {
-	if !tb.ensure_capacity() { return }
-	if tb.tex.ne(tex) {
-		tb.flush()
-		tb.bindings.set_frag_image(0, tex.img)
-		tb.tex = tex
-	}
-
+fn (tb mut TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := tb.char_cnt * 4
 	tb.char_cnt++
 	matrix.transform_vec2_arr(&tb.verts[base_vert], &quad.positions[0], 4)
@@ -66,18 +60,44 @@ pub fn (tb mut TextBatch) draw_q_m(tex Texture, quad &math.Quad, matrix &math.Ma
 	for i in 0..4 {
 		tb.verts[base_vert + i].s = quad.texcoords[i].x
 		tb.verts[base_vert + i].t = quad.texcoords[i].y
+		tb.verts[base_vert + i].color = *color
 	}
 }
 
-pub fn (tb mut TextBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
-	tb.draw_q_m(tex, quad, config.get_matrix())
-}
+pub fn (tb mut TextBatch) draw_text(font &fonts.FontStash, str string, config DrawConfig) {
+	if !tb.ensure_capacity(str.len) { return }
+	if tb.img.id != font.img.id {
+		tb.flush()
+		tb.bindings.set_frag_image(0, font.img)
+		tb.img = font.img
+		
+	}
 
-pub fn (tb mut TextBatch) draw(tex Texture, config DrawConfig) {
-	tb.quad.set_image_dimensions(tex.width, tex.height)
-	tb.quad.set_viewport(0, 0, tex.width, tex.height)
+	matrix := config.get_matrix()
+	// matrix := config.get_matrix_no_translation()
 
-	tb.draw_q_m(tex, tb.quad, config.get_matrix())
+	mut f := font
+	f.update_texture()
+	iter := C.FONStextIter{}
+	C.fonsTextIterInit(font.stash, &iter, config.x, config.y, str.str, C.NULL)
+
+	fons_quad := C.FONSquad{}
+	mut iter_result := 1
+	for iter_result == 1 {
+		iter_result = C.fonsTextIterNext(font.stash, &iter, &fons_quad)
+
+		// TODO: maybe make the transform_vec2_arr generic and just use a local fixed array for positions and tex coords?
+		tb.quad.positions[0] = math.Vec2{fons_quad.x0, fons_quad.y0}
+		tb.quad.positions[1] = math.Vec2{fons_quad.x1, fons_quad.y0}
+		tb.quad.positions[2] = math.Vec2{fons_quad.x1, fons_quad.y1}
+		tb.quad.positions[3] = math.Vec2{fons_quad.x0, fons_quad.y1}
+
+		tb.quad.texcoords[0] = math.Vec2{fons_quad.s0, fons_quad.t0}
+		tb.quad.texcoords[1] = math.Vec2{fons_quad.s1, fons_quad.t0}
+		tb.quad.texcoords[2] = math.Vec2{fons_quad.s1, fons_quad.t1}
+		tb.quad.texcoords[3] = math.Vec2{fons_quad.s0, fons_quad.t1}
+		tb.draw_q_m(tb.quad, matrix, math.Color{iter.color})
+	}
 }
 
 pub fn (tb mut TextBatch) flush() {

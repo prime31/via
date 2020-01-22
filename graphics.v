@@ -47,6 +47,10 @@ pub fn (g &Graphics) get_default_pipeline() sg_pipeline {
 	return g.def_pip
 }
 
+pub fn (g &Graphics) get_default_text_pipeline() sg_pipeline {
+	return g.def_text_pip
+}
+
 pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
 	g.min_filter = min
 	g.mag_filter = mag

@@ -33,19 +33,15 @@ pub struct C.FONSparams {
 	height int
 	flags char
 	userPtr voidptr
-	// int (*renderCreate)(void* uptr, int width, int height)
 	renderCreate fn(uptr voidptr, width int, height int) int
-	// int (*renderResize)(void* uptr, int width, int height)
 	renderResize fn(uptr voidptr, width int, height int) int
-	// void (*renderUpdate)(void* uptr, int* rect, const unsigned char* data)
 	renderUpdate fn(uptr voidptr, rect &int, data byteptr)
-	// void (*renderDraw)(void* uptr, const float* verts, const float* tcoords, const unsigned int* colors, int nverts)
 	renderDraw fn(uptr voidptr, verts &f32, tcoords &f32, colors &u32, nverts int)
-	// void (*renderDelete)(void* uptr)
 	renderDelete fn(uptr voidptr)
 }
 
 pub struct C.FONSquad {
+pub:
 	x0 f32
 	y0 f32
 	s0 f32
@@ -56,16 +52,18 @@ pub struct C.FONSquad {
 	t1 f32
 }
 pub fn (q C.FONSquad) str() string {
-	return 'xy: ($q.x0, $q.y0) - ($q.x1, $q.y1) st: ($q.s0, $q.t0) - ($q.s1, $q.t1)'
+	return 'xy0: ($q.x0, $q.y0) xy1: ($q.x1, $q.y1) st0: ($q.s0, $q.t0) st1: ($q.s1, $q.t1)'
 }
 
 pub struct C.FONStextIter {
+pub:
 	x f32
 	y f32
 	nextx f32
 	nexty f32
 	scale f32
 	spacing f32
+	color u32
 	codepoint u32
 	isize i16
 	iblur i16

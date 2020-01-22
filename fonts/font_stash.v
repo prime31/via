@@ -6,7 +6,7 @@ import via.libs.physfs
 import via.libs.sokol.gfx
 
 pub struct FontStash {
-mut:
+pub mut:
 	stash &C.FONScontext
 	img C.sg_image
 	min_filter gfx.Filter
@@ -161,7 +161,7 @@ pub fn (font &FontStash) set_blur(blur f32) {
 	C.fonsSetBlur(font.stash, blur)
 }
 
-pub fn (font &FontStash) set_align(align int) {
+pub fn (font &FontStash) set_align(align fontstash.FonsAlign) {
 	C.fonsSetAlign(font.stash, align)
 }
 
