@@ -1,7 +1,7 @@
 module graphics
 import via.math
 
-pub struct DrawSpriteConfig {
+pub struct DrawConfig {
 	x f32 = 0.0
 	y f32 = 0.0
 	rot f32 = 0.0
@@ -11,6 +11,6 @@ pub struct DrawSpriteConfig {
 	oy f32 = 0.0
 }
 
-pub fn (c &DrawSpriteConfig) get_matrix() math.Mat32 {
+pub fn (c &DrawConfig) get_matrix() math.Mat32 {
 	return math.mat32_transform(c.x, c.y, math.radians(c.rot), c.sx, c.sy, c.ox, c.oy)
 }

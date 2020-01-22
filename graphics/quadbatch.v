@@ -69,11 +69,11 @@ pub fn (qb mut QuadBatch) draw_q_m(tex Texture, quad &math.Quad, matrix &math.Ma
 	}
 }
 
-pub fn (qb mut QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawSpriteConfig) {
+pub fn (qb mut QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
 	qb.draw_q_m(tex, quad, config.get_matrix())
 }
 
-pub fn (qb mut QuadBatch) draw(tex Texture, config DrawSpriteConfig) {
+pub fn (qb mut QuadBatch) draw(tex Texture, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.width, tex.height)
 	qb.quad.set_viewport(0, 0, tex.width, tex.height)
 

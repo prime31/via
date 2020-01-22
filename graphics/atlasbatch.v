@@ -74,7 +74,7 @@ pub fn (sb mut AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32)
 	sb.v_buffer_dirty = true
 }
 
-pub fn (sb mut AtlasBatch) add(config DrawSpriteConfig) int {
+pub fn (sb mut AtlasBatch) add(config DrawConfig) int {
 	if !sb.ensure_capacity() {
 		return -1
 	}
@@ -86,7 +86,7 @@ pub fn (sb mut AtlasBatch) add(config DrawSpriteConfig) int {
 	return sb.sprite_cnt - 1
 }
 
-pub fn (sb mut AtlasBatch) add_q(quad &math.Quad, config DrawSpriteConfig) int {
+pub fn (sb mut AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
 	if !sb.ensure_capacity() {
 		return -1
 	}
