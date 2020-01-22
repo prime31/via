@@ -83,6 +83,7 @@ typedef struct FONSquad FONSquad;
 
 struct FONStextIter {
 	float x, y, nextx, nexty, scale, spacing;
+	unsigned int color;
 	unsigned int codepoint;
 	short isize, iblur;
 	struct FONSfont* font;
@@ -1325,6 +1326,7 @@ FONS_DEF int fonsTextIterInit(FONScontext* stash, FONStextIter* iter,
 	iter->isize = (short)(state->size*10.0f);
 	iter->iblur = (short)state->blur;
 	iter->scale = fons__tt_getPixelHeightScale(&iter->font->font, (float)iter->isize/10.0f);
+	iter->color = state->color;
 
 	// Align horizontally
 	if (state->align & FONS_ALIGN_LEFT) {
