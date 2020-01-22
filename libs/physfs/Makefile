@@ -56,6 +56,12 @@ physfsrwops.o: physfs_hg/extras/physfsrwops.c
 	cp physfs_hg/extras/physfsrwops.h $(MODULE_FOLDER)
 	cp physfs_hg/build/physfsrwops.o $(MODULE_FOLDER)/$(LIB_FOLDER)
 
+build-wasm:
+	[ -d physfs_hg ] || hg clone https://hg.icculus.org/icculus/physfs physfs_hg
+	(cd physfs_hg ; mkdir build ; cd build ; emconfigure cmake .. ; emconfigure make)
+	[ -d $(MODULE_FOLDER)/webgl ] || mkdir $(MODULE_FOLDER)/webgl
+	cp physfs_hg/build/libphysfs.a $(MODULE_FOLDER)/webgl
+
 cross_compile_win:
 	(cd physfs_hg ; rm -rf build ; mkdir build ; cd build ; cmake $(OPTS) -DCMAKE_TOOLCHAIN_FILE=../../../win_build/mingw-w64-x86_64.cmake .. ; make)
 	[ -d $(MODULE_FOLDER)/win64 ] || mkdir $(MODULE_FOLDER)/win64
