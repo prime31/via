@@ -74,12 +74,11 @@ pub fn (tb mut TextBatch) draw_text(font &fonts.FontStash, str string, config Dr
 	}
 
 	matrix := config.get_matrix()
-	// matrix := config.get_matrix_no_translation()
 
 	mut f := font
 	f.update_texture()
 	iter := C.FONStextIter{}
-	C.fonsTextIterInit(font.stash, &iter, config.x, config.y, str.str, C.NULL)
+	C.fonsTextIterInit(font.stash, &iter, 0, 0, str.str, C.NULL)
 
 	fons_quad := C.FONSquad{}
 	mut iter_result := 1
