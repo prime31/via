@@ -22,7 +22,7 @@ pub fn texture_atlas(tex Texture, bytes []byte) TextureAtlas {
 
 	mut state := AtlasParserState.quad_name
 	mut quad_name := string{0, 0}
-	mut vp := [f32(0), 0, 0, 0]!
+	mut vp := [f32(0), 0, 0, 0]!!
 	mut vp_i := 0
 
 	mut buf := utils.new_parser_buffer(150)

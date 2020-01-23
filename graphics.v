@@ -104,8 +104,8 @@ pub fn (g &Graphics) new_pipeline(pipeline_desc &sg_pipeline_desc) sg_pipeline {
 	return sg_make_pipeline(pipeline_desc)
 }
 
-pub fn (gg &Graphics) new_clear_pass(r, g, b, a f32) sg_pass_action {
-	return gfx.create_clear_pass(r, g, b, a)
+pub fn (gg &Graphics) make_clear_pass(r, g, b, a f32) sg_pass_action {
+	return gfx.make_clear_pass(r, g, b, a)
 }
 
 pub fn (g &Graphics) new_atlasbatch(tex graphics.Texture, max_sprites int) &graphics.AtlasBatch {
