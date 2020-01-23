@@ -42,6 +42,11 @@ pub const (
 	sqrt2 = f32(C.M_SQRT2)
 )
 
+[inline]
+pub fn radians(x f32) f32 { return x * 0.0174532925 }
+
+[inline]
+pub fn degrees(x f32) f32 { return x * 57.295779513 }
 
 [inline]
 pub fn min(x, y f32) f32 { return C.fminf(x, y) }
@@ -175,8 +180,28 @@ pub fn ceilpow2_u32(i u32) u32 {
 	return x + 1
 }
 
+// loops t so that it is never larger than length and never smaller than 0
 [inline]
-pub fn radians(x f32) f32 { return x * 0.0174532925 }
+pub fn repeat(t f32, len f32) f32 { return t - floor(t / len) * len }
 
+// ping-pongs t so that it is never larger than length and never smaller than 0
 [inline]
-pub fn degrees(x f32) f32 { return x * 57.295779513 }
+pub fn ping_pong(t, len f32) f32 {
+	tt := repeat(t, len * 2)
+	return len - abs(tt - len)
+}
+
+// moves start towards end by shift clamping the result. start can be less than or greater than end.
+// example: start is 2, end is 10, shift is 4 results in 6
+[inline]
+pub fn approach(start, end, shift f32) f32 {
+	if start < end { return min(start + shift, end) }
+	return max(start - shift, end)
+}
+
+// helper for moving a value around in a circle
+[inline]
+pub fn rotate_around(pos Vec2, speed, time f32) Vec2 {
+	x, y := sincos(time * speed)
+	return Vec2{pos.x + x, pos.y + y}
+}

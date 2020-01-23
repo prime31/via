@@ -49,3 +49,11 @@ pub fn (c &Clock) get_time() u64 {
 pub fn (c &Clock) get_frame_count() u32 {
 	return c.frame_count
 }
+
+pub fn (c &Clock) get_ticks() u32 {
+	return SDL_GetTicks()
+}
+
+pub fn (c &Clock) get_seconds() f32 {
+	return f32(SDL_GetTicks()) / 1000.0
+}
