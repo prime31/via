@@ -1,7 +1,13 @@
 module via
 import via.libs.imgui
+import via.libs.sokol.gfx_imgui
 
-pub fn imgui_init(win voidptr, gl_context voidptr, viewports, docking bool) {
+const (
+	sg_imgui = &sg_imgui_t{}
+)
+
+pub fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool) {
+	if gfx_dbg { gfx_imgui.initialize(sg_imgui) }
 	igCreateContext(C.NULL)
 
 	mut io := imgui.get_io()
@@ -17,8 +23,13 @@ pub fn imgui_init(win voidptr, gl_context voidptr, viewports, docking bool) {
 	imgui.init_for_gl('#version 150'.str, win, gl_context)
 }
 
-fn imgui_new_frame(win voidptr) {
+fn imgui_new_frame(win voidptr, gfx_dbg bool) {
 	imgui.new_frame(win)
+
+	if gfx_dbg {
+		gfx_imgui.draw_menu(sg_imgui)
+		gfx_imgui.draw(sg_imgui)
+	}
 }
 
 fn imgui_render(win voidptr, gl_context voidptr) {

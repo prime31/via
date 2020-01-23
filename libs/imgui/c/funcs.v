@@ -19,6 +19,12 @@ fn C.igRender()
 fn C.igGetDrawData() voidptr
 fn C.igGetStyle() &C.ImGuiStyle
 
+fn C.igBeginMainMenuBar() bool
+fn C.igBeginMenu(label byteptr, show bool) bool
+fn C.igMenuItemBoolPtr(label byteptr, unknown byteptr, open &bool, something bool)
+fn C.igEndMenu()
+fn C.igEndMainMenuBar()
+
 // multiple viewport
 fn C.igUpdatePlatformWindows()
 fn C.igRenderPlatformWindowsDefault(voidptr, voidptr)

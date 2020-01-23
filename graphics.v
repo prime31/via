@@ -31,10 +31,12 @@ fn (g &Graphics) free() {
 	unsafe { free(g) }
 }
 
-fn (g mut Graphics) init_defaults() {
+fn (g &Graphics) setup() {
 	desc := sg_desc{}
 	sg_setup(&desc)
+}
 
+fn (g mut Graphics) init_defaults() {
 	pip, shader := graphics.pipeline_make_default()
 	g.def_pip = pip
 	g.def_shader = shader

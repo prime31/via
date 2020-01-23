@@ -11,7 +11,6 @@ pub mut:
 	clock &Clock
 	win &Window
 	input &Input
-	imgui bool
 }
 
 pub const (
@@ -45,7 +44,6 @@ fn create_via(config &ViaConfig) &Via {
 	vv.clock = new_clock(config)
 	vv.win = new_window(config)
 	vv.input = new_input(config)
-	vv.imgui = config.imgui_enabled
 
 	return vv
 }
@@ -66,24 +64,25 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	mut v := create_via(config)
 	C.SDL_Init(C.SDL_INIT_VIDEO)
 	v.win.create(config)
-	v.g.init_defaults()
+	v.g.setup()
 
-	if v.imgui { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports_enabled, config.imgui_docking_enabled) }
+	if config.imgui_enabled { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports_enabled, config.imgui_docking_enabled, config.imgui_gfx_debug_enabled) }
+	v.g.init_defaults()
 
 	ctx.initialize(v)
 
 	for !v.poll_events() {
-		if v.imgui { imgui_new_frame(v.win.sdl_window) }
+		if config.imgui_enabled { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug_enabled) }
 
 		ctx.update(v)
 		ctx.draw(v)
 
-		if v.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
+		if config.imgui_enabled { imgui_render(v.win.sdl_window, v.win.gl_context) }
 		v.win.swap()
 		v.clock.tick()
 	}
 
-	if v.imgui { imgui_shutdown() }
+	if config.imgui_enabled { imgui_shutdown() }
 	C.SDL_VideoQuit()
 
 	v.free()

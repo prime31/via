@@ -15,6 +15,7 @@ pub mut:
 	window_highdpi bool = true				/* whether the rendering canvas is full-resolution on HighDPI displays */
 
 	imgui_enabled bool = false				/* whether imgui should be enabled */
+	imgui_gfx_debug_enabled bool = false	/* whether the Sokol gfx debugger should be enabled */
 	imgui_viewports_enabled bool = true		/* whether imgui viewports should be enabled */
 	imgui_docking_enabled bool = true		/* whether imgui docking should be enabled */
 }

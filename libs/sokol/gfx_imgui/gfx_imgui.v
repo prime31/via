@@ -1,9 +1,8 @@
 module gfx_imgui
-import prime31.sokol.simgui.c
 
 #flag -DSOKOL_TRACE_HOOKS
 
-#include "thirdparty/cimgui/cimgui.h"
+#include "thirdparty/cimgui.h"
 #define SOKOL_GFX_IMGUI_IMPL
 #include "sokol_gfx_imgui.h"
 
