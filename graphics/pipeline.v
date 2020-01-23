@@ -2,84 +2,106 @@ module graphics
 import via.math
 import via.libs.sokol.gfx
 
-pub fn pipeline_make_default() (sg_pipeline, sg_shader) {
-	mut shader_desc := shader_get_default_desc()
-	shader := shader_make(null_str, null_str, mut shader_desc)
-
-	mut pipeline_desc := pipeline_desc_make_default(shader)
-	pipeline_desc.label = 'Default Pip'.str
-	return sg_make_pipeline(&pipeline_desc), shader
+pub struct Pipeline {
+mut:
+	uniforms []Uniform
+pub:
+	pip C.sg_pipeline
+	shader C.sg_shader
 }
 
-pub fn pipeline_make_default_text() (sg_pipeline, sg_shader) {
-	mut shader_desc := shader_get_default_desc()
-	shader := shader_make(null_str, default_text_frag_main, mut shader_desc)
-
-	mut pipeline_desc := pipeline_desc_make_default(shader)
-	pipeline_desc.label = 'Default Text Pip'.str
-	return sg_make_pipeline(&pipeline_desc), shader
+struct Uniform {
+mut:
+	shader_stage gfx.ShaderStage
+	index int
+	num_bytes int
+	data voidptr
+	dirty bool
 }
 
-pub fn pipeline_desc_make_default(shader sg_shader) sg_pipeline_desc {
-	return sg_pipeline_desc{
-		layout: layout_desc_make_default()
-		shader: shader
-		index_type: .uint16
-		blend: sg_blend_state{
-			enabled: true
-			src_factor_rgb: .src_alpha
-			dst_factor_rgb: .one_minus_src_alpha
-			src_factor_alpha: .one
-			dst_factor_alpha: .one_minus_src_alpha
+pub fn (p &Pipeline) free() {
+	for u in p.uniforms {
+		unsafe { free(u.data) }
+	}
+	p.uniforms.free()
+	p.pip.free()
+	p.shader.free()
+}
+
+pub fn pipeline(vert, frag string, shader_desc sg_shader_desc, pipeline_desc mut sg_pipeline_desc) Pipeline {
+	pipeline_desc.shader = shader_make(vert, frag, mut shader_desc)
+
+	mut uniforms := []Uniform
+	for i in 0..4 {
+		u := shader_desc.vs.uniform_blocks[i]
+		if u.size == 0 { break }
+		uniforms << Uniform{
+			shader_stage: .vs
+			index: i
+			num_bytes: u.size
+			data: malloc(u.size)
 		}
 	}
+
+	for i in 0..4 {
+		u := shader_desc.fs.uniform_blocks[i]
+		if u.size == 0 { break }
+		uniforms << Uniform{
+			shader_stage: .fs
+			index: i
+			num_bytes: u.size
+			data: malloc(u.size)
+		}
+	}
+
+	return Pipeline{
+		uniforms: uniforms
+		pip: sg_make_pipeline(pipeline_desc)
+		shader: pipeline_desc.shader
+	}
 }
 
-pub fn layout_desc_make_default() sg_layout_desc {
-	mut layout := sg_layout_desc{}
-	layout.attrs[0] = sg_vertex_attr_desc{
-		format: .float2 // position
-	}
-	layout.attrs[1] = sg_vertex_attr_desc{
-		format: .float2 // tex coords
-	}
-	layout.attrs[2] = sg_vertex_attr_desc{
-		format: .ubyte4n // color
-	}
-	return layout
+pub fn pipeline_new_default() Pipeline {
+	shader_desc := shader_get_default_desc()
+	mut pipeline_desc := pipeline_get_default_desc()
+	pipeline_desc.label = 'Default Pip'.str
+	return pipeline(null_str, null_str, shader_desc, mut pipeline_desc)
 }
 
-pub fn bindings_create(verts []math.Vertex, vert_usage gfx.Usage, indices []u16, indices_usage gfx.Usage) sg_bindings {
-	mut bindings := sg_bindings{}
-	bindings.vertex_buffers[0] = vert_buffer_create(verts, vert_usage)
-	bindings.index_buffer = index_buffer_create(indices, indices_usage)
-	return bindings
+pub fn pipeline_new_default_text() Pipeline {
+	shader_desc := shader_get_default_desc()
+	mut pipeline_desc := pipeline_get_default_desc()
+	pipeline_desc.label = 'Default Text Pip'.str
+	return pipeline(null_str, default_text_frag_main, shader_desc, mut pipeline_desc)
 }
 
-pub fn vert_buffer_create(verts []math.Vertex, usage gfx.Usage) sg_buffer {
-	mut vert_buff_desc := sg_buffer_desc{
-		@type: .vertexbuffer
-		usage: usage
-		size: sizeof(math.Vertex) * verts.len
+pub fn (p &Pipeline) get_uniform_index(shader_stage gfx.ShaderStage, index int) int {
+	for i, uni in p.uniforms {
+		if uni.shader_stage == int(shader_stage) && uni.index == index {
+			return i
+		}
 	}
-
-	// dynamic and stream needs to be set some time after init
-	if usage != .dynamic && usage != .stream {
-		vert_buff_desc.content = verts.data
-	}
-	return sg_make_buffer(&vert_buff_desc)
+	return -1
 }
 
-pub fn index_buffer_create(indices []u16, usage gfx.Usage) sg_buffer {
-	mut index_buff_desc := sg_buffer_desc{
-		@type: .indexbuffer
-		usage: usage
-		size: sizeof(u16) * indices.len
-	}
+pub fn (p mut Pipeline) set_uniform(uniform_index int, data voidptr) {
+	assert(uniform_index >= 0 && uniform_index < p.uniforms.len)
+	mut uni := p.uniforms[uniform_index]
+	p.uniforms[uniform_index].dirty = true
+	C.memcpy(uni.data, data, uni.num_bytes)
+}
 
-	// dynamic and stream needs to be set some time after init
-	if usage != .dynamic && usage != .stream {
-		index_buff_desc.content = indices.data
+pub fn (p mut Pipeline) set_uniform_raw(shader_stage gfx.ShaderStage, index int, data voidptr) {
+	uni_index := p.get_uniform_index(shader_stage, index)
+	assert(uni_index >= 0)
+	p.set_uniform(uni_index, data)
+}
+
+pub fn (p mut Pipeline) apply_uniforms() {
+	for i, uni in p.uniforms {
+		if uni.dirty {
+			sg_apply_uniforms(uni.shader_stage, uni.index, uni.data, uni.num_bytes)
+			p.uniforms[i].dirty = false
+		}
 	}
-	return sg_make_buffer(&index_buff_desc)
 }
