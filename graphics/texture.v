@@ -55,6 +55,31 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 	return tex
 }
 
+pub fn render_texture(width, height int, min_filter, mag_filter gfx.Filter, depth_stencil bool) Texture {
+	mut img_desc := sg_image_desc{
+		render_target: true
+		width: width
+		height: height
+		num_mipmaps: 0
+		min_filter: min_filter
+		mag_filter: mag_filter
+		wrap_u: .clamp_to_edge
+		wrap_v: .clamp_to_edge
+	}
+
+	if depth_stencil {
+		img_desc.pixel_format = .depth_stencil
+	}
+
+	tex := Texture{
+		img: sg_make_image(&img_desc)
+		width: width
+		height: height
+		channels: .rgb_alpha
+	}
+	return tex
+}
+
 fn new_checker_texture() Texture {
     pixels := [
         u32(0xFFFFFFFF), 0x00000000, 0xFFFFFFFF, 0x00000000,

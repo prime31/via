@@ -216,8 +216,8 @@ pub struct C.sg_pass_action {
 pub mut:
     _start_canary u32
     colors [4]sg_color_attachment_action
-    depth sg_depth_attachment_action
-    stencil sg_stencil_attachment_action
+    depth C.sg_depth_attachment_action
+    stencil C.sg_stencil_attachment_action
     _end_canary u32
 }
 

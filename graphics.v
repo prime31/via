@@ -1,5 +1,6 @@
 module via
 import filepath
+import via.math
 import via.fonts
 import via.graphics
 import via.libs.physfs
@@ -104,14 +105,18 @@ pub fn (g &Graphics) new_pipeline(pipeline_desc &sg_pipeline_desc) sg_pipeline {
 	return sg_make_pipeline(pipeline_desc)
 }
 
-pub fn (gg &Graphics) make_clear_pass(r, g, b, a f32) sg_pass_action {
-	return gfx.make_clear_pass(r, g, b, a)
-}
-
 pub fn (g &Graphics) new_atlasbatch(tex graphics.Texture, max_sprites int) &graphics.AtlasBatch {
 	return graphics.atlasbatch(tex, max_sprites)
 }
 
 pub fn (g &Graphics) new_fontstash(width, height int) &fonts.FontStash {
 	return fonts.fontstash(width, height, g.min_filter, g.mag_filter)
+}
+
+pub fn (gg &Graphics) make_clear_pass(r, g, b, a f32) sg_pass_action {
+	return gfx.make_clear_pass(r, g, b, a)
+}
+
+pub fn (g &Graphics) new_offscreen_pass(width, height int, clear_color math.Color) graphics.OffScreenPass {
+	return graphics.offscreenpass(width, height, g.min_filter, g.mag_filter, clear_color)
 }

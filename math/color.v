@@ -9,47 +9,63 @@ pub fn (c Color) str() string { return '${c.r()} ${c.g()} ${c.b()} ${c.a()}' }
 
 pub fn (a Color) eq(b Color) bool { return a.value == b.value }
 
-fn (c Color) r() byte {
+pub fn (c Color) r() byte {
 	return byte(c.value)
 }
 
-fn (c Color) g() byte {
+pub fn (c Color) g() byte {
 	return byte(c.value >> 8)
 }
 
-fn (c Color) b() byte {
+pub fn (c Color) b() byte {
 	return byte(c.value >> 16)
 }
 
-fn (c Color) a() byte {
+pub fn (c Color) a() byte {
 	return byte(c.value >> 24)
 }
 
-fn (c mut Color) set_r(r byte) {
+pub fn (c Color) r_f() f32 {
+	return f32(c.r()) / 255
+}
+
+pub fn (c Color) g_f() f32 {
+	return f32(c.g()) / 255
+}
+
+pub fn (c Color) b_f() f32 {
+	return f32(c.b()) / 255
+}
+
+pub fn (c Color) a_f() f32 {
+	return f32(c.a()) / 255
+}
+
+pub fn (c mut Color) set_r(r byte) {
 	c.value = (c.value & 0xffffff00) | r
 }
 
-fn (c mut Color) set_g(g byte) {
+pub fn (c mut Color) set_g(g byte) {
 	c.value = (c.value & 0xffff00ff) | g << 8
 }
 
-fn (c mut Color) set_b(b byte) {
+pub fn (c mut Color) set_b(b byte) {
 	c.value = (c.value & 0xff00ffff) | b << 16
 }
 
-fn (c mut Color) set_a(a byte) {
+pub fn (c mut Color) set_a(a byte) {
 	c.value = (c.value & 0x00ffffff) | a << 24
 }
 
-fn color_from_bytes(r byte, g byte, b byte, a byte) Color {
+pub fn color_from_bytes(r byte, g byte, b byte, a byte) Color {
     return Color{(r) | (g << 8) | (b << 16) | (a << 24)}
 }
 
-fn color_from_floats(r f32, g f32, b f32, a f32) Color {
+pub fn color_from_floats(r f32, g f32, b f32, a f32) Color {
     return color_from_bytes(byte(r * 255), byte(g * 255), byte(b * 255), byte(a * 255))
 }
 
-fn color_from_ints(r int, g int, b int, a int) Color {
+pub fn color_from_ints(r int, g int, b int, a int) Color {
     return color_from_bytes(byte(r), byte(g), byte(b), byte(a))
 }
 
