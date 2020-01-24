@@ -473,6 +473,9 @@ static GLPROC get_proc(const char *proc)
 #elif defined(__EMSCRIPTEN__)
 extern void* emscripten_GetProcAddress(const char *name_);
 
+static void open_libgl(void) {}
+static void close_libgl(void) {}
+
 static GLPROC get_proc(const char *proc)
 {
     return emscripten_GetProcAddress(proc);
