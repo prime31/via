@@ -16,7 +16,7 @@ fn new_audio(config ViaConfig) &Audio {
 }
 
 fn (a &Audio) free() {
-	C.FMOD_System_Release(a.sys)
+	a.sys.free()
 	unsafe { free(a) }
 }
 

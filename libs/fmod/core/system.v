@@ -13,6 +13,10 @@ pub fn create(maxchannels int, flags int) System {
 	return fmod
 }
 
+pub fn (s &System) free() {
+	C.FMOD_System_Release(s.sys)
+}
+
 pub fn (s &System) get_version() u32 {
 	ver := u32(0)
 	FMOD_System_GetVersion(s.sys, &ver)

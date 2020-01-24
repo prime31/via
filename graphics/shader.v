@@ -2,13 +2,15 @@ module graphics
 import via.math
 import via.libs.sokol.gfx
 
-pub const (
-	null_str = string{0, 0}
-)
+pub struct ShaderSourceConfig {
+pub:
+	vert string = string{0, 0}
+	frag string = string{0, 0}
+}
 
-pub fn shader_make(vert, frag string, shader_desc mut sg_shader_desc) C.sg_shader {
-	vert_main := if vert.len == 0 { default_vert_main } else { vert }
-	frag_main := if frag.len == 0 { default_frag_main } else { frag }
+pub fn shader_make(src ShaderSourceConfig, shader_desc mut sg_shader_desc) C.sg_shader {
+	vert_main := if src.vert.len == 0 { default_vert_main } else { src.vert }
+	frag_main := if src.frag.len == 0 { default_frag_main } else { src.frag }
 
 	mut vert_src := default_vert + vert_main
 	frag_src := default_frag + frag_main

@@ -28,8 +28,8 @@ pub fn (p &Pipeline) free() {
 	p.shader.free()
 }
 
-pub fn pipeline(vert, frag string, shader_desc sg_shader_desc, pipeline_desc mut sg_pipeline_desc) Pipeline {
-	pipeline_desc.shader = shader_make(vert, frag, mut shader_desc)
+pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, pipeline_desc mut sg_pipeline_desc) Pipeline {
+	pipeline_desc.shader = shader_make(shader_src, mut shader_desc)
 
 	mut uniforms := []Uniform
 	for i in 0..4 {
@@ -65,14 +65,14 @@ pub fn pipeline_new_default() Pipeline {
 	shader_desc := shader_get_default_desc()
 	mut pipeline_desc := pipeline_get_default_desc()
 	pipeline_desc.label = 'Default Pip'.str
-	return pipeline(null_str, null_str, shader_desc, mut pipeline_desc)
+	return pipeline({}, shader_desc, mut pipeline_desc)
 }
 
 pub fn pipeline_new_default_text() Pipeline {
 	shader_desc := shader_get_default_desc()
 	mut pipeline_desc := pipeline_get_default_desc()
 	pipeline_desc.label = 'Default Text Pip'.str
-	return pipeline(null_str, default_text_frag_main, shader_desc, mut pipeline_desc)
+	return pipeline({frag: default_text_frag_main}, shader_desc, mut pipeline_desc)
 }
 
 pub fn (p &Pipeline) get_uniform_index(shader_stage gfx.ShaderStage, index int) int {

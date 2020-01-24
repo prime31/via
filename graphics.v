@@ -74,24 +74,24 @@ pub fn (g &Graphics) new_texture_atlas(src string) graphics.TextureAtlas {
 	return graphics.texture_atlas(tex, buf)
 }
 
-pub fn (g &Graphics) new_shader(vert, frag string, shader_desc &sg_shader_desc) C.sg_shader {
+pub fn (g &Graphics) new_shader(src graphics.ShaderSourceConfig, shader_desc &sg_shader_desc) C.sg_shader {
 	mut vert_needs_free := false
-	vert_src := if vert.len > 0 && vert.ends_with('.vert') {
+	vert_src := if src.vert.len > 0 && src.vert.ends_with('.vert') {
 		vert_needs_free = true
-		physfs.read_text(vert)
+		physfs.read_text(src.vert)
 	} else {
-		vert
+		src.vert
 	}
 
 	mut frag_needs_free := false
-	frag_src := if frag.len > 0 && vert.ends_with('.frag') {
+	frag_src := if src.frag.len > 0 && src.frag.ends_with('.frag') {
 		frag_needs_free = true
-		physfs.read_text(frag)
+		physfs.read_text(src.frag)
 	} else {
-		frag
+		src.frag
 	}
 
-	shader := graphics.shader_make(vert_src, frag_src, mut shader_desc)
+	shader := graphics.shader_make({vert: vert_src frag: frag_src}, mut shader_desc)
 
 	if vert_needs_free {
 		unsafe{ vert_src.free() }
