@@ -10,10 +10,8 @@ struct Graphics {
 mut:
 	min_filter gfx.Filter
 	mag_filter gfx.Filter
-	def_shader sg_shader
-	def_pip sg_pipeline
-	def_text_shader sg_shader
-	def_text_pip sg_pipeline
+	def_pip graphics.Pipeline
+	def_text_pip graphics.Pipeline
 }
 
 fn new_graphics(config &ViaConfig) &Graphics {
@@ -24,9 +22,7 @@ fn new_graphics(config &ViaConfig) &Graphics {
 }
 
 fn (g &Graphics) free() {
-	g.def_shader.free()
 	g.def_pip.free()
-	g.def_text_shader.free()
 	g.def_text_pip.free()
 	unsafe { free(g) }
 }
@@ -37,20 +33,15 @@ fn (g &Graphics) setup() {
 }
 
 fn (g mut Graphics) init_defaults() {
-	pip, shader := graphics.pipeline_make_default()
-	g.def_pip = pip
-	g.def_shader = shader
-
-	text_pip, text_shader := graphics.pipeline_make_default_text()
-	g.def_text_pip = text_pip
-	g.def_text_shader = text_shader
+	g.def_pip = graphics.pipeline_new_default()
+	g.def_text_pip = graphics.pipeline_new_default_text()
 }
 
-pub fn (g &Graphics) get_default_pipeline() sg_pipeline {
+pub fn (g &Graphics) get_default_pipeline() graphics.Pipeline {
 	return g.def_pip
 }
 
-pub fn (g &Graphics) get_default_text_pipeline() sg_pipeline {
+pub fn (g &Graphics) get_default_text_pipeline() graphics.Pipeline {
 	return g.def_text_pip
 }
 

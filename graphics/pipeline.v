@@ -19,6 +19,10 @@ mut:
 	dirty bool
 }
 
+pub fn (p1 &Pipeline) eq(p2 &Pipeline) bool {
+	return p1.shader.id == p2.shader.id && p1.pip.id == p2.pip.id
+}
+
 pub fn (p &Pipeline) free() {
 	for u in p.uniforms {
 		unsafe { free(u.data) }
