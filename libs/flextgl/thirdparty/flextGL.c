@@ -470,6 +470,13 @@ static GLPROC get_proc(const char *proc)
     CFRelease(procname);
     return res;
 }
+#elif defined(__EMSCRIPTEN__)
+extern void* emscripten_GetProcAddress(const char *name_);
+
+static GLPROC get_proc(const char *proc)
+{
+    return emscripten_GetProcAddress(proc);
+}
 #elif defined(ANDROID)
 #include <EGL/egl.h>
 
