@@ -1,4 +1,5 @@
 module via
+import via.time
 import via.libs.flextgl
 import via.libs.sokol
 import via.libs.sokol.gfx
@@ -9,9 +10,7 @@ pub mut:
 	audio &Audio
 	fs &FileSystem
 	g &Graphics
-	clock &Clock
 	win &Window
-	input &Input
 }
 
 pub const (
@@ -19,9 +18,7 @@ pub const (
 		audio: 0
 		fs: 0
 		g: 0
-		clock: 0
 		win: 0
-		input: 0
 	}
 )
 
@@ -32,9 +29,7 @@ fn create_via(config &ViaConfig) &Via {
 	// 	audio: new_audio(config, fs)
 	// 	fs: fs
 	// 	g: new_graphics(config, fs)
-	// 	clock: new_clock(config)
 	// 	win: new_window(config)
-	// 	input: new_input(config)
 	// 	imgui: config.imgui_enabled
 	// }
 
@@ -42,9 +37,7 @@ fn create_via(config &ViaConfig) &Via {
 	vv.audio = new_audio(config)
 	vv.fs = fs
 	vv.g = new_graphics(config)
-	vv.clock = new_clock(config)
 	vv.win = new_window(config)
-	vv.input = new_input(config)
 
 	return vv
 }
@@ -53,7 +46,7 @@ fn (v &Via) free() {
 	v.audio.free()
 	v.fs.free()
 	v.g.free()
-	v.clock.free()
+	time.free()
 	v.win.free()
 
 	sg_shutdown()
@@ -80,7 +73,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 		if config.imgui_enabled { imgui_render(v.win.sdl_window, v.win.gl_context) }
 		v.win.swap()
-		v.clock.tick()
+		time.tick()
 	}
 
 	if config.imgui_enabled { imgui_shutdown() }

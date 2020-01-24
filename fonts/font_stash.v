@@ -1,5 +1,6 @@
 module fonts
 import via.math
+import via.time
 import via.libs.fontstash
 import via.libs.physfs
 import via.libs.sokol.gfx
@@ -12,7 +13,7 @@ pub mut:
 	mag_filter gfx.Filter
 	width int
 	height int
-	last_update u32 = u32(32000)
+	last_update u32 = u32(0)
 	tex_dirty bool
 }
 
@@ -108,11 +109,8 @@ fn render_delete(uptr voidptr) {
 }
 
 pub fn (font mut FontStash) update_texture() {
-	// hack: we really should be using frame_count here but we need a way to get it
-	ticks := SDL_GetTicks() / 25
-
-	if font.tex_dirty && ticks != font.last_update {
-		font.last_update = ticks
+	if font.tex_dirty && time.get_frame_count() != font.last_update {
+		font.last_update = time.get_frame_count()
 		mut content := sg_image_content{}
 		content.subimage[0][0].ptr = font.stash.texData
 		content.subimage[0][0].size = font.width * font.height
