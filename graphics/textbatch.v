@@ -70,7 +70,6 @@ pub fn (tb mut TextBatch) draw_text(font &fonts.FontStash, str string, config Dr
 		tb.flush()
 		tb.bindings.set_frag_image(0, font.img)
 		tb.img = font.img
-		
 	}
 
 	matrix := config.get_matrix()

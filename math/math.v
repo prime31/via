@@ -159,7 +159,7 @@ pub fn sincos(x f32) (f32, f32) {
 [inline]
 pub fn ceilpow2_int(i int) int {
 	mut x := i
-	x -= 1
+	x--
 	x |= x >> 1
 	x |= x >> 2
 	x |= x >> 4
@@ -171,7 +171,7 @@ pub fn ceilpow2_int(i int) int {
 [inline]
 pub fn ceilpow2_u32(i u32) u32 {
 	mut x := i
-	x -= 1
+	x--
 	x |= x >> 1
 	x |= x >> 2
 	x |= x >> 4

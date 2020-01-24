@@ -1,4 +1,5 @@
 module via
+import via.libs.flextgl
 import via.libs.sokol
 import via.libs.sokol.gfx
 import via.libs.sdl2
@@ -88,7 +89,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	v.free()
 }
 
-fn (v mut Via) poll_events() bool {
+fn (v &Via) poll_events() bool {
 	ev := SDL_Event{}
 	for 0 < C.SDL_PollEvent(&ev) {
 		match int(ev.@type) {

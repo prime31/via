@@ -1,5 +1,4 @@
 module fonts
-import via
 import via.math
 import via.libs.fontstash
 import via.libs.physfs
@@ -85,7 +84,7 @@ fn render_update(uptr voidptr, rect &int, data byteptr) {
 fn render_draw(uptr voidptr, verts_ptr &f32, tcoords_ptr &f32, colors_ptr &u32, nverts int) {
 	mut fs := &FontStash(uptr)
 
-	if fs.tex_dirty && via.v.clock.get_frame_count() != fs.last_update {
+	if fs.tex_dirty {
 		fs.update_texture()
 	}
 
@@ -109,8 +108,11 @@ fn render_delete(uptr voidptr) {
 }
 
 pub fn (font mut FontStash) update_texture() {
-	if via.v.clock.frame_count != font.last_update {
-		font.last_update = via.v.clock.frame_count
+	// hack: we really should be using frame_count here but we need a way to get it
+	ticks := SDL_GetTicks() / 25
+
+	if font.tex_dirty && ticks != font.last_update {
+		font.last_update = ticks
 		mut content := sg_image_content{}
 		content.subimage[0][0].ptr = font.stash.texData
 		content.subimage[0][0].size = font.width * font.height
