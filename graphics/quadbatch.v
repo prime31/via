@@ -12,7 +12,7 @@ mut:
 	last_appended_quad_cnt int = 0
 	tex Texture
 	quad math.Quad
-	trans_mat math.Mat44
+	trans_mat math.Mat32
 	uniform_set bool
 }
 
@@ -39,7 +39,7 @@ fn (qb &QuadBatch) ensure_capacity() bool {
 	return true
 }
 
-pub fn (qb mut QuadBatch) begin(trans_mat math.Mat44) {
+pub fn (qb mut QuadBatch) begin(trans_mat math.Mat32) {
 	qb.trans_mat = trans_mat
 	qb.uniform_set = false
 }
@@ -90,7 +90,7 @@ pub fn (qb mut QuadBatch) flush() {
 
 	sg_apply_bindings(&qb.bindings)
 	if !qb.uniform_set {
-		sg_apply_uniforms(gfx.ShaderStage.vs, 0, &qb.trans_mat, sizeof(math.Mat44))
+		sg_apply_uniforms(gfx.ShaderStage.vs, 0, &qb.trans_mat, sizeof(math.Mat32))
 		qb.uniform_set = true
 	}
 	sg_draw(0, total_quads * 6, 1)

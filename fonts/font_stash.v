@@ -66,6 +66,8 @@ fn render_create(uptr voidptr, width int, height int) int {
 		wrap_v: .clamp_to_edge
 		usage: .dynamic
 		pixel_format: .r8
+		label: 'FontStash'.str
+		d3d11_texture: 0
 	}
 
     fs.img = sg_make_image(&img_desc)
@@ -83,15 +85,16 @@ fn render_update(uptr voidptr, rect &int, data byteptr) {
 }
 
 fn render_draw(uptr voidptr, verts_ptr &f32, tcoords_ptr &f32, colors_ptr &u32, nverts int) {
+	println('---- FontStash.render_draw called ----')
 	mut fs := &FontStash(uptr)
 
 	if fs.tex_dirty {
 		fs.update_texture()
 	}
 
-	verts := *f32(verts_ptr)
-	tcoords := *f32(tcoords_ptr)
-	colors := *f32(colors_ptr)
+	// verts := *f32(verts_ptr)
+	// tcoords := *f32(tcoords_ptr)
+	// colors := *f32(colors_ptr)
 
 	for i in 0..nverts {
 		//sgl_v2f_t2f_c1i(verts[2*i+0], verts[2*i+1], tcoords[2*i+0], tcoords[2*i+1], colors[i]);

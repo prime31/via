@@ -40,6 +40,8 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 		mag_filter: mag_filter
 		wrap_u: .clamp_to_edge
 		wrap_v: .clamp_to_edge
+		label: &byte(0)
+		d3d11_texture: 0
 	}
 	img_desc.content.subimage[0][0] = sg_subimage_content{
 		ptr: img.data
@@ -65,6 +67,8 @@ pub fn render_texture(width, height int, min_filter, mag_filter gfx.Filter, dept
 		mag_filter: mag_filter
 		wrap_u: .clamp_to_edge
 		wrap_v: .clamp_to_edge
+		label: &byte(0)
+		d3d11_texture: 0
 	}
 
 	if depth_stencil {
@@ -94,6 +98,10 @@ fn new_checker_texture() Texture {
 		pixel_format: .rgba8
 		min_filter: .nearest
 		mag_filter: .nearest
+		wrap_u: .clamp_to_edge
+		wrap_v: .clamp_to_edge
+		label: &byte(0)
+		d3d11_texture: 0
 	}
 	img_desc.content.subimage[0][0] = sg_subimage_content{
 		ptr: pixels.data

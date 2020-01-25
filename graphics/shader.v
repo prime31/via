@@ -29,9 +29,10 @@ pub fn shader_make(src ShaderSourceConfig, shader_desc mut sg_shader_desc) C.sg_
 pub fn shader_get_default_desc() C.sg_shader_desc {
 	mut shader_desc := C.sg_shader_desc{
 		_start_canary: 0 // hack because struct initialization fails if something isnt set
+		label: &byte(0)
 	}
 	shader_desc.set_frag_image(0, 'MainTex')
-		.set_vert_uniform_block_size(0, sizeof(math.Mat44))
-		.set_vert_uniform(0, 0, 'TransformProjectionMatrix', .mat4, 0)
+		.set_vert_uniform_block_size(0, sizeof(math.Mat32))
+		.set_vert_uniform(0, 0, 'TransformMatrix', .float3, 2)
 	return shader_desc
 }

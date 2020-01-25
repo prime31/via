@@ -30,6 +30,7 @@ pub fn pipeline_get_default_desc() sg_pipeline_desc {
 	return sg_pipeline_desc{
 		layout: layout_desc_make_default()
 		index_type: .uint16
+		label: &byte(0)
 		blend: sg_blend_state{
 			enabled: true
 			src_factor_rgb: .src_alpha
@@ -66,6 +67,9 @@ pub fn vert_buffer_create(verts []math.Vertex, usage gfx.Usage) sg_buffer {
 		@type: .vertexbuffer
 		usage: usage
 		size: sizeof(math.Vertex) * verts.len
+		label: &byte(0)
+		d3d11_buffer: 0
+		content: 0
 	}
 
 	// dynamic and stream needs to be set some time after init
@@ -80,6 +84,9 @@ pub fn index_buffer_create(indices []u16, usage gfx.Usage) sg_buffer {
 		@type: .indexbuffer
 		usage: usage
 		size: sizeof(u16) * indices.len
+		label: &byte(0)
+		d3d11_buffer: 0
+		content: 0
 	}
 
 	// dynamic and stream needs to be set some time after init

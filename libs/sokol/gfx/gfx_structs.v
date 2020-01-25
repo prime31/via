@@ -129,6 +129,7 @@ pub fn (desc mut C.sg_shader_desc) set_frag_uniform_block_size(block_index, size
 pub fn (desc mut C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
     desc.vs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
 	desc.vs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
+    desc.vs.uniform_blocks[block_index].uniforms[uniform_index].array_count = array_count
     return desc
 }
 

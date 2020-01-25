@@ -27,7 +27,7 @@ pub fn (p &Pipeline) free() {
 	for u in p.uniforms {
 		unsafe { free(u.data) }
 	}
-	p.uniforms.free()
+	unsafe { p.uniforms.free() }
 	p.pip.free()
 	p.shader.free()
 }

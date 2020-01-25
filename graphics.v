@@ -28,7 +28,15 @@ fn (g &Graphics) free() {
 }
 
 fn (g &Graphics) setup() {
-	desc := sg_desc{}
+	desc := sg_desc{
+		mtl_device: 0
+		mtl_renderpass_descriptor_cb: 0
+		mtl_drawable_cb: 0
+		d3d11_device: 0
+		d3d11_device_context: 0
+		d3d11_render_target_view_cb: 0
+		d3d11_depth_stencil_view_cb: 0
+	}
 	sg_setup(&desc)
 }
 

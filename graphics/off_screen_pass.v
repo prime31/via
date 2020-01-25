@@ -16,7 +16,9 @@ pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Fi
     depth_tex := render_texture(width, height, min_filter, mag_filter, true)
 
 	// create an offscreen render pass into those images
-	mut pass_desc := sg_pass_desc{}
+	mut pass_desc := sg_pass_desc{
+        label: 'Offscreen Pass'.str
+    }
 	pass_desc.color_attachments[0].image = color_tex.img
     pass_desc.depth_stencil_attachment.image = depth_tex.img
 

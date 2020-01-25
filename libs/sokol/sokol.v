@@ -3,7 +3,6 @@ module sokol
 #flag -I @VMOD/via/libs/sokol/thirdparty
 #flag -I @VMOD/via/libs/sokol/thirdparty/util
 
-#flag darwin -fobjc-arc
 #flag linux -lX11 -lGL
 
 // METAL

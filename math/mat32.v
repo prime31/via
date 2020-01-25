@@ -80,6 +80,12 @@ pub fn mat32_ortho(left, right, bottom, top f32) Mat32 {
     return result
 }
 
+pub fn mat32_ortho_off_center(width, height int) Mat32 {
+	half_w := int(f32(width) / 2)
+	half_h := int(f32(height) / 2)
+    return mat32_ortho(-half_w, half_w, half_h, -half_h)
+}
+
 pub fn mat32_transform(x, y, angle, sx, sy, ox, oy f32) Mat32 {
 	mut result := mat32_zero()
     result.set_transform(x, y, angle, sx, sy, ox, oy)
