@@ -21,7 +21,7 @@ void main() {
 }'
 	default_vert_main = '
 vec4 position(mat3x2 transMat, vec2 localPosition) {
-	return vec4(transMat * vec3(localPosition, 0), 0, 1);
+	return vec4(transMat * vec3(localPosition, 1), 0, 1);
 }'
 
 	default_frag = '#version 330

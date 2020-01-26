@@ -53,6 +53,28 @@ pub fn (p mut OffScreenPass) set_stencil_action(action gfx.Action, val byte) {
     }
 }
 
+pub fn (p &OffScreenPass) get_pixel_perfect_config(w, h int) DrawConfig {
+    mut scale := 1
+    aspect_ratio := f32(w) / f32(h)
+    if f32(p.color_tex.width) / f32(p.color_tex.height) > aspect_ratio {
+        scale = w / p.color_tex.width
+    } else {
+        scale = h / p.color_tex.height
+    }
+
+    if scale == 0 {
+        scale = 1
+    }
+
+    // scale--
+    x := (w - (p.color_tex.width * scale)) / 2
+    y := (h - (p.color_tex.height * scale)) / 2
+
+
+    //ox:p.color_tex.width/2 oy:p.color_tex.height/2
+    return {x:x y:y sx:scale sy:scale}
+}
+
 pub fn (p &OffScreenPass) begin() {
     sg_begin_pass(p.pass, &p.pass_action)
 }

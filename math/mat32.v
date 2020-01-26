@@ -13,6 +13,11 @@ pub:
     data [6]f32
 }
 
+pub fn (self Mat32) str() string {
+    return  '${self.data[0]} ${self.data[2]} ${self.data[4]}\n' +
+            '${self.data[1]} ${self.data[3]} ${self.data[5]}'
+}
+
 pub fn (self Mat32) + (other Mat32) Mat32 {
     mut result := Mat32{}
     result.data[0] = self.data[0] + other.data[0]
@@ -26,6 +31,19 @@ pub fn (self Mat32) + (other Mat32) Mat32 {
     return result
 }
 
+pub fn (l Mat32) * (r Mat32) Mat32 {
+    mut result := Mat32{}
+
+    result.data[0] = l.data[0] * r.data[0] + l.data[2] * r.data[1]
+    result.data[1] = l.data[1] * r.data[0] + l.data[3] * r.data[1]
+    result.data[2] = l.data[0] * r.data[2] + l.data[2] * r.data[3]
+    result.data[3] = l.data[1] * r.data[2] + l.data[3] * r.data[3]
+    result.data[4] = l.data[0] * r.data[4] + l.data[2] * r.data[5] + l.data[4]
+    result.data[5] = l.data[1] * r.data[4] + l.data[3] * r.data[5] + l.data[5]
+
+    return result
+}
+
 pub fn mat32_zero() Mat32 {
     mut result := Mat32{}
     C.memset(&result, 0, sizeof(Mat32))
@@ -36,6 +54,13 @@ pub fn mat32_identity() Mat32 {
     mut result := mat32_zero()
     result.data[0] = 1.0
     result.data[3] = 1.0
+    return result
+}
+
+pub fn mat32_translate(x, y f32) Mat32 {
+    mut result := mat32_identity()
+    result.data[4] = x
+    result.data[5] = y
     return result
 }
 
@@ -71,19 +96,25 @@ pub fn mat32_skew(x_rad f32, y_rad f32) Mat32 {
     return result
 }
 
-pub fn mat32_ortho(left, right, bottom, top f32) Mat32 {
-    mut result := mat32_identity()
-    result.data[0] = 2.0 / (right - left)
-    result.data[3] = 2.0 / (top - bottom)
-    result.data[4] = (left + right) / (left - right)
-    result.data[5] = (bottom + top) / (bottom - top)
+pub fn mat32_ortho(width, height f32) Mat32 {
+    mut result := mat32_zero()
+    result.data[0] = 2.0 / width
+    result.data[3] = -2.0 / height
+    result.data[4] = -1.0
+    result.data[5] = 1.0
     return result
 }
 
 pub fn mat32_ortho_off_center(width, height int) Mat32 {
 	half_w := int(f32(width) / 2)
 	half_h := int(f32(height) / 2)
-    return mat32_ortho(-half_w, half_w, half_h, -half_h)
+
+    mut result := mat32_identity()
+    result.data[0] = 2.0 / (half_w + half_w)
+    result.data[3] = 2.0 / (-half_h - half_h)
+    result.data[4] = (-half_w + half_w) / (-half_w - half_w)
+    result.data[5] = (half_h - half_h) / (half_h + half_h)
+    return result
 }
 
 pub fn mat32_transform(x, y, angle, sx, sy, ox, oy f32) Mat32 {
