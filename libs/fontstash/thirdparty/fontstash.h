@@ -173,7 +173,7 @@ static FT_Library ftLibrary;
 static int fons__tt_init()
 {
 	FT_Error ftError;
-	FONS_NOTUSED(context);
+	//FONS_NOTUSED(context);
 	ftError = FT_Init_FreeType(&ftLibrary);
 	return ftError == 0;
 }
