@@ -12,8 +12,8 @@ pub mut:
 }
 
 pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Filter, clear_color math.Color) OffScreenPass {
-    color_tex := render_texture(width, height, min_filter, mag_filter, false)
-    depth_tex := render_texture(width, height, min_filter, mag_filter, true)
+    color_tex := rendertexture(width, height, min_filter, mag_filter, false)
+    depth_tex := rendertexture(width, height, min_filter, mag_filter, true)
 
 	// create an offscreen render pass into those images
 	mut pass_desc := sg_pass_desc{

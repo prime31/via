@@ -70,7 +70,7 @@ pub fn (g &Graphics) new_texture_atlas(src string) graphics.TextureAtlas {
 	tex := g.new_texture(tex_src)
 
 	buf := physfs.read_bytes(src)
-	return graphics.texture_atlas(tex, buf)
+	return graphics.textureatlas(tex, buf)
 }
 
 pub fn (g &Graphics) new_shader(src graphics.ShaderSourceConfig, shader_desc &sg_shader_desc) C.sg_shader {

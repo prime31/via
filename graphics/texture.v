@@ -8,11 +8,10 @@ pub mut:
 pub:
 	width int
 	height int
-	channels image.Channels
 }
 
 pub fn (t Texture) str() string {
-	return 'w: $t.width, h: $t.height, id: $t.img.id, channels: $t.channels'
+	return 'w: $t.width, h: $t.height, id: $t.img.id'
 }
 
 pub fn (t Texture) eq(other Texture) bool {
@@ -52,12 +51,11 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 		img: sg_make_image(&img_desc)
 		width: img.width
 		height: img.height
-		channels: img.channels
 	}
 	return tex
 }
 
-pub fn render_texture(width, height int, min_filter, mag_filter gfx.Filter, depth_stencil bool) Texture {
+pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth_stencil bool) Texture {
 	mut img_desc := sg_image_desc{
 		render_target: true
 		width: width
@@ -79,7 +77,6 @@ pub fn render_texture(width, height int, min_filter, mag_filter gfx.Filter, dept
 		img: sg_make_image(&img_desc)
 		width: width
 		height: height
-		channels: .rgb_alpha
 	}
 	return tex
 }
@@ -112,7 +109,6 @@ fn new_checker_texture() Texture {
 		img: sg_make_image(&img_desc)
 		width: img_desc.width
 		height: img_desc.height
-		channels: .rgb_alpha
 	}
     return tex
 }

@@ -15,7 +15,7 @@ enum AtlasParserState {
 	quad_origin
 }
 
-pub fn texture_atlas(tex Texture, bytes []byte) TextureAtlas {
+pub fn textureatlas(tex Texture, bytes []byte) TextureAtlas {
 	mut atlas := TextureAtlas{
 		tex: tex
 	}
