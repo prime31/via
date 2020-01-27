@@ -14,14 +14,6 @@ mut:
 	def_text_pip graphics.Pipeline
 }
 
-pub struct PassActionConfig {
-pub:
-	color math.Color = math.Color{}
-	color_action gfx.Action = gfx.Action.clear
-	stencil_action gfx.Action = .clear
-	stencil_val byte = byte(0)
-}
-
 pub struct PassConfig {
 pub:
 	pipeline &graphics.Pipeline = &graphics.Pipeline(0)
@@ -73,24 +65,12 @@ pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
 	g.mag_filter = mag
 }
 
-pub fn (gr &Graphics) make_clear_pass(r, g, b, a f32) sg_pass_action {
+pub fn (gr &Graphics) make_clear_pass(r, g, b, a f32) graphics.PassAction {
 	return gr.make_pass_action({color:math.color_from_floats(r, g, b, a)})
 }
 
-pub fn (g &Graphics) make_pass_action(config PassActionConfig) C.sg_pass_action {
-	mut color_action := sg_color_attachment_action {
-		action: C.SG_ACTION_CLEAR
-	}
-	color_action.set_color_values(config.color.r_f(), config.color.g_f(), config.color.b_f(), config.color.a_f())
-
-	mut pass_action := sg_pass_action{
-		stencil: sg_stencil_attachment_action{
-			action: config.stencil_action
-			val: config.stencil_val
-		}
-	}
-	pass_action.colors[0] = color_action
-	return pass_action
+pub fn (g &Graphics) make_pass_action(config graphics.PassActionConfig) graphics.PassAction {
+	return graphics.passaction(config)
 }
 
 //#region create graphics resources
@@ -152,7 +132,8 @@ pub fn (g &Graphics) new_fontstash(width, height int) &fonts.FontStash {
 }
 
 pub fn (g &Graphics) new_offscreen_pass(width, height int, clear_color math.Color) graphics.OffScreenPass {
-	return graphics.offscreenpass(width, height, g.min_filter, g.mag_filter, clear_color)
+	pass := g.make_pass_action({color:clear_color})
+	return graphics.offscreenpass(width, height, g.min_filter, g.mag_filter, pass)
 }
 
 //#endregion
@@ -178,10 +159,10 @@ pub fn (g &Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config P
 }
 
 // TODO: might need a separate version for offscreen-to-backbuffer blit that sets mat32_ortho
-pub fn (g &Graphics) begin_default_pass(pass_action &sg_pass_action, config PassConfig) {
+pub fn (g &Graphics) begin_default_pass(pass_action &graphics.PassAction, config PassConfig) {
 	// TODO: begin all batches
 	w, h := vv.win.get_drawable_size()
-	sg_begin_default_pass(pass_action, w, h)
+	sg_begin_default_pass(&pass_action.pass, w, h)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
 		g.get_default_pipeline()

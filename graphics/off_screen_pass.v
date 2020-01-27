@@ -8,10 +8,10 @@ pub:
 	depth_tex Texture
 	pass sg_pass
 pub mut:
-	pass_action sg_pass_action
+	pass_action PassAction
 }
 
-pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Filter, clear_color math.Color) OffScreenPass {
+pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Filter, pass_action PassAction) OffScreenPass {
 	color_tex := rendertexture(width, height, min_filter, mag_filter, false)
 	depth_tex := rendertexture(width, height, min_filter, mag_filter, true)
 
@@ -25,7 +25,7 @@ pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Fi
 	return OffScreenPass{
 		color_tex: color_tex
 		depth_tex: depth_tex
-		pass_action: vv.g.make_clear_pass(clear_color.r_f(), clear_color.g_f(), clear_color.b_f(), clear_color.a_f())
+		pass_action: pass_action
 		pass: sg_make_pass(&pass_desc)
 	}
 }
@@ -36,20 +36,6 @@ pub fn (p &OffScreenPass) free(free_images bool) {
 	if free_images {
 		p.color_tex.free()
 		p.depth_tex.free()
-	}
-}
-
-pub fn (p mut OffScreenPass) set_depth_action(action gfx.Action, val f32) {
-	p.pass_action.depth = sg_depth_attachment_action{
-		action: action
-		val: val
-	}
-}
-
-pub fn (p mut OffScreenPass) set_stencil_action(action gfx.Action, val byte) {
-	p.pass_action.stencil = sg_stencil_attachment_action{
-		action: action
-		val: val
 	}
 }
 
