@@ -13,6 +13,8 @@ pub mut:
 	win &Window
 }
 
+__global vv &Via
+
 pub const (
 	v = &Via{
 		audio: 0
@@ -25,19 +27,12 @@ pub const (
 fn create_via(config &ViaConfig) &Via {
 	fs := new_filesystem(config)
 
-	// via := &Via {
-	// 	audio: new_audio(config, fs)
-	// 	fs: fs
-	// 	g: new_graphics(config, fs)
-	// 	win: new_window(config)
-	// 	imgui: config.imgui_enabled
-	// }
-
-	mut vv := v
-	vv.audio = new_audio(config)
-	vv.fs = fs
-	vv.g = new_graphics(config)
-	vv.win = new_window(config)
+	vv = &Via {
+		audio: audio(config)
+		fs: fs
+		g: graphics(config)
+		win: window(config)
+	}
 
 	return vv
 }
@@ -60,23 +55,23 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	v.win.create(config)
 	v.g.setup()
 
-	if config.imgui_enabled { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports_enabled, config.imgui_docking_enabled, config.imgui_gfx_debug_enabled) }
+	if config.imgui { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 	v.g.init_defaults()
 
 	ctx.initialize(v)
 
 	for !v.poll_events() {
-		if config.imgui_enabled { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug_enabled) }
+		if config.imgui { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug) }
 
 		ctx.update(v)
 		ctx.draw(v)
 
-		if config.imgui_enabled { imgui_render(v.win.sdl_window, v.win.gl_context) }
+		if config.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
 		v.win.swap()
 		time.tick()
 	}
 
-	if config.imgui_enabled { imgui_shutdown() }
+	if config.imgui { imgui_shutdown() }
 	C.SDL_VideoQuit()
 
 	v.free()

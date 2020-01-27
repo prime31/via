@@ -6,7 +6,7 @@ struct Audio {
 	sys fmod.System
 }
 
-fn new_audio(config ViaConfig) &Audio {
+fn audio(config ViaConfig) &Audio {
 	sys := fmod.create(32, C.FMOD_INIT_NORMAL)
 	fmod_physfs.set_physfs_file_system(sys)
 

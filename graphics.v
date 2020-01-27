@@ -14,7 +14,22 @@ mut:
 	def_text_pip graphics.Pipeline
 }
 
-fn new_graphics(config &ViaConfig) &Graphics {
+pub struct PassActionConfig {
+pub:
+	color math.Color = math.Color{}
+	color_action gfx.Action = gfx.Action.clear
+	stencil_action gfx.Action = .clear
+	stencil_val byte = byte(0)
+}
+
+pub struct PassConfig {
+pub:
+	pipeline &graphics.Pipeline = &graphics.Pipeline(0)
+	trans_mat &math.Mat32 = &math.Mat32(0)
+	blit_pass bool = false
+}
+
+fn graphics(config &ViaConfig) &Graphics {
 	return &Graphics{
 		min_filter: .nearest
  		mag_filter: .nearest
@@ -45,18 +60,40 @@ fn (g mut Graphics) init_defaults() {
 	g.def_text_pip = graphics.pipeline_new_default_text()
 }
 
-pub fn (g &Graphics) get_default_pipeline() graphics.Pipeline {
-	return g.def_pip
+pub fn (g &Graphics) get_default_pipeline() &graphics.Pipeline {
+	return &g.def_pip
 }
 
-pub fn (g &Graphics) get_default_text_pipeline() graphics.Pipeline {
-	return g.def_text_pip
+pub fn (g &Graphics) get_default_text_pipeline() &graphics.Pipeline {
+	return &g.def_text_pip
 }
 
 pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
 	g.min_filter = min
 	g.mag_filter = mag
 }
+
+pub fn (gr &Graphics) make_clear_pass(r, g, b, a f32) sg_pass_action {
+	return gr.make_pass_action({color:math.color_from_floats(r, g, b, a)})
+}
+
+pub fn (g &Graphics) make_pass_action(config PassActionConfig) C.sg_pass_action {
+	mut color_action := sg_color_attachment_action {
+		action: C.SG_ACTION_CLEAR
+	}
+	color_action.set_color_values(config.color.r_f(), config.color.g_f(), config.color.b_f(), config.color.a_f())
+
+	mut pass_action := sg_pass_action{
+		stencil: sg_stencil_attachment_action{
+			action: config.stencil_action
+			val: config.stencil_val
+		}
+	}
+	pass_action.colors[0] = color_action
+	return pass_action
+}
+
+//#region create graphics resources
 
 pub fn (g &Graphics) new_texture(src string) graphics.Texture {
 	buf := physfs.read_bytes(src)
@@ -114,10 +151,59 @@ pub fn (g &Graphics) new_fontstash(width, height int) &fonts.FontStash {
 	return fonts.fontstash(width, height, g.min_filter, g.mag_filter)
 }
 
-pub fn (gg &Graphics) make_clear_pass(r, g, b, a f32) sg_pass_action {
-	return gfx.make_clear_pass(r, g, b, a)
-}
-
 pub fn (g &Graphics) new_offscreen_pass(width, height int, clear_color math.Color) graphics.OffScreenPass {
 	return graphics.offscreenpass(width, height, g.min_filter, g.mag_filter, clear_color)
 }
+
+//#endregion
+
+//#region rendering
+
+pub fn (g &Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config PassConfig) {
+	// TODO: begin all batches
+	// TODO: set the projection matrix for the pipeline based on the render texture size flipped
+	sg_begin_pass(pass.pass, &pass.pass_action)
+
+	mut pip := if config.pipeline == &graphics.Pipeline(0) {
+		g.get_default_pipeline()
+	} else {
+		println('def pass: use custom pip')
+		config.pipeline
+	}
+
+	sg_apply_pipeline(pip.pip)
+
+	proj_mat := math.mat32_ortho_off_center(pass.color_tex.width, -pass.color_tex.height)
+	pip.set_uniform_raw(.vs, 0, &proj_mat)
+}
+
+// TODO: might need a separate version for offscreen-to-backbuffer blit that sets mat32_ortho
+pub fn (g &Graphics) begin_default_pass(pass_action &sg_pass_action, config PassConfig) {
+	// TODO: begin all batches
+	w, h := vv.win.get_drawable_size()
+	sg_begin_default_pass(pass_action, w, h)
+
+	mut pip := if config.pipeline == &graphics.Pipeline(0) {
+		g.get_default_pipeline()
+	} else {
+		println('def pass: use custom pip')
+		config.pipeline
+	}
+
+	sg_apply_pipeline(pip.pip)
+
+	// blitting offscreen textures does not need an ortho off-center matrix so we set the rect to 0,0,w,h
+	proj_mat := if config.blit_pass {
+		math.mat32_ortho(w, h)
+	} else {
+		math.mat32_ortho_off_center(w, h)
+	}
+	pip.set_uniform_raw(.vs, 0, &proj_mat)
+}
+
+pub fn (g &Graphics) end_pass() {
+	// TODO: end all batches
+	sg_end_pass()
+}
+
+//#endregion
