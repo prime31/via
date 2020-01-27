@@ -32,6 +32,13 @@ pub fn passaction(config PassActionConfig) PassAction {
 	return PassAction{pass_action}
 }
 
+pub fn (p mut PassAction) set_clear_color(color math.Color) {
+	p.pass.colors[0].val[0] = color.r_f()
+	p.pass.colors[0].val[1] = color.g_f()
+	p.pass.colors[0].val[2] = color.b_f()
+	p.pass.colors[0].val[3] = color.a_f()
+}
+
 pub fn (p mut PassAction) set_depth_action(action gfx.Action, val f32) {
 	p.pass.depth = sg_depth_attachment_action{
 		action: action

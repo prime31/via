@@ -6,11 +6,11 @@ const (
 	sg_imgui = &sg_imgui_t{}
 )
 
-pub fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool) {
+fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool) {
 	if gfx_dbg { gfx_imgui.initialize(sg_imgui) }
 	igCreateContext(C.NULL)
 
-	mut io := imgui.get_io()
+	mut io := C.igGetIO()
 	io.ConfigFlags |= C.ImGuiConfigFlags_NavEnableKeyboard
 	if docking { io.ConfigFlags |= C.ImGuiConfigFlags_DockingEnable }
 	if viewports { io.ConfigFlags |= C.ImGuiConfigFlags_ViewportsEnable }
@@ -21,6 +21,22 @@ pub fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg b
 	}
 
 	imgui.init_for_gl('#version 150'.str, win, gl_context)
+}
+
+// returns true if the event is handled by imgui and should be ignored by via
+fn imgui_handle_event(evt &C.SDL_Event) bool {
+	if ImGui_ImplSDL2_ProcessEvent(evt) {
+		match evt.@type {
+			.mousewheel { return C.igGetIO().WantCaptureMouse }
+			.mousebuttondown { return C.igGetIO().WantCaptureMouse }
+			.textinput { return C.igGetIO().WantCaptureKeyboard }
+			.keydown { return C.igGetIO().WantCaptureKeyboard }
+			.keyup { return C.igGetIO().WantCaptureKeyboard }
+			.windowevent { return true }
+			else { return false }
+		}
+	}
+	return false
 }
 
 fn imgui_new_frame(win voidptr, gfx_dbg bool) {
@@ -35,7 +51,7 @@ fn imgui_new_frame(win voidptr, gfx_dbg bool) {
 fn imgui_render(win voidptr, gl_context voidptr) {
 	igRender()
 
-	io := imgui.get_io()
+	io := C.igGetIO()
 	sg_apply_viewport(0, 0, int(io.DisplaySize.x), int(io.DisplaySize.y), false)
 	ImGui_ImplOpenGL3_RenderDrawData(C.igGetDrawData())
 

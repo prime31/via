@@ -66,6 +66,7 @@ pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
 }
 
 pub fn (gr &Graphics) make_clear_pass(r, g, b, a f32) graphics.PassAction {
+	println('WARNING: use make_pass_action')
 	return gr.make_pass_action({color:math.color_from_floats(r, g, b, a)})
 }
 

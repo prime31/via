@@ -1,10 +1,6 @@
 module imgui
 import via.libs.imgui.c
 
-pub fn get_io() &ImGuiIO {
-	return C.igGetIO()
-}
-
 // ImGui lifecycle helpers, wrapping ImGui, SDL2 Impl and GL Impl methods
 // BEFORE calling init_for_gl a gl loader lib must be called! You must use the same one
 // used in the makefile when imgui was compiled!

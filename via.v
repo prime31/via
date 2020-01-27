@@ -1,5 +1,6 @@
 module via
 import via.time
+import via.input
 import via.libs.flextgl
 import via.libs.sokol
 import via.libs.sokol.gfx
@@ -11,6 +12,7 @@ pub mut:
 	fs &FileSystem
 	g &Graphics
 	win &Window
+	imgui bool
 }
 
 __global vv &Via
@@ -32,6 +34,7 @@ fn create_via(config &ViaConfig) &Via {
 		fs: fs
 		g: graphics(config)
 		win: window(config)
+		imgui: config.imgui
 	}
 
 	return vv
@@ -80,16 +83,23 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 fn (v &Via) poll_events() bool {
 	ev := SDL_Event{}
 	for 0 < C.SDL_PollEvent(&ev) {
-		match int(ev.@type) {
-			C.SDL_QUIT {
+		// ignore events imgui eats
+		if v.imgui && imgui_handle_event(&ev) { continue }
+
+		match ev.@type {
+			.quit {
 				return true
 			}
-			C.SDL_WINDOWEVENT {
+			.windowevent {
 				if ev.window.windowID == v.win.id && ev.window.event == C.SDL_WINDOWEVENT_CLOSE {
 					return true
 				}
 			}
-			else {}
+			.render_targets_reset { println('render_targets_reset') }
+			else {
+				// defer all other events to input to handle
+				input.handle_event(&ev)
+			}
 		}
 	}
 

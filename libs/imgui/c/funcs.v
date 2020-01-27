@@ -1,7 +1,7 @@
 module c
 
 fn C.igCheckbox(label voidptr, p_open voidptr)
-fn C.igGetIO() voidptr
+fn C.igGetIO() &C.ImGuiIO
 fn C.igCreateContext(shared_font_atlas voidptr) voidptr
 fn C.igDestroyContext(igui_context voidptr)
 fn C.igSetCurrentContext(igui_context voidptr)

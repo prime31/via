@@ -6,13 +6,13 @@ struct Window {
 pub mut:
 	id u32
 mut:
-	sdl_window voidptr
+	sdl_window &C.SDL_Window
 	gl_context voidptr
 }
 
 fn window(config ViaConfig) &Window {
 	return &Window{
-		sdl_window: voidptr(0)
+		sdl_window: 0
 		gl_context: voidptr(0)
 	}
 }
