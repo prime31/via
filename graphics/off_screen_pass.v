@@ -66,12 +66,9 @@ pub fn (p &OffScreenPass) get_pixel_perfect_config(w, h int) DrawConfig {
         scale = 1
     }
 
-    // scale--
     x := (w - (p.color_tex.width * scale)) / 2
     y := (h - (p.color_tex.height * scale)) / 2
 
-
-    //ox:p.color_tex.width/2 oy:p.color_tex.height/2
     return {x:x y:y sx:scale sy:scale}
 }
 

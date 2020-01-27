@@ -6,13 +6,13 @@ fn C.memcmp() int
 
 pub struct Pipeline {
 mut:
-	uniforms []Uniform
+	uniforms []UniformBlock
 pub:
 	pip C.sg_pipeline
 	shader C.sg_shader
 }
 
-struct Uniform {
+struct UniformBlock {
 mut:
 	shader_stage gfx.ShaderStage
 	index int
@@ -37,11 +37,11 @@ pub fn (p &Pipeline) free() {
 pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, pipeline_desc mut sg_pipeline_desc) Pipeline {
 	pipeline_desc.shader = shader_make(shader_src, mut shader_desc)
 
-	mut uniforms := []Uniform
+	mut uniforms := []UniformBlock
 	for i in 0..4 {
 		u := shader_desc.vs.uniform_blocks[i]
 		if u.size == 0 { break }
-		uniforms << Uniform{
+		uniforms << UniformBlock{
 			shader_stage: .vs
 			index: i
 			num_bytes: u.size
@@ -52,7 +52,7 @@ pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, pipel
 	for i in 0..4 {
 		u := shader_desc.fs.uniform_blocks[i]
 		if u.size == 0 { break }
-		uniforms << Uniform{
+		uniforms << UniformBlock{
 			shader_stage: .fs
 			index: i
 			num_bytes: u.size
