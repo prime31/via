@@ -58,6 +58,8 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	v.win.create(config)
 	v.g.setup()
 
+	input.set_window_scale(v.win.get_scale())
+
 	if config.imgui { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 	v.g.init_defaults()
 

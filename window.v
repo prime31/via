@@ -53,6 +53,13 @@ fn (w &Window) swap() {
 	SDL_GL_SwapWindow(w.sdl_window)
 }
 
+// returns the drawable size / the window size. Used to scale mouse coords when the OS gives them to us in points.
+pub fn (w &Window) get_scale() f32 {
+	wx, wy := w.get_size()
+	dx, dy := w.get_drawable_size()
+	return dx / wx
+}
+
 pub fn (w &Window) get_drawable_size() (int, int) {
 	width := 0
 	height := 0

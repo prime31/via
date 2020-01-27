@@ -83,7 +83,3 @@ pub fn (p &OffScreenPass) get_pixel_perfect_no_border_config() DrawConfig {
 
 	return {x:x y:y sx:scale sy:scale}
 }
-
-pub fn (p &OffScreenPass) begin() {
-	sg_begin_pass(p.pass, &p.pass_action)
-}

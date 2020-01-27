@@ -10,6 +10,7 @@ mut:
 	mouse_wheel_y int
 	mouse_rel_x int
 	mouse_rel_y int
+	window_scale int
 }
 
 pub enum MouseButton {
@@ -33,6 +34,13 @@ pub fn free() {
 }
 
 //#region internal event handling
+
+// used for scaling mouse input. On macos, mouse position is in points but we always render in pixels.
+// scale should be drawable_size / window_size
+pub fn set_window_scale(scale f32) {
+	mut i := input
+	i.window_scale = int(scale)
+}
 
 // clears any released keys
 pub fn new_frame() {
@@ -165,14 +173,16 @@ pub fn mouse_pos() (int, int) {
 	x := 0
 	y := 0
 	C.SDL_GetMouseState(&x, &y)
-	return x, y
+	return x * input.window_scale, y * input.window_scale
 }
 
 // gets the scaled mouse position based on the currently bound render texture scale and offset
-// as calcuated in OffscreenPass. offset_n is the calcualted x, y value.
-pub fn mouse_pos_scaled(scale, offset_x, offset_y int) (int, int) {
-	mut x, y := mouse_pos()
-	return (x - offset_x) * scale, (y - offset_y) * scale
+// as calcuated in OffscreenPass. scale should be scale and offset_n is the calcualted x, y value.
+pub fn mouse_pos_scaled(scale_x, scale_y f32, offset_x, offset_y f32) (int, int) {
+	x, y := mouse_pos()
+	xf := f32(x) - offset_x
+	yf := f32(y) - offset_y
+	return int(xf / scale_x), int(yf / scale_y)
 }
 
 pub fn mouse_rel_motion() (int, int) {
