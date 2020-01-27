@@ -1,13 +1,8 @@
 module image
 
 #flag -I @VMOD/via/libs/stb/image/thirdparty
+#flag @VMOD/via/libs/stb/image/thirdparty/stb_image.o
 
-
-// #define STBI_NO_STDIO
-#define STBI_NO_GIF
-#define STBI_NO_LINEAR
-#define STBI_NO_HDR
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 

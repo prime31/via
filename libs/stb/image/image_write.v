@@ -1,6 +1,5 @@
 module image
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
 fn C.stbi_write_png(filename byteptr, w int, h int, comp int, data voidptr, stride_in_bytes int) int
