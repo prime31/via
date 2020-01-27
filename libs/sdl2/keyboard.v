@@ -1,4 +1,5 @@
-module c
+module sdl2
+import via.libs.sdl2.c
 
 pub struct C.SDL_Keysym {
 pub:
@@ -35,8 +36,8 @@ fn C.SDL_GetScancodeFromName(name byteptr) Scancode
 fn C.SDL_GetKeyName(key int) byteptr
 fn C.SDL_GetKeyFromName(name byteptr) int
 fn C.SDL_StartTextInput()
-fn C.SDL_IsTextInputActive() Bool
+fn C.SDL_IsTextInputActive() c.Bool
 fn C.SDL_StopTextInput()
 fn C.SDL_SetTextInputRect(rect &SDL_Rect)
-fn C.SDL_HasScreenKeyboardSupport() Bool
-fn C.SDL_IsScreenKeyboardShown(window &SDL_Window) Bool
+fn C.SDL_HasScreenKeyboardSupport() c.Bool
+fn C.SDL_IsScreenKeyboardShown(window &SDL_Window) c.Bool

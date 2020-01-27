@@ -1,4 +1,4 @@
-module c
+module sdl2
 
 pub enum Scancode {
 	unknown = 0

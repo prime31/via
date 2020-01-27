@@ -81,6 +81,8 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 }
 
 fn (v &Via) poll_events() bool {
+	input.new_frame()
+	
 	ev := SDL_Event{}
 	for 0 < C.SDL_PollEvent(&ev) {
 		// ignore events imgui eats

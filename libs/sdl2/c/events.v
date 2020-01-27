@@ -147,6 +147,9 @@ pub:
     x int           /**< X coordinate, relative to window */
     y int           /**< Y coordinate, relative to window */
 }
+pub fn (e &C.SDL_MouseButtonEvent) str() string {
+	return 'MouseButtonEvent. button: $e.button, state: $e.state, clicks: $e.clicks, x: $e.x, y: $e.y'
+}
 
 pub struct C.SDL_MouseWheelEvent {
 pub:
