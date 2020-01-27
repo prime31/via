@@ -1,37 +1,73 @@
-module sdl2
+module c
 
-pub union C.SDL_Event {
-pub:
-	@type u32
-	display C.SDL_DisplayEvent
-	window C.SDL_WindowEvent
-	key C.SDL_KeyboardEvent
-	edit C.SDL_TextEditingEvent
-	text C.SDL_TextInputEvent
-	motion C.SDL_MouseMotionEvent
-	button C.SDL_MouseButtonEvent
-	wheel C.SDL_MouseWheelEvent
-	jaxis C.SDL_JoyAxisEvent
-	jball C.SDL_JoyBallEvent
-	jhat C.SDL_JoyHatEvent
-	jbutton C.SDL_JoyButtonEvent
-	jdevice C.SDL_JoyDeviceEvent
-	caxis C.SDL_ControllerAxisEvent
-	cbutton C.SDL_ControllerButtonEvent
-	cdevice C.SDL_ControllerDeviceEvent
-	adevice C.SDL_AudioDeviceEvent
-	sensor C.SDL_SensorEvent
-	quit C.SDL_QuitEvent
-	user C.SDL_UserEvent
-	tfinger C.SDL_TouchFingerEvent
-	mgesture C.SDL_MultiGestureEvent
-	drop C.SDL_DropEvent
-
-	_pad56 [56]byte
+pub enum EventType {
+	firstevent = 0
+	quit = 256
+	app_terminating = 257
+	app_lowmemory = 258
+	app_willenterbackground = 259
+	app_didenterbackground = 260
+	app_willenterforeground = 261
+	app_didenterforeground = 262
+	displayevent = 336
+	windowevent = 512
+	syswmevent = 513
+	keydown = 768
+	keyup = 769
+	textediting = 770
+	textinput = 771
+	keymapchanged = 772
+	mousemotion = 1024
+	mousebuttondown = 1025
+	mousebuttonup = 1026
+	mousewheel = 1027
+	joyaxismotion = 1536
+	joyballmotion = 1537
+	joyhatmotion = 1538
+	joybuttondown = 1539
+	joybuttonup = 1540
+	joydeviceadded = 1541
+	joydeviceremoved = 1542
+	controlleraxismotion = 1616
+	controllerbuttondown = 1617
+	controllerbuttonup = 1618
+	controllerdeviceadded = 1619
+	controllerdeviceremoved = 1620
+	controllerdeviceremapped = 1621
+	fingerdown = 1792
+	fingerup = 1793
+	fingermotion = 1794
+	dollargesture = 2048
+	dollarrecord = 2049
+	multigesture = 2050
+	clipboardupdate = 2304
+	dropfile = 4096
+	droptext = 4097
+	dropbegin = 4098
+	dropcomplete = 4099
+	audiodeviceadded = 4352
+	audiodeviceremoved = 4353
+	sensorupdate = 4608
+	render_targets_reset = 8192
+	render_device_reset = 8193
+	userevent = 32768
+	lastevent = 65535
 }
 
-// individual event declarations
+pub enum Eventaction {
+	addevent
+	peekevent
+	getevent
+}
+
+pub struct C.SDL_CommonEvent {
+pub:
+	@type u32
+	timestamp u32
+}
+
 pub struct C.SDL_DisplayEvent {
+pub:
     @type u32        /**< ::SDL_DISPLAYEVENT */
     timestamp u32   /**< In milliseconds, populated using SDL_GetTicks() */
     display u32     /**< The associated display index */
@@ -44,7 +80,7 @@ pub struct C.SDL_DisplayEvent {
 
 pub struct C.SDL_WindowEvent {
 pub:
-	@type u32           /**< ::SDL_WINDOWEVENT */
+	@type EventType   	/**< ::SDL_WINDOWEVENT */
 	timestamp u32       /**< In milliseconds, populated using SDL_GetTicks() */
 	windowID u32        /**< The associated window */
 	event byte          /**< ::SDL_WindowEventID */
@@ -79,10 +115,10 @@ pub:
 
 pub struct C.SDL_TextInputEvent {
 pub:
-    @type u32                              /**< ::SDL_TEXTINPUT */
-    timestamp u32                         /**< In milliseconds, populated using SDL_GetTicks() */
-    windowID u32                          /**< The window with keyboard focus, if any */
-    text [32]byte  /**< The input text */
+    @type u32    	/**< ::SDL_TEXTINPUT */
+    timestamp u32	/**< In milliseconds, populated using SDL_GetTicks() */
+    windowID u32 	/**< The window with keyboard focus, if any */
+    text [32]byte  	/**< The input text */
 }
 
 pub struct C.SDL_MouseMotionEvent {
@@ -251,6 +287,18 @@ pub:
     padding u16
 }
 
+pub struct C.SDL_DollarGestureEvent {
+pub:
+	@type u32
+	timestamp u32
+	touchId i64
+	gestureId i64
+	numFingers u32
+	error f32
+	x f32
+	y f32
+}
+
 pub struct C.SDL_DropEvent {
 pub:
     @type u32        /**< ::SDL_DROPBEGIN or ::SDL_DROPFILE or ::SDL_DROPTEXT or ::SDL_DROPCOMPLETE */
@@ -273,6 +321,12 @@ pub:
 	timestamp u32
 }
 
+pub struct C.SDL_OSEvent {
+pub:
+	@type u32
+	timestamp u32
+}
+
 pub struct C.SDL_UserEvent {
 pub:
     @type u32        /**< ::SDL_USEREVENT through ::SDL_LASTEVENT-1 */
@@ -282,3 +336,62 @@ pub:
     data1 voidptr        /**< User defined data pointer */
     data2 voidptr        /**< User defined data pointer */
 }
+
+pub struct C.SDL_SysWMmsg {}
+
+pub struct C.SDL_SysWMEvent {
+pub:
+	@type u32
+	timestamp u32
+	msg &SDL_SysWMmsg
+}
+
+pub struct C.SDL_Event {
+pub:
+	@type EventType
+	common SDL_CommonEvent
+	display SDL_DisplayEvent
+	window SDL_WindowEvent
+	key SDL_KeyboardEvent
+	edit SDL_TextEditingEvent
+	text SDL_TextInputEvent
+	motion SDL_MouseMotionEvent
+	button SDL_MouseButtonEvent
+	wheel SDL_MouseWheelEvent
+	jaxis SDL_JoyAxisEvent
+	jball SDL_JoyBallEvent
+	jhat SDL_JoyHatEvent
+	jbutton SDL_JoyButtonEvent
+	jdevice SDL_JoyDeviceEvent
+	caxis SDL_ControllerAxisEvent
+	cbutton SDL_ControllerButtonEvent
+	cdevice SDL_ControllerDeviceEvent
+	adevice SDL_AudioDeviceEvent
+	sensor SDL_SensorEvent
+	quit SDL_QuitEvent
+	user SDL_UserEvent
+	syswm SDL_SysWMEvent
+	tfinger SDL_TouchFingerEvent
+	mgesture SDL_MultiGestureEvent
+	dgesture SDL_DollarGestureEvent
+	drop SDL_DropEvent
+	padding [56]byte
+}
+
+fn C.SDL_PumpEvents()
+fn C.SDL_PeepEvents(events &SDL_Event, numevents int, action Eventaction, minType u32, maxType u32) int
+fn C.SDL_HasEvent(typ u32) Bool
+fn C.SDL_HasEvents(minType u32, maxType u32) Bool
+fn C.SDL_FlushEvent(typ u32)
+fn C.SDL_FlushEvents(minType u32, maxType u32)
+fn C.SDL_PollEvent(event &SDL_Event) int
+fn C.SDL_WaitEvent(event &SDL_Event) int
+fn C.SDL_WaitEventTimeout(event &SDL_Event, timeout int) int
+fn C.SDL_PushEvent(event &SDL_Event) int
+fn C.SDL_SetEventFilter(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
+fn C.SDL_GetEventFilter(filter fn(voidptr, &SDL_Event) int, userdata &voidptr /* void** */) Bool
+fn C.SDL_AddEventWatch(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
+fn C.SDL_DelEventWatch(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
+fn C.SDL_FilterEvents(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
+fn C.SDL_EventState(typ u32, state int) byte
+fn C.SDL_RegisterEvents(numevents int) u32

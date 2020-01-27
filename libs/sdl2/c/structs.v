@@ -1,5 +1,11 @@
 module c
 
+pub struct C.SDL_Point {
+pub:
+	x int
+	y int
+}
+
 pub struct C.SDL_RWops {}
 
 pub struct C.SDL_Color {
@@ -27,8 +33,6 @@ pub mut:
 	h f32
 }
 
-pub struct C.SDL_Window {}
-
 pub struct C.SDL_Renderer {}
 
 pub struct C.SDL_Texture {}
@@ -47,36 +51,6 @@ pub:
 	clip_rect SDL_Rect
 	map voidptr
 	refcount int
-}
-
-/////////////////////////////////////////////////////////
-// TODO: should be moved out of c folder
-pub enum WindowEventID {
-	_none
-	shown
-	hidden
-	exposed
-	moved
-	resized
-	size_changed
-	minimized
-	maximized
-	restored
-	enter
-	leave
-	focus_gained
-	focus_lost
-	close
-	take_focus
-	hit_test
-}
-
-struct C.SDL_Keysym {
-pub:
-	scancode int  /**< hardware specific scancode */
-	sym int       /**< SDL virtual keysym */
-	mod u16       /**< current key modifiers */
-	unused u32    /**< translated character */
 }
 
 pub struct C.SDL_AudioSpec {
