@@ -10,7 +10,7 @@ mut:
 	mouse_wheel_y int
 	mouse_rel_x int
 	mouse_rel_y int
-	window_scale int
+	window_scale int = 1
 }
 
 pub enum MouseButton {
