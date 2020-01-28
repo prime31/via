@@ -1,6 +1,7 @@
 module via
 import via.time
 import via.input
+import via.filesystem
 import via.libs.flextgl
 import via.libs.sokol
 import via.libs.sokol.gfx
@@ -9,7 +10,6 @@ import via.libs.sdl2
 pub struct Via {
 pub mut:
 	audio &Audio
-	fs &FileSystem
 	g &Graphics
 	win &Window
 	imgui bool
@@ -20,18 +20,16 @@ __global vv &Via
 pub const (
 	v = &Via{
 		audio: 0
-		fs: 0
 		g: 0
 		win: 0
 	}
 )
 
 fn create_via(config &ViaConfig) &Via {
-	fs := new_filesystem(config)
+	filesystem.init_filesystem(config.identity, config.append_identity)
 
 	vv = &Via {
 		audio: audio(config)
-		fs: fs
 		g: graphics(config)
 		win: window(config)
 		imgui: config.imgui
@@ -45,7 +43,7 @@ fn create_via(config &ViaConfig) &Via {
 
 fn (v &Via) free() {
 	v.audio.free()
-	v.fs.free()
+	filesystem.free()
 	v.g.free()
 	time.free()
 	v.win.free()
@@ -76,6 +74,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 		ctx.update(v)
 		ctx.draw(v)
+		sg_commit()
 
 		if v.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
 		v.win.swap()

@@ -5,7 +5,7 @@ module sokol
 
 #flag linux -lX11 -lGL
 
-// METAL
+// METAL: must be run with "v -d metal"
 // #flag -DSOKOL_METAL
 // #flag darwin -framework Metal -framework Cocoa -framework MetalKit -framework QuartzCore -fobjc-arc
 

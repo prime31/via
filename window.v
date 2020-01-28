@@ -72,17 +72,19 @@ fn (w mut Window) create_metal_window(config &ViaConfig) {
 }
 
 fn (w &Window) swap() {
-	SDL_GL_SwapWindow(w.sdl_window)
+	$if !metal? { SDL_GL_SwapWindow(w.sdl_window) }
 }
 
 // returns the drawable size / the window size. Used to scale mouse coords when the OS gives them to us in points.
 pub fn (w &Window) get_scale() f32 {
-	wx, wy := w.get_size()
-	dx, dy := w.get_drawable_size()
+	wx, _ := w.get_size()
+	dx, _ := w.get_drawable_size()
 	return dx / wx
 }
 
 pub fn (w &Window) get_drawable_size() (int, int) {
+	$if metal? { return int(sdl_metal_util.width()), int(sdl_metal_util.height()) }
+
 	width := 0
 	height := 0
 	SDL_GL_GetDrawableSize(w.sdl_window, &width, &height)
