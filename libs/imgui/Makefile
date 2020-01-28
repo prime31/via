@@ -138,6 +138,12 @@ ifdef SED
 	$(SED) "s/glsl_version = NULL/glsl_version/g" $(MODULE_FOLDER)/imgui_impl_opengl3.h
 endif
 
+build_wasm:
+	[ -d cimgui_git ] || git clone --recursive --depth 1 $(IMGUI_BRANCH) https://github.com/cimgui/cimgui.git cimgui_git
+	(export CFLAGS= CXXFLAGS= ; cd cimgui_git ; mkdir build ; cd build ; emconfigure cmake -DIMGUI_STATIC=ON .. ; emconfigure make)
+	[ -d $(MODULE_FOLDER)/webgl ] || mkdir $(MODULE_FOLDER)/webgl
+	cp cimgui_git/build/cimgui.a $(MODULE_FOLDER)/webgl
+
 generate_v_bindings:
 	dotnet run --project generator
 
