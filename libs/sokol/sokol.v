@@ -6,12 +6,10 @@ module sokol
 #flag linux -lX11 -lGL
 
 // METAL
-// #define SOKOL_METAL // which one? depends on import order...
 // #flag -DSOKOL_METAL
-// #flag darwin -framework Metal -framework Cocoa -framework MetalKit -framework QuartzCore
+// #flag darwin -framework Metal -framework Cocoa -framework MetalKit -framework QuartzCore -fobjc-arc
 
 // OPENGL
-// #define SOKOL_GLCORE33 // which one? depends on import order...
 #flag -DSOKOL_GLCORE33
 #flag darwin -framework OpenGL -framework Cocoa -framework QuartzCore
 // this is just to quite the warnings about gl.h and gl3.h being included by Apple

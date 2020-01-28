@@ -1,7 +1,7 @@
 module sdl_metal_util
 
 #flag -I @VMOD/via/libs/sokol/sdl_metal_util
-#flag darwin -framework Metal -framework Cocoa -framework MetalKit -framework QuartzCore
+#flag darwin -framework Metal -framework Cocoa -framework MetalKit -framework QuartzCore -fobjc-arc
 
 #include "metal_util.h"
 

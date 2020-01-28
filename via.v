@@ -37,6 +37,9 @@ fn create_via(config &ViaConfig) &Via {
 		imgui: config.imgui
 	}
 
+	// disable imgui for metal
+	$if metal? { vv.imgui = false }
+
 	return vv
 }
 
@@ -63,23 +66,23 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 	input.set_window_scale(v.win.get_scale())
 
-	if config.imgui { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
+	if v.imgui { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 	v.g.init_defaults()
 
 	ctx.initialize(v)
 
 	for !v.poll_events() {
-		if config.imgui { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug) }
+		if v.imgui { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug) }
 
 		ctx.update(v)
 		ctx.draw(v)
 
-		if config.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
+		if v.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
 		v.win.swap()
 		time.tick()
 	}
 
-	if config.imgui { imgui_shutdown() }
+	if v.imgui { imgui_shutdown() }
 	C.SDL_VideoQuit()
 
 	v.free()

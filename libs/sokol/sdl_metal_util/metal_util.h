@@ -9,9 +9,8 @@ static CAMetalLayer* _metal_layer;
 static id<CAMetalDrawable> _drawable;
 static MTLRenderPassDescriptor* _render_pass_descriptor;
 static CGSize _fb_size;
-#endif
 
-#if defined(SOKOL_METAL)
+
 CGSize _mu_calculate_drawable_size() {
     static float content_scale = 0;
     if (content_scale < 0)
@@ -27,7 +26,8 @@ void mu_create_metal_layer(void* window) {
     _window = window;
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	_metal_layer = (__bridge __typeof__ (CAMetalLayer*))SDL_RenderGetMetalLayer(renderer);
-    SDL_DestroyRenderer(renderer);
+    // TODO: switch over to SDL_Metal when 2.0.11 releases
+    // SDL_DestroyRenderer(renderer);
 
     _metal_layer.framebufferOnly = YES;
 }
@@ -38,7 +38,7 @@ const void* mu_get_metal_device() {
 
 const void* mu_get_render_pass_descriptor() {
     // todo: do we need to set the drawableSize? doesnt seem like we do...
-    //_metal_layer.drawableSize = _mu_calculate_drawable_size();
+    // _metal_layer.drawableSize = _mu_calculate_drawable_size();
 
     _drawable = [_metal_layer nextDrawable];
     _fb_size = _metal_layer.drawableSize;
@@ -87,6 +87,12 @@ const void* mu_get_metal_device() { return 0; }
 const void* mu_get_render_pass_descriptor() { return 0; }
 
 const void* mu_get_drawable() { return 0; }
+
+float mu_dpi_scale() { return 0; }
+
+float mu_width() { return 0; }
+
+float mu_height() { return 0; }
 
 void mu_set_framebuffer_only(bool framebuffer_only) {}
 

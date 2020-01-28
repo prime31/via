@@ -1,6 +1,7 @@
 module via
 import via.libs.sdl2
 import via.libs.flextgl
+import via.libs.sokol.sdl_metal_util
 
 struct Window {
 pub mut:
@@ -23,6 +24,11 @@ fn (w &Window) free() {
 }
 
 fn (w mut Window) create(config &ViaConfig) {
+	$if metal? { w.create_metal_window(config) }
+	$if !metal? { w.create_gl_window(config) }
+}
+
+fn (w mut Window) create_gl_window(config &ViaConfig) {
 	SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_FLAGS, C.SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
 	SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK, C.SDL_GL_CONTEXT_PROFILE_CORE)
 	SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
@@ -47,6 +53,22 @@ fn (w mut Window) create(config &ViaConfig) {
 	}
 
 	flextgl.flext_init()
+}
+
+[if metal]
+fn (w mut Window) create_metal_window(config &ViaConfig) {
+	println('metal window')
+	C.SDL_SetHint(C.SDL_HINT_RENDER_DRIVER, 'metal')
+	C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_AUDIO)
+
+	mut window_flags := C.SDL_WINDOW_MOUSE_FOCUS
+	if config.window_resizable { window_flags = window_flags | C.SDL_WINDOW_RESIZABLE }
+	if config.window_highdpi { window_flags = window_flags | C.SDL_WINDOW_ALLOW_HIGHDPI }
+	if config.window_fullscreen { window_flags = window_flags | C.SDL_WINDOW_FULLSCREEN }
+	w.sdl_window = C.SDL_CreateWindow("V SDL2 + Metal + Sokol demo", C.SDL_WINDOWPOS_CENTERED, C.SDL_WINDOWPOS_CENTERED, 512, 384, window_flags)
+	w.id = SDL_GetWindowID(w.sdl_window)
+
+	sdl_metal_util.init_metal(w.sdl_window)
 }
 
 fn (w &Window) swap() {
