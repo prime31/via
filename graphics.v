@@ -144,7 +144,6 @@ pub fn (g &Graphics) new_offscreen_pass(width, height int, clear_color math.Colo
 
 pub fn (g &Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config PassConfig) {
 	// TODO: begin all batches
-	// TODO: set the projection matrix for the pipeline based on the render texture size flipped
 	sg_begin_pass(pass.pass, &pass.pass_action)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
@@ -156,11 +155,17 @@ pub fn (g &Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config P
 
 	sg_apply_pipeline(pip.pip)
 
-	proj_mat := math.mat32_ortho_off_center(pass.color_tex.width, -pass.color_tex.height)
+	// projection matrix with flipped y for OpenGL madness
+	mut proj_mat := math.mat32_ortho_off_center(pass.color_tex.width, -pass.color_tex.height)
+	if &config.trans_mat != &math.Mat32(0) {
+		// TODO: shouldnt this be translation * projection?!?!
+		proj_mat = proj_mat * *config.trans_mat
+	}
 	pip.set_uniform_raw(.vs, 0, &proj_mat)
+	pip.apply_uniforms()
 }
 
-// TODO: might need a separate version for offscreen-to-backbuffer blit that sets mat32_ortho
+// TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
 pub fn (g &Graphics) begin_default_pass(pass_action &graphics.PassAction, config PassConfig) {
 	// TODO: begin all batches
 	w, h := vv.win.get_drawable_size()
@@ -176,12 +181,20 @@ pub fn (g &Graphics) begin_default_pass(pass_action &graphics.PassAction, config
 	sg_apply_pipeline(pip.pip)
 
 	// blitting offscreen textures does not need an ortho off-center matrix so we set the rect to 0,0,w,h
-	proj_mat := if config.blit_pass {
+	mut proj_mat := if config.blit_pass {
 		math.mat32_ortho(w, h)
 	} else {
 		math.mat32_ortho_off_center(w, h)
 	}
+
+	// not-blit passes could have a translation matrix
+	if !config.blit_pass && config.trans_mat != &math.Mat32(0) {
+		// TODO: shouldnt this be translation * projection?!?!
+		proj_mat = proj_mat * *config.trans_mat
+	}
+
 	pip.set_uniform_raw(.vs, 0, &proj_mat)
+	pip.apply_uniforms()
 }
 
 pub fn (g &Graphics) end_pass() {

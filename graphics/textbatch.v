@@ -13,8 +13,6 @@ mut:
 	last_appended_char_cnt int = 0
 	img C.sg_image
 	quad math.Quad
-	trans_mat math.Mat32
-	uniform_set bool
 }
 
 pub fn textbatch(max_chars int) &TextBatch {
@@ -40,10 +38,7 @@ fn (tb &TextBatch) ensure_capacity(chars int) bool {
 	return true
 }
 
-pub fn (tb mut TextBatch) begin(trans_mat math.Mat32) {
-	tb.trans_mat = trans_mat
-	tb.uniform_set = false
-}
+pub fn (tb mut TextBatch) begin() {}
 
 pub fn (tb mut TextBatch) end() {
 	tb.flush()
@@ -107,10 +102,6 @@ pub fn (tb mut TextBatch) flush() {
 	tb.last_appended_char_cnt = tb.char_cnt
 
 	sg_apply_bindings(&tb.bindings)
-	if !tb.uniform_set {
-		sg_apply_uniforms(gfx.ShaderStage.vs, 0, &tb.trans_mat, sizeof(math.Mat32))
-		tb.uniform_set = true
-	}
 	sg_draw(0, total_quads * 6, 1)
 }
 

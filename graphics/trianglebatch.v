@@ -11,8 +11,6 @@ mut:
 	tri_cnt int = 0
 	last_appended_tri_cnt int = 0
 	tex Texture
-	trans_mat math.Mat32
-	uniform_set bool
 }
 
 pub fn trianglebatch(max_tris int) &TriangleBatch {
@@ -39,10 +37,7 @@ fn (tb &TriangleBatch) ensure_capacity(tris int) bool {
 	return true
 }
 
-pub fn (tb mut TriangleBatch) begin(trans_mat math.Mat32) {
-	tb.trans_mat = trans_mat
-	tb.uniform_set = false
-}
+pub fn (tb mut TriangleBatch) begin() {}
 
 pub fn (tb mut TriangleBatch) end() {
 	tb.flush()
@@ -117,10 +112,6 @@ pub fn (tb mut TriangleBatch) flush() {
 	tb.last_appended_tri_cnt = tb.tri_cnt
 
 	sg_apply_bindings(&tb.bindings)
-	if !tb.uniform_set {
-		sg_apply_uniforms(gfx.ShaderStage.vs, 0, &tb.trans_mat, sizeof(math.Mat32))
-		tb.uniform_set = true
-	}
 	sg_draw(0, total_tris * 3, 1)
 }
 
