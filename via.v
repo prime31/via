@@ -54,7 +54,10 @@ fn (v &Via) free() {
 
 pub fn run<T>(config &ViaConfig, ctx mut T) {
 	mut v := create_via(config)
-	C.SDL_Init(C.SDL_INIT_VIDEO)
+	if C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_HAPTIC | C.SDL_INIT_GAMECONTROLLER) != 0 {
+		C.SDL_Log(c'Unable to initialize SDL: %s', C.SDL_GetError())
+	}
+
 	v.win.create(config)
 	v.g.setup()
 
@@ -84,7 +87,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 fn (v &Via) poll_events() bool {
 	input.new_frame()
-	
+
 	ev := SDL_Event{}
 	for 0 < C.SDL_PollEvent(&ev) {
 		// ignore events imgui eats

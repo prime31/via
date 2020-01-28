@@ -69,12 +69,8 @@ pub fn handle_event(evt &C.SDL_Event) {
 	mut i := input
 
 	match evt.@type {
-		.keydown {
-			i.handle_keyboard_event(evt.key)
-		}
-		.keyup {
-			i.handle_keyboard_event(evt.key)
-		}
+		.keydown { i.handle_keyboard_event(evt.key) }
+		.keyup { i.handle_keyboard_event(evt.key) }
 		.mousemotion {
 			i.mouse_rel_x = evt.motion.xrel
 			i.mouse_rel_y = evt.motion.yrel
@@ -84,6 +80,7 @@ pub fn handle_event(evt &C.SDL_Event) {
 		.mousewheel { i.mouse_wheel_y = evt.wheel.y	}
 		.controlleraxismotion {
 			// evt.caxis
+			println('controlleraxismotion')
 		}
 		.controllerbuttondown {
 			// evt.cbutton
