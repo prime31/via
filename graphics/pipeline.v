@@ -78,7 +78,11 @@ pub fn pipeline_new_default_text() Pipeline {
 	shader_desc := shader_get_default_desc()
 	mut pipeline_desc := pipeline_get_default_desc()
 	pipeline_desc.label = 'Default Text Pip'.str
-	return pipeline({frag: default_text_frag_main}, shader_desc, mut pipeline_desc)
+
+	mut frag_main := string{0, 0}
+	$if metal? { frag_main = default_text_frag_main_metal }
+	$if !metal? { frag_main = default_text_frag_main }
+	return pipeline({frag: frag_main}, shader_desc, mut pipeline_desc)
 }
 
 pub fn (p &Pipeline) get_uniform_index(shader_stage gfx.ShaderStage, index int) int {
