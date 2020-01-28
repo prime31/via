@@ -39,6 +39,8 @@ pub fn (p &OffScreenPass) free(free_images bool) {
 	}
 }
 
+//#region Resolution Policies for blitting the render target
+
 pub fn (p &OffScreenPass) get_pixel_perfect_config() DrawConfig {
 	w, h := vv.win.get_drawable_size()
 
@@ -83,3 +85,5 @@ pub fn (p &OffScreenPass) get_pixel_perfect_no_border_config() DrawConfig {
 
 	return {x:x y:y sx:scale sy:scale}
 }
+
+//#endregion
