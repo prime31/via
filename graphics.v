@@ -11,9 +11,28 @@ struct Graphics {
 mut:
 	min_filter gfx.Filter
 	mag_filter gfx.Filter
+	pass_action C.sg_pass_action
 	def_pip graphics.Pipeline
 	def_text_pip graphics.Pipeline
 	pass_proj_mat math.Mat32
+}
+
+pub struct PassActionConfig {
+pub:
+	color math.Color = math.Color{}
+	color_action gfx.Action = gfx.Action.clear
+	stencil_action gfx.Action = .clear
+	stencil_val byte = byte(0)
+}
+fn (cfg &PassActionConfig) apply(pa mut C.sg_pass_action) {
+	pa.colors[0].action = cfg.color_action
+	pa.colors[0].val[0] = cfg.color.r_f()
+	pa.colors[0].val[1] = cfg.color.g_f()
+	pa.colors[0].val[2] = cfg.color.b_f()
+	pa.colors[0].val[3] = cfg.color.a_f()
+
+	pa.stencil.action = cfg.stencil_action
+	pa.stencil.val = cfg.stencil_val
 }
 
 pub struct PassConfig {
@@ -65,15 +84,6 @@ pub fn (g &Graphics) get_default_text_pipeline() &graphics.Pipeline {
 pub fn (g mut Graphics) set_default_filter(min, mag gfx.Filter) {
 	g.min_filter = min
 	g.mag_filter = mag
-}
-
-pub fn (gr &Graphics) make_clear_pass(r, g, b, a f32) graphics.PassAction {
-	println('WARNING: use make_pass_action')
-	return gr.make_pass_action({color:math.color_from_floats(r, g, b, a)})
-}
-
-pub fn (g &Graphics) make_pass_action(config graphics.PassActionConfig) graphics.PassAction {
-	return graphics.passaction(config)
 }
 
 //#region create graphics resources
@@ -134,18 +144,17 @@ pub fn (g &Graphics) new_fontstash(width, height int) &fonts.FontStash {
 	return fonts.fontstash(width, height, g.min_filter, g.mag_filter)
 }
 
-pub fn (g &Graphics) new_offscreen_pass(width, height int, clear_color math.Color) graphics.OffScreenPass {
-	pass := g.make_pass_action({color:clear_color})
-	return graphics.offscreenpass(width, height, g.min_filter, g.mag_filter, pass)
+pub fn (g &Graphics) new_offscreen_pass(width, height int) graphics.OffScreenPass {
+	return graphics.offscreenpass(width, height, g.min_filter, g.mag_filter)
 }
 
 //#endregion
 
 //#region rendering
 
-pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config PassConfig) {
-	// TODO: begin all batches
-	sg_begin_pass(pass.pass, &pass.pass_action)
+pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, pass_action_cfg PassActionConfig, config PassConfig) {
+	pass_action_cfg.apply(mut g.pass_action)
+	sg_begin_pass(pass.pass, &g.pass_action)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
 		g.get_default_pipeline()
@@ -167,10 +176,10 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, confi
 }
 
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
-pub fn (g mut Graphics) begin_default_pass(pass_action &graphics.PassAction, config PassConfig) {
-	// TODO: begin all batches
+pub fn (g mut Graphics) begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
+	pass_action_cfg.apply(mut g.pass_action)
 	w, h := vv.win.get_drawable_size()
-	sg_begin_default_pass(&pass_action.pass, w, h)
+	sg_begin_default_pass(&g.pass_action, w, h)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
 		g.get_default_pipeline()

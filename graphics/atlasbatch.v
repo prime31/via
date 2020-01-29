@@ -98,13 +98,12 @@ pub fn (sb mut AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
 	return sb.sprite_cnt - 1
 }
 
-pub fn (sb mut AtlasBatch) draw(trans_mat &math.Mat32) {
+pub fn (sb mut AtlasBatch) draw() {
 	if sb.v_buffer_dirty {
 		sb.update_verts()
 	}
 
 	sg_apply_bindings(&sb.bindings)
-	sg_apply_uniforms(gfx.ShaderStage.vs, 0, trans_mat, sizeof(math.Mat32))
 	sg_draw(0, sb.sprite_cnt * 6, 1)
 	sb.v_buffer_safe_to_update = true
 }

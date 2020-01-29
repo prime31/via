@@ -7,11 +7,9 @@ pub:
 	color_tex Texture
 	depth_tex Texture
 	pass sg_pass
-pub mut:
-	pass_action PassAction
 }
 
-pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Filter, pass_action PassAction) OffScreenPass {
+pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Filter) OffScreenPass {
 	color_tex := rendertexture(width, height, min_filter, mag_filter, false)
 	depth_tex := rendertexture(width, height, min_filter, mag_filter, true)
 
@@ -25,7 +23,6 @@ pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Fi
 	return OffScreenPass{
 		color_tex: color_tex
 		depth_tex: depth_tex
-		pass_action: pass_action
 		pass: sg_make_pass(&pass_desc)
 	}
 }
