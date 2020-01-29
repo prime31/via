@@ -150,11 +150,9 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, confi
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
 		g.get_default_pipeline()
 	} else {
-		println('def pass: use custom pip')
+		println('offscreen pass: use custom pip')
 		config.pipeline
 	}
-
-	sg_apply_pipeline(pip.pip)
 
 	// projection matrix with flipped y for OpenGL madness
 	mut proj_mat := math.mat32_ortho_off_center(pass.color_tex.width, -pass.color_tex.height)
@@ -165,9 +163,7 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, confi
 
 	// save the transform-projection matrix in case a new pipeline is set later
 	g.pass_proj_mat = proj_mat
-
-	pip.set_uniform_raw(.vs, 0, &proj_mat)
-	pip.apply_uniforms()
+	g.set_pipeline(mut pip)
 }
 
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
@@ -182,8 +178,6 @@ pub fn (g mut Graphics) begin_default_pass(pass_action &graphics.PassAction, con
 		println('def pass: use custom pip')
 		config.pipeline
 	}
-
-	sg_apply_pipeline(pip.pip)
 
 	// blitting offscreen textures does not need an ortho off-center matrix so we set the rect to 0,0,w,h
 	mut proj_mat := if config.blit_pass {
@@ -200,9 +194,7 @@ pub fn (g mut Graphics) begin_default_pass(pass_action &graphics.PassAction, con
 
 	// save the transform-projection matrix in case a new pipeline is set later
 	g.pass_proj_mat = proj_mat
-
-	pip.set_uniform_raw(.vs, 0, &proj_mat)
-	pip.apply_uniforms()
+	g.set_pipeline(mut pip)
 }
 
 pub fn (g &Graphics) end_pass() {
