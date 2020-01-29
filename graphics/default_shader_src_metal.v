@@ -47,18 +47,18 @@ struct spvUnsafeArray
     }
 };
 
-struct main0_out
-{
-    float2 VaryingTexCoord [[user(locn0)]];
-    float4 VaryingColor [[user(locn1)]];
-    float4 gl_Position [[position]];
-};
-
-struct main0_in
+struct vs_in
 {
     float2 VertPosition [[attribute(0)]];
     float2 VertTexCoord [[attribute(1)]];
     float4 VertColor [[attribute(2)]];
+};
+
+struct vs_out
+{
+    float2 VaryingTexCoord [[user(locn0)]];
+    float4 VaryingColor [[user(locn1)]];
+    float4 gl_Position [[position]];
 };
 
 static inline __attribute__((always_inline))
@@ -67,9 +67,9 @@ float4 position(thread const float3x2& transMat, thread const float2& localPosit
     return float4(transMat * float3(localPosition, 1.0), 0.0, 1.0);
 }
 
-vertex main0_out _main(main0_in in [[stage_in]], constant spvUnsafeArray<float3, 2>& TransformMatrix [[buffer(0)]])
+vertex vs_out _main(vs_in in [[stage_in]], constant spvUnsafeArray<float3, 2>& TransformMatrix [[buffer(0)]])
 {
-    main0_out out = {};
+    vs_out out = {};
     out.VaryingTexCoord = in.VertTexCoord;
     out.VaryingColor = in.VertColor;
     float3x2 param = float3x2(float2(TransformMatrix[0].x, TransformMatrix[0].y), float2(TransformMatrix[0].z, TransformMatrix[1].x), float2(TransformMatrix[1].y, TransformMatrix[1].z));
