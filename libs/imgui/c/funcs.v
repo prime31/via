@@ -19,6 +19,9 @@ fn C.igRender()
 fn C.igGetDrawData() voidptr
 fn C.igGetStyle() &C.ImGuiStyle
 
+fn C.igDragFloat2(label byteptr, v []f32, v_speed f32, v_min f32, v_max f32, format byteptr, power f32) bool
+fn C.igSliderAngle(label byteptr, v_rad &f32, v_degrees_min f32, v_degrees_max f32, format byteptr) bool
+
 fn C.igBeginMainMenuBar() bool
 fn C.igBeginMenu(label byteptr, show bool) bool
 fn C.igMenuItemBoolPtr(label byteptr, unknown byteptr, open &bool, something bool)

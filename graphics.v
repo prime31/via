@@ -13,6 +13,7 @@ mut:
 	mag_filter gfx.Filter
 	def_pip graphics.Pipeline
 	def_text_pip graphics.Pipeline
+	pass_proj_mat math.Mat32
 }
 
 pub struct PassConfig {
@@ -142,7 +143,7 @@ pub fn (g &Graphics) new_offscreen_pass(width, height int, clear_color math.Colo
 
 //#region rendering
 
-pub fn (g &Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config PassConfig) {
+pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config PassConfig) {
 	// TODO: begin all batches
 	sg_begin_pass(pass.pass, &pass.pass_action)
 
@@ -161,12 +162,16 @@ pub fn (g &Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, config P
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
 	}
+
+	// save the transform-projection matrix in case a new pipeline is set later
+	g.pass_proj_mat = proj_mat
+
 	pip.set_uniform_raw(.vs, 0, &proj_mat)
 	pip.apply_uniforms()
 }
 
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
-pub fn (g &Graphics) begin_default_pass(pass_action &graphics.PassAction, config PassConfig) {
+pub fn (g mut Graphics) begin_default_pass(pass_action &graphics.PassAction, config PassConfig) {
 	// TODO: begin all batches
 	w, h := vv.win.get_drawable_size()
 	sg_begin_default_pass(&pass_action.pass, w, h)
@@ -193,6 +198,9 @@ pub fn (g &Graphics) begin_default_pass(pass_action &graphics.PassAction, config
 		proj_mat = proj_mat * *config.trans_mat
 	}
 
+	// save the transform-projection matrix in case a new pipeline is set later
+	g.pass_proj_mat = proj_mat
+
 	pip.set_uniform_raw(.vs, 0, &proj_mat)
 	pip.apply_uniforms()
 }
@@ -200,6 +208,16 @@ pub fn (g &Graphics) begin_default_pass(pass_action &graphics.PassAction, config
 pub fn (g &Graphics) end_pass() {
 	// TODO: end all batches
 	sg_end_pass()
+}
+
+pub fn (g &Graphics) set_pipeline(pipeline mut graphics.Pipeline) {
+	sg_apply_pipeline(pipeline.pip)
+	pipeline.set_uniform_raw(.vs, 0, &g.pass_proj_mat)
+	pipeline.apply_uniforms()
+}
+
+pub fn (g &Graphics) set_default_pipeline() {
+	g.set_pipeline(mut g.def_pip)
 }
 
 //#endregion

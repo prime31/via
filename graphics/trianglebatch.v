@@ -81,7 +81,6 @@ pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int) {
 	v0 := center + sin_cos.scale(radius)
 	theta += increment
 
-	// for (int i = 1; i < circleSegments - 1; i++) {
 	for i in 1..segments - 1 {
 		sin_cos = math.Vec2{math.cos(theta), math.sin(theta)}
 		v1 := center + sin_cos.scale(radius)
@@ -90,14 +89,6 @@ pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int) {
 		v2 := center + sin_cos.scale(radius)
 
 		tb.draw_triangle(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y)
-
-		// v1 := center + radius * new Vector2((float) Math.Cos(theta), (float) Math.Sin(theta));
-		// var v2 = center + radius * new Vector2((float) Math.Cos(theta + increment),
-		// 				(float) Math.Sin(theta + increment));
-
-		// AddVertex(v0, color, PrimitiveType.TriangleList)
-		// AddVertex(v1, color, PrimitiveType.TriangleList)
-		// AddVertex(v2, color, PrimitiveType.TriangleList)
 
 		theta += increment
 	}

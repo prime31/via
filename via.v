@@ -73,7 +73,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		if v.imgui { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug) }
 
 		ctx.update(v)
-		ctx.draw(v)
+		ctx.draw(mut v)
 		sg_commit()
 
 		if v.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
