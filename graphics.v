@@ -206,7 +206,6 @@ pub fn (g mut Graphics) begin_default_pass(pass_action &graphics.PassAction, con
 }
 
 pub fn (g &Graphics) end_pass() {
-	// TODO: end all batches
 	sg_end_pass()
 }
 
