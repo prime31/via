@@ -1,5 +1,9 @@
 module math
 
+const (
+	delta = 1e-10
+)
+
 pub struct Rect {
 pub mut:
 	x int
@@ -26,6 +30,12 @@ pub fn (r &Rect) contains(x, y int) bool {
 	return r.x <= x && x < r.right() && r.y <= y && y < r.bottom()
 }
 
+[inline]
+pub fn (r &Rect) contains_pt(x, y int) bool {
+	return f32(x - r.x) > delta && f32(y - r.y) > delta &&
+		f32(r.x + r.w - x) > delta && f32(r.y + r.h - y) > delta
+}
+
 pub fn (r1 &Rect) union_rect(r2 &Rect) Rect {
 	mut res := Rect{}
 	res.x = int(min(r1.x, r2.x))
@@ -49,5 +59,14 @@ pub fn (r1 &Rect) intersection(r2 &Rect) Rect {
 		return Rect{left, top, right - left, bottom - top}
 	} else {
 		return Rect{0, 0, 0, 0}
+	}
+}
+
+pub fn minkowski_diff(r1, r2 &Rect) Rect {
+	return Rect{
+		x: r2.x - r1.x - r1.w
+		y: r2.y - r1.y - r1.h
+		w: r1.w + r2.w
+		h: r1.h + r2.h
 	}
 }

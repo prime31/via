@@ -1,6 +1,10 @@
 module collections
 import via.math
 
+const (
+	delta = 1e-10
+)
+
 // TODO: should be an interface
 pub struct Collider {
 pub mut:
@@ -24,8 +28,8 @@ pub fn (i &Collider) get_bounds() math.Rect {
 pub struct SpatialHash {
 	cells IntHashMap
 	items IntHashMap
-	cell_size int = 32
-	inv_cell_size f32 = 1.0 / 32.0
+	cell_size int = 50
+	inv_cell_size f32 = 1.0 / 50.0
 mut:
 	id_counter int
 	bounds math.Rect
@@ -109,9 +113,9 @@ fn (sh mut SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell 
 			sh.cells.put(key, cell)
 			return cell
 		}
-	}
 
-	panic('')
+		return &Cell(0)
+	}
 }
 
 fn (sh mut SpatialHash) expand_bounds(x, y, x1, y1 int) {
@@ -197,12 +201,215 @@ pub fn (sh mut SpatialHash) update(id int, collider Collider) {
 	}
 }
 
+struct SegmentIntersectionResult {
+	collision bool
+	ti1 f32
+	ti2 f32
+	nx1 f32
+	ny1 f32
+	nx2 f32
+	ny2 f32
+}
+
+struct CollisionResult {
+	collision bool
+	overlaps bool
+	ti f32
+	move_x f32
+	move_y f32
+	normal_x f32
+	normal_y f32
+	touch_x f32
+	touch_y f32
+}
+
+fn (sh &SpatialHash) get_segment_intersection_indices(bounds &math.Rect, x1, y1, x2, y2 f32) SegmentIntersectionResult {
+	mut ti1 := -1000000.0
+	mut ti2 := 1000000.0
+	dx := x2 - x1
+	dy := y2 - y1
+	mut nx := 0
+	mut ny := 0
+	mut nx1 := 0.0
+	mut ny1 := 0.0
+	mut nx2 := 0.0
+	mut ny2 := 0.0
+	mut p := 0.0
+	mut q := 0.0
+	mut r := 0.0
+
+	for side in 1..5 {
+		match side {
+			1 {
+				nx = -1
+				ny = 0
+				p = -dx
+				q = x1 - bounds.x
+			}
+			2 {
+				nx = 1
+				ny = 0
+				p = dx
+				q = f32(bounds.x + bounds.w) - x1
+			}
+			3 {
+				nx = 0
+				ny = -1
+				p = -dy
+				q = y1 - bounds.y
+			}
+			4 {
+				nx = 0
+				ny = 1
+				p = dy
+				q = f32(bounds.y + bounds.h) - y1
+			}
+			else {}
+		}
+
+		if p == 0 {
+			if q <= 0 {
+				return SegmentIntersectionResult{}
+			}
+		} else {
+			r = q / p
+			if p < 0 {
+				if r > ti2 {
+					return SegmentIntersectionResult{}
+				}
+				if r > ti1 {
+					ti1 = r
+					nx1 = nx
+					ny1 = ny
+				}
+			} else { // p > 0
+				if r < ti1 {
+					return SegmentIntersectionResult{}
+				}
+				if r < ti2 {
+					ti2 = r
+					nx2 = nx
+					ny2 = ny
+				}
+			}
+		}
+	}
+
+	println('colllllllllision')
+	return SegmentIntersectionResult{true, ti1, ti2, nx1, ny1, nx2, ny2}
+}
+
+fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, goal_y f32) CollisionResult {
+	dx := goal_x - bounds.x
+	dy := goal_y - bounds.y
+
+	item := *HashItem(sh.items.get(other_id))
+	diff := math.minkowski_diff(bounds, item.bounds)
+
+	mut overlaps := false
+	mut ti := 0.0
+	mut nx := 0.0
+	mut ny := 0.0
+
+	if diff.contains(0, 0) || diff.contains_pt(0, 0) {
+		println('already overlapping before movement')
+		overlaps = true
+	} else {
+		col := sh.get_segment_intersection_indices(diff, 0, 0, dx, dy)
+
+		// item tunnels into another
+		if col.ti1 < 1 && math.abs(col.ti1 - col.ti2) >= delta {
+			if 0.0 < col.ti1 + delta || ((col.ti1 == 0.0) && (col.ti2 > 0.0)) {
+				ti = col.ti1
+				nx = col.nx1
+				ny = col.ny1
+				println('tunnnels: $ti, $nx, $ny')
+				overlaps = false
+			}
+		}
+	}
+
+	if ti == 0 {
+		println('-------- da fuk? this right?')
+		return CollisionResult{}
+	}
+
+	mut tx := 0.0
+	mut ty := 0.0
+
+	if overlaps {
+		println('----- implement overlaps')
+		if dx == 0 && dy == 0 {
+			// intersecting and not moving - use minimum displacement vector
+		} else {
+			// intersecting and moving - move in the opposite direction
+		}
+	} else { // tunnel
+		tx = f32(bounds.x) + dx * ti
+		ty = f32(bounds.y) + dy * ti
+		println('------- bottom tunnel')
+	}
+
+	return CollisionResult{
+		collision: true
+		overlaps: overlaps
+		ti: ti
+		move_x: dx
+		move_y: dy
+		normal_x: nx
+		normal_y: ny
+		touch_x: tx
+		touch_y: ty
+	}
+}
+
+fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) {
+	tl := math.min(goal_x, bounds.x)
+	tt := math.min(goal_y, bounds.y)
+	tr := math.max(goal_x + bounds.w, bounds.right())
+	tb := math.max(goal_y + bounds.h, bounds.bottom())
+	tw := tr - tl
+	th := tb - tt
+
+	cl, ct := sh.cell_coords(tl, tt)
+	cw, ch := sh.cell_coords(tw, th)
+
+	mut visited := []int
+	// println('($cl,$ct) ($cw,$ch)')
+	for x := cl; x <= cw; x++ {
+		for y := ct; y <= ch; y++ {
+			mut cell := sh.cell_at_position(x, y, false)
+			if cell != C.NULL {
+				for item_id in cell.list {
+					if item_id == id || item_id in visited {
+						continue
+					}
+					
+					visited << item_id
+					col := sh.detect_collision(bounds, item_id, goal_x, goal_y)
+					println('col $col.move_x,$col.move_y, touch $col.touch_x,$col.touch_y')
+				}
+			}
+		}
+	}
+
+	unsafe { visited.free() }
+}
+
+pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) {
+	mut item := *HashItem(sh.items.get(id))
+
+	sh.project(id, item.bounds, goal_x, goal_y)
+}
+
 
 pub fn (sh mut SpatialHash) debug() {
 	println('---- SpatialHash ----')
 	for x := sh.bounds.x; x <= sh.bounds.right(); x++ {
 		for y := sh.bounds.y; y <= sh.bounds.bottom(); y++ {
 			cell := sh.cell_at_position(x, y, false)
+			if cell == C.NULL { continue }
+			
 			if cell.list.len > 0 {
 				l := cell.list.len
 				println('Cell ($x, $y) - $l')
