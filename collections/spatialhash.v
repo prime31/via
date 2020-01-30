@@ -79,12 +79,13 @@ pub fn (sh mut SpatialHash) free() {
 	}
 }
 
-fn (sh &SpatialHash) get_hashed_key(x, y f32) u32 {
+[inline]
+fn get_hashed_key(x, y f32) u32 {
 	xi := math.ifloor(x)
 	yi := math.ifloor(y)
 
 	tx := u32(xi) * 2209710647
-	ty := u32(yi) * 2209710647
+	ty := u32(yi) * 2209710648
 	return tx + ty + 2849577407
 }
 
@@ -98,7 +99,7 @@ fn (sh &SpatialHash) cell_coordsi(x, y int) (int, int) {
 }
 
 fn (sh mut SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell {
-	key := sh.get_hashed_key(x, y) as int
+	key := get_hashed_key(x, y) as int
 
 	if sh.cells.has(key) {
 		return *Cell(sh.cells.get(key))
@@ -160,35 +161,40 @@ pub fn (sh mut SpatialHash) remove(id int) {
 }
 
 pub fn (sh mut SpatialHash) update(id int, collider Collider) {
+	// fetch the item and its new bounds
 	mut item := *HashItem(sh.items.get(id))
+	bounds := collider.get_bounds()
 
 	// remove from all occupied cells
-	mut p1x, mut p1y := sh.cell_coords(item.bounds.x, item.bounds.y)
-	mut p2x, mut p2y := sh.cell_coords(item.bounds.right(), item.bounds.bottom())
+	p1x, p1y := sh.cell_coords(item.bounds.x, item.bounds.y)
+	p2x, p2y := sh.cell_coords(item.bounds.right(), item.bounds.bottom())
+
+	// add to new cells
+	np1x, np1y := sh.cell_coords(bounds.x, bounds.y)
+	np2x, np2y := sh.cell_coords(bounds.right(), bounds.bottom())
+
+	item.bounds = bounds
+
+	// early out for no change
+	if p1x == np1x && p1y == np1y && p2x == np2x && p2y == np2y {
+		return
+	}
 
 	for x := p1x; x <= p2x; x++ {
 		for y := p1y; y <= p2y; y++ {
 			mut cell := sh.cell_at_position(x, y, false)
-			cell.list.delete(id)
-			cell = sh.cell_at_position(x, y, false)
+			cell.list.delete(cell.list.index(id))
 		}
 	}
 
-	// add to new cells
-	bounds := collider.get_bounds()
-	p1x, p1y = sh.cell_coords(bounds.x, bounds.y)
-	p2x, p2y = sh.cell_coords(bounds.right(), bounds.bottom())
+	sh.expand_bounds(np1x, np1y, np2x, np2y)
 
-	sh.expand_bounds(p1x, p1y, p2x, p2y)
-
-	for x := p1x; x <= p2x; x++ {
-		for y := p1y; y <= p2y; y++ {
+	for x := np1x; x <= np2x; x++ {
+		for y := np1y; y <= np2y; y++ {
 			mut cell := sh.cell_at_position(x, y, true)
 			cell.list << id
 		}
 	}
-
-	item.bounds = bounds
 }
 
 

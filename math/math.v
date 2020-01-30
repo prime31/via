@@ -52,6 +52,9 @@ pub fn degrees(x f32) f32 { return x * 57.295779513 }
 pub fn min(x, y f32) f32 { return C.fminf(x, y) }
 
 [inline]
+pub fn imin(x, y f32) int { return int(C.fminf(x, y)) }
+
+[inline]
 pub fn max(x, y f32) f32 { return C.fmaxf(x, y) }
 
 [inline]

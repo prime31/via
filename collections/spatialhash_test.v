@@ -3,16 +3,16 @@ module collections
 fn test_spatialhash() {
 	mut hash := collections.spatialhash()
 
-	mut h1 := collections.Collider{0, 0, 10, 30}
+	mut h1 := collections.Collider{0, 0, 10, 35}
 	h1_id := hash.add(h1)
 	hash.debug()
 
-	println('\n-- updated Collider')
-	h1.x += 34
+	println('\n-- updating Collider')
+	h1.w += 134
 	hash.update(h1_id, h1)
 	hash.debug()
 
-	println('\n-- removed Collider')
+	println('\n-- removing Collider')
 	hash.remove(h1_id)
 	hash.debug()
 
