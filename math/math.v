@@ -55,6 +55,9 @@ pub fn min(x, y f32) f32 { return C.fminf(x, y) }
 pub fn max(x, y f32) f32 { return C.fmaxf(x, y) }
 
 [inline]
+pub fn imax(x, y int) int { return int(C.fmaxf(x, y)) }
+
+[inline]
 pub fn lerp(x, y, s f32) f32 { return x + s * (y - x) }
 
 [inline]
@@ -178,6 +181,22 @@ pub fn ceilpow2_u32(i u32) u32 {
 	x |= x >> 8
 	x |= x >> 16
 	return x + 1
+}
+
+[inline]
+pub fn ceilpow2_i64(_x i64) i64 {
+    if _x == 0 { return 1 }
+
+    mut x := _x
+    x--
+    x |= x >> 1
+    x |= x >> 2
+    x |= x >> 4
+    x |= x >> 8
+    x |= x >> 16
+    x |= x >> 32
+
+    return x + 1
 }
 
 // loops t so that it is never larger than length and never smaller than 0
