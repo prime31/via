@@ -108,8 +108,7 @@ pub fn (tb mut TriangleBatch) flush() {
 
 pub fn (tb &TriangleBatch) free() {
 	tb.bindings.vertex_buffers[0].free()
-	// tb.bindings.index_buffer.free() // V bug cant find sg_buffer
-	sg_destroy_buffer(tb.bindings.index_buffer)
+	tb.bindings.index_buffer.free()
 	tb.tex.free()
 
 	unsafe {

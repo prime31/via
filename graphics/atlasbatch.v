@@ -110,8 +110,7 @@ pub fn (sb mut AtlasBatch) draw() {
 
 pub fn (sb &AtlasBatch) free() {
 	sb.bindings.vertex_buffers[0].free()
-	// sb.bindings.index_buffer.free() // V bug cant find sg_buffer
-	sg_destroy_buffer(sb.bindings.index_buffer)
+	sb.bindings.index_buffer.free()
 
 	unsafe {
 		sb.verts.free()

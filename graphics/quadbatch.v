@@ -90,8 +90,7 @@ pub fn (qb mut QuadBatch) flush() {
 
 pub fn (qb &QuadBatch) free() {
 	qb.bindings.vertex_buffers[0].free()
-	// qb.bindings.index_buffer.free() // V bug cant find sg_buffer
-	sg_destroy_buffer(qb.bindings.index_buffer)
+	qb.bindings.index_buffer.free()
 
 	unsafe {
 		qb.verts.free()

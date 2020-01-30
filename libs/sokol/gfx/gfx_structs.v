@@ -52,7 +52,7 @@ pub mut:
     _start_canary u32
     vertex_buffers [8]sg_buffer
     vertex_buffer_offsets [8]int
-    index_buffer sg_buffer
+    index_buffer C.sg_buffer
     index_buffer_offset int
     vs_images [8]sg_image
     fs_images [8]sg_image

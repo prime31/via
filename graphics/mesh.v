@@ -92,8 +92,7 @@ pub fn (m mut Mesh) draw() {
 
 pub fn (m &Mesh) free() {
 	m.bindings.vertex_buffers[0].free()
-	// m.bindings.index_buffer.free() // V bug cant find sg_buffer
-	sg_destroy_buffer(m.bindings.index_buffer)
+	m.bindings.index_buffer.free()
 
 	unsafe {
 		m.verts.free()
