@@ -70,3 +70,14 @@ pub fn minkowski_diff(r1, r2 &Rect) Rect {
 		h: r1.h + r2.h
 	}
 }
+
+fn nearest(x, a, b int) int {
+	if abs(a - x) < abs(b - x) {
+		return a
+	}
+	return b
+}
+
+pub fn (r &Rect) get_nearest_corner(x, y int) (int, int) {
+	return nearest(x, r.x, r.x + r.w), nearest(y, r.y, r.y + r.h)
+}

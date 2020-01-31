@@ -33,25 +33,37 @@ fn test_collision() {
 	assert(response.x == 0.0)
 	assert(response.y == -32.0)
 
+	c := collections.Collider{-26, -26, 32, 32}
+	c_id := hash.add(c)
+	resp := hash.check(c_id, 0, 0)
+	assert resp.x == -32
+	assert resp.y == -32
 
-	c := collections.Collider{-16, -16, 32, 32}
-	c_id := hash.add(a)
-	//resp := hash.check(c_id, 0, 0)
+	d := collections.Collider{-10, 0, 32, 32}
+	d_id := hash.add(d)
+	respd := hash.check(d_id, 0, 0)
+	assert respd.x == -32
+	assert respd.y == 0
 
-	// hash.debug()
+	e := collections.Collider{65, 50, 32, 32}
+	e_id := hash.add(e)
+	respe := hash.check(e_id, 75, 10)
+	assert respe.x == 75
+	assert respe.y == 10
+
+	//hash.debug()
 
 	hash.free()
 }
 
 fn test_inthashmap() {
-	// mut c := Cell{}
-	// c.list = [1, 2, 3]
-	// println('eles=${c.list}')
+	mut c := Cell{}
+	c.list = [1, 2, 3]
 
-	// mut hmap := collections.inthashmap()
-	// hmap.put(4, c)
-	// mut cptr := *Cell(hmap.get(4))
-	// cptr.list << 4
-	// println('len=${cptr.list.len}, eles=${cptr.list}')
-	// println('eles=${c.list}')
+	mut hmap := collections.inthashmap()
+	hmap.put(4, c)
+
+	mut cptr := *Cell(hmap.get(4))
+	cptr.list << 4
+	assert cptr.list.len == c.list.len
 }

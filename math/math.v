@@ -2,6 +2,11 @@ module math
 
 #include <math.h>
 
+pub const (
+	max_i32 = 2147483647
+	min_i32 = -2147483648
+)
+
 fn C.acosf(x f32) f32
 fn C.asinf(x f32) f32
 fn C.atanf(x f32) f32
@@ -130,6 +135,13 @@ pub fn pow(x, y f32) f32 { return C.powf(x, y) }
 
 [inline]
 pub fn sqrt(a f32) f32 { return C.sqrtf(a) }
+
+[inline]
+pub fn sign(x f32) f32 {
+	if x < 0 { return -1 }
+	if x > 0 { return 1 }
+	return 0
+}
 
 // Returns a smooth Hermite interpolation between 0 and 1. when x is in [a, b]
 [inline]

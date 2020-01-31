@@ -108,10 +108,8 @@ fn (sh mut SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell 
 		return *Cell(sh.cells.get(key))
 	} else {
 		if create_if_absent {
-			println('creating... $key')
 			cell := &Cell{}
 			sh.cells.put(key, cell)
-			println('put...')
 			return cell
 		}
 
@@ -148,7 +146,6 @@ pub fn (sh mut SpatialHash) add(collider Collider) int {
 		}
 	}
 
-	println('---------- done')
 	sh.items.put(id, &HashItem{collider, bounds})
 	return id
 }
@@ -231,7 +228,6 @@ mut:
 	normal_y f32
 	touch_x f32
 	touch_y f32
-	other &Collider
 }
 
 pub struct CollisionReponse {
@@ -241,7 +237,7 @@ pub:
 }
 
 pub fn (c CollisionResult) str() string {
-	return 'col: $c.collision, overlaps: $c.overlaps, ti: $c.ti, move: ($c.move_x,$c.move_y), normal: ($c.normal_x,$c.normal_y), touch: ($c.touch_x,$c.touch_y)'
+	return 'col: collision: $c.collision, overlaps: $c.overlaps, ti: $c.ti, move: ($c.move_x,$c.move_y), normal: ($c.normal_x,$c.normal_y), touch: ($c.touch_x,$c.touch_y)'
 }
 
 fn sort_collisions(a, b &CollisionResult) int {
@@ -254,9 +250,9 @@ fn sort_collisions(a, b &CollisionResult) int {
 // from Bump.lua: This is a generalized implementation of the liang-barsky algorithm, which also returns
 // the normals of the sides where the segment intersects. Returns collision = false if the segment never touches the rect
 // Notice that normals are only guaranteed to be accurate when initially ti1, ti2 == -math.huge, math.huge
-fn (sh &SpatialHash) get_segment_intersection_indices(bounds &math.Rect, x1, y1, x2, y2 f32) SegmentIntersectionResult {
-	mut ti1 := -1000000.0
-	mut ti2 := 1000000.0
+fn (sh &SpatialHash) get_segment_intersection_indices(bounds &math.Rect, x1, y1, x2, y2, min, max f32) SegmentIntersectionResult {
+	mut ti1 := min
+	mut ti2 := max
 	dx := x2 - x1
 	dy := y2 - y1
 	mut nx := 0
@@ -341,11 +337,15 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 	mut nx := 0.0
 	mut ny := 0.0
 
-	if diff.contains(0, 0) || diff.contains_pt(0, 0) {
-		println('already overlapping before movement')
+	if diff.contains(0, 0) || diff.contains_pt(0, 0) { // already overlapping before movement
+		px, py := diff.get_nearest_corner(0, 0)
+		// area of intersection
+		wi := math.min(bounds.w, math.abs(px))
+		hi := math.min(bounds.h, math.abs(py))
+		ti = -wi * hi // ti is the negative area of intersection
 		overlaps = true
 	} else {
-		col := sh.get_segment_intersection_indices(diff, 0, 0, dx, dy)
+		col := sh.get_segment_intersection_indices(diff, 0, 0, dx, dy, f32(math.min_i32), f32(math.max_i32))
 
 		// item tunnels into another
 		if col.ti1 < 1 && math.abs(col.ti1 - col.ti2) >= delta {
@@ -359,7 +359,7 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 	}
 
 	if ti == 0 {
-		println('-------- da fuk? this right?')
+		println('-------- da fuk? this right? does this mean not colliding?')
 		return CollisionResult{}
 	}
 
@@ -367,16 +367,31 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 	mut ty := 0.0
 
 	if overlaps {
-		println('----- implement overlaps')
 		if dx == 0 && dy == 0 {
 			// intersecting and not moving - use minimum displacement vector
+			mut px, mut py := diff.get_nearest_corner(0, 0)
+			if math.abs(px) < math.abs(py) {
+				py = 0
+			} else {
+				px = 0
+			}
+			nx = math.sign(px)
+			ny = math.sign(py)
+			tx = bounds.x + px
+			ty = bounds.y + py
 		} else {
 			// intersecting and moving - move in the opposite direction
+			col := sh.get_segment_intersection_indices(diff, 0, 0, dx, dy, f32(math.min_i32), 1)
+			if col.ti1 == 0 {
+				return CollisionResult{}
+			}
+
+			tx = f32(bounds.x) + dx * col.ti1
+			ty = f32(bounds.y) + dy * col.ti1
 		}
 	} else { // tunnel
 		tx = f32(bounds.x) + dx * ti
 		ty = f32(bounds.y) + dy * ti
-		println('------- bottom tunnel')
 	}
 
 	return CollisionResult{
@@ -414,16 +429,19 @@ fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) [
 					if item_id == id || item_id in visited {
 						continue
 					}
-					
+
 					visited << item_id
 					col := sh.detect_collision(bounds, item_id, goal_x, goal_y)
-					collisions << col
+					println('$col')
+					if col.collision {
+						collisions << col
+					}
 				}
 			}
 		}
 	}
 
-	if collisions.len > 0 {
+	if collisions.len > 1 {
 		collisions.sort_with_compare(sort_collisions)
 	}
 
@@ -432,14 +450,14 @@ fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) [
 	return collisions
 }
 
-// gets all the potential overlaps. Note that the array must be freed.
+// gets all the potential overlaps. Note that the array must be freed
 pub fn (sh mut SpatialHash) broadphase(id int, goal_x, goal_y f32) []CollisionResult {
 	mut item := *HashItem(sh.items.get(id))
 	return sh.project(id, item.bounds, goal_x, goal_y)
 }
 
 pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) CollisionReponse {
-	mut item := *HashItem(sh.items.get(id))
+	item := *HashItem(sh.items.get(id))
 
 	collisions := sh.project(id, item.bounds, goal_x, goal_y)
 	defer {
@@ -452,7 +470,7 @@ pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) CollisionReponse {
 			y: collisions[0].touch_y
 		}
 	}
-	return CollisionReponse{}
+	return CollisionReponse{goal_x, goal_y}
 }
 
 pub fn (sh mut SpatialHash) move(id int, goal_x, goal_y f32) {
@@ -475,7 +493,7 @@ pub fn (sh mut SpatialHash) debug() {
 		for y := sh.bounds.y; y <= sh.bounds.bottom(); y++ {
 			cell := sh.cell_at_position(x, y, false)
 			if cell == C.NULL { continue }
-			
+
 			if cell.list.len > 0 {
 				l := cell.list.len
 				println('Cell ($x, $y) - $l')

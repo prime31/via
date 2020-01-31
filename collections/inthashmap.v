@@ -75,8 +75,8 @@ pub fn (hashmap &IntHashMap) has(key int) bool {
 pub fn (hashmap mut IntHashMap) put(key int, value voidptr) {
     mut idx := hashmap.put_index(key)
     if idx < 0 {
-        //println('no space, rehashing')
-        hashmap.rehash(hashmap._keys.len * 2)
+        println('key: $key, idx: $idx, no space, rehashing')
+        hashmap.rehash()
         idx = hashmap.put_index(key)
     }
 
@@ -87,8 +87,8 @@ pub fn (hashmap mut IntHashMap) put(key int, value voidptr) {
         hashmap._size++
 
         if hashmap._size >= hashmap.threshold {
-            //println('hit hashmap threshold, rehashing')
-            hashmap.rehash(hashmap._keys.len * 2)
+            println('hit hashmap threshold, rehashing')
+            hashmap.rehash()
         }
     } else {
         hashmap._values[idx] = value
@@ -121,7 +121,7 @@ pub fn (hashmap mut IntHashMap) remove(key int) voidptr {
         return 0
     }
 
-    res := hashmap._values[idx] //C.array__get(hashmap._values, idx)
+    res := hashmap._values[idx]
     hashmap._size--
     hashmap.shift_keys(idx)
     return res
@@ -153,7 +153,7 @@ fn (hashmap &IntHashMap) read_index(key int) int {
         return -1
     }
 
-    if hashmap._keys[idx] == key && hashmap._used[idx] {
+    if hashmap._keys[idx] == key {
         return idx
     }
 
@@ -181,39 +181,49 @@ fn (hashmap &IntHashMap) put_index(key int) int {
 
     start_idx := hashmap.start_index(key)
     mut idx := start_idx
+    mut keyx := key
     for {
         if !hashmap._used[idx] {
             break
         }
 
-        idx = hashmap.next_index(key)
+        idx = hashmap.next_index(keyx)
         if idx == start_idx {
             return -1
         }
+        // TODO: is bumping the key the right solution?
+        keyx++
     }
 
     return idx
 }
 
-fn (hashmap mut IntHashMap) rehash(new_capacity int) {
+fn (hashmap mut IntHashMap) rehash() {
+    new_capacity := hashmap._keys.len * 2
     hashmap.threshold = int(f32(new_capacity) * hashmap.fill_factor)
     hashmap.mask = u32(new_capacity - 1)
 
-    old_capacity := hashmap._keys.len
+    old_capacity := hashmap._keys.len - 1
     old_keys := hashmap._keys
     old_values := hashmap._values
     old_used := hashmap._used
-    //println('rehash $old_capacity -> $new_capacity')
+    // println('rehash $old_capacity -> $new_capacity')
 
     hashmap._keys = [0].repeat(new_capacity)
     hashmap._values = [voidptr(0)].repeat(new_capacity)
     hashmap._used = [false].repeat(new_capacity)
     hashmap._size = 0
 
-    for i := old_capacity; i > 0; i-- {
+    for i := old_capacity; i >= 0; i-- {
         if old_used[i] {
             hashmap.put(old_keys[i], old_values[i])
         }
+    }
+
+    unsafe {
+        old_keys.free()
+        old_values.free()
+        old_used.free()
     }
 }
 
