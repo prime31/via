@@ -10,6 +10,7 @@ struct Debug {
 mut:
 	fons &C.FONScontext
 	def_font int
+	did_draw bool
 }
 
 const (
@@ -36,9 +37,12 @@ pub fn setup() {
 }
 
 pub fn begin(w, h int) {
+	mut d := debug
+	d.did_draw = false
+
 	C.sgl_defaults()
 	C.sgl_matrix_mode_projection()
-	
+
 	mat := math.mat32_ortho_off_center(w, h)
 	set_proj_mat(mat)
 }
@@ -55,6 +59,11 @@ pub fn mult_mat(mat math.Mat32) {
 
 // commits the frame and renders all commands
 pub fn draw() {
+	// only draw once per frame
+	if debug.did_draw { return }
+	mut d := debug
+	d.did_draw = true
+
 	sfons.flush(debug.fons)
 	C.sgl_draw()
 }
