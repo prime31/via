@@ -128,6 +128,8 @@ fn (sh mut SpatialHash) expand_bounds(x, y, x1, y1 int) {
 	}
 }
 
+//#region Collider management
+
 pub fn (sh mut SpatialHash) add(collider Collider) int {
 	id := sh.id_counter++
 
@@ -201,6 +203,10 @@ pub fn (sh mut SpatialHash) update(id int, collider Collider) {
 	}
 }
 
+//#endregion
+
+//#region Bump narrow phase
+
 struct SegmentIntersectionResult {
 	collision bool
 	ti1 f32
@@ -211,7 +217,7 @@ struct SegmentIntersectionResult {
 	ny2 f32
 }
 
-struct CollisionResult {
+pub struct CollisionResult {
 	collision bool
 	overlaps bool
 	ti f32
@@ -221,8 +227,22 @@ struct CollisionResult {
 	normal_y f32
 	touch_x f32
 	touch_y f32
+	other &Collider
+}
+pub fn (c CollisionResult) str() string {
+	return 'col: $c.collision, overlaps: $c.overlaps, ti: $c.ti, move: ($c.move_x,$c.move_y), normal: ($c.normal_x,$c.normal_y), touch: ($c.touch_x,$c.touch_y)'
 }
 
+fn sort_collisions(a, b &CollisionResult) int {
+	if a.ti == b.ti {
+		println('sort_collisions got simultaneous ti. potentially add rect_getSquareDistance to sort')
+	}
+	return if a.ti < b.ti { -1 } else { 1 }
+}
+
+// from Bump.lua: This is a generalized implementation of the liang-barsky algorithm, which also returns
+// the normals of the sides where the segment intersects. Returns collision = false if the segment never touches the rect
+// Notice that normals are only guaranteed to be accurate when initially ti1, ti2 == -math.huge, math.huge
 fn (sh &SpatialHash) get_segment_intersection_indices(bounds &math.Rect, x1, y1, x2, y2 f32) SegmentIntersectionResult {
 	mut ti1 := -1000000.0
 	mut ti2 := 1000000.0
@@ -295,7 +315,6 @@ fn (sh &SpatialHash) get_segment_intersection_indices(bounds &math.Rect, x1, y1,
 		}
 	}
 
-	println('colllllllllision')
 	return SegmentIntersectionResult{true, ti1, ti2, nx1, ny1, nx2, ny2}
 }
 
@@ -363,7 +382,7 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 	}
 }
 
-fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) {
+fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) []CollisionResult {
 	tl := math.min(goal_x, bounds.x)
 	tt := math.min(goal_y, bounds.y)
 	tr := math.max(goal_x + bounds.w, bounds.right())
@@ -375,7 +394,8 @@ fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) {
 	cw, ch := sh.cell_coords(tw, th)
 
 	mut visited := []int
-	// println('($cl,$ct) ($cw,$ch)')
+	mut collisions := []CollisionResult
+
 	for x := cl; x <= cw; x++ {
 		for y := ct; y <= ch; y++ {
 			mut cell := sh.cell_at_position(x, y, false)
@@ -387,21 +407,47 @@ fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) {
 					
 					visited << item_id
 					col := sh.detect_collision(bounds, item_id, goal_x, goal_y)
-					println('col $col.move_x,$col.move_y, touch $col.touch_x,$col.touch_y')
+					collisions << col
 				}
 			}
 		}
 	}
 
+	if collisions.len > 0 {
+		collisions.sort_with_compare(sort_collisions)
+	}
+
 	unsafe { visited.free() }
+
+	return collisions
+}
+
+// gets all the potential overlaps. Note that the array must be freed.
+pub fn (sh mut SpatialHash) broadphase(id int, goal_x, goal_y f32) []CollisionResult {
+	mut item := *HashItem(sh.items.get(id))
+	return sh.project(id, item.bounds, goal_x, goal_y)
 }
 
 pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) {
 	mut item := *HashItem(sh.items.get(id))
 
-	sh.project(id, item.bounds, goal_x, goal_y)
+	collisions := sh.project(id, item.bounds, goal_x, goal_y)
+	unsafe { collisions.free() }
 }
 
+pub fn (sh mut SpatialHash) move(id int, goal_x, goal_y f32) {
+	// sh.check(id, goal_x, goal_y)
+}
+
+//#endregion
+
+//#region Bump collision response
+
+pub fn cross(sh &SpatialHash, col &CollisionResult) {
+
+}
+
+//#endregion
 
 pub fn (sh mut SpatialHash) debug() {
 	println('---- SpatialHash ----')
