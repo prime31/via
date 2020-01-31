@@ -29,7 +29,15 @@ fn test_collision() {
 	b := collections.Collider{0, -100, 32, 32}
 	b_id := hash.add(b)
 
-	hash.check(b_id, 0, 64)
+	response := hash.check(b_id, 0, 64)
+	assert(response.x == 0.0)
+	assert(response.y == -32.0)
+
+
+	c := collections.Collider{-16, -16, 32, 32}
+	c_id := hash.add(a)
+	//resp := hash.check(c_id, 0, 0)
+
 	// hash.debug()
 
 	hash.free()

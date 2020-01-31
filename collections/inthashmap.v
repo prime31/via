@@ -60,7 +60,6 @@ pub fn (hm &IntHashMap) free() {
 
 pub fn (hashmap &IntHashMap) get(key int) voidptr {
     idx := hashmap.read_index(key)
-
     if idx != -1 { // unsafe!
         return hashmap._values[idx]
     } else {
@@ -118,7 +117,6 @@ pub fn (hashmap &IntHashMap) keys() []int {
 // unsafe
 pub fn (hashmap mut IntHashMap) remove(key int) voidptr {
     idx := hashmap.read_index(key)
-
     if idx == -1 {
         return 0
     }
@@ -151,7 +149,6 @@ fn (hashmap &IntHashMap) next_index(key int) int {
 [inline]
 fn (hashmap &IntHashMap) read_index(key int) int {
     mut idx := hashmap.start_index(key)
-
     if !hashmap._used[idx] {
         return -1
     }
@@ -163,7 +160,6 @@ fn (hashmap &IntHashMap) read_index(key int) int {
     start_idx := idx
     for {
         idx = hashmap.next_index(idx)
-
         if idx == start_idx || !hashmap._used[idx] {
             return -1
         }
@@ -185,7 +181,6 @@ fn (hashmap &IntHashMap) put_index(key int) int {
 
     start_idx := hashmap.start_index(key)
     mut idx := start_idx
-
     for {
         if !hashmap._used[idx] {
             break

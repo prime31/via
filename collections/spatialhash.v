@@ -104,13 +104,14 @@ fn (sh &SpatialHash) cell_coordsi(x, y int) (int, int) {
 
 fn (sh mut SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell {
 	key := get_hashed_key(x, y) as int
-
 	if sh.cells.has(key) {
 		return *Cell(sh.cells.get(key))
 	} else {
 		if create_if_absent {
+			println('creating... $key')
 			cell := &Cell{}
 			sh.cells.put(key, cell)
+			println('put...')
 			return cell
 		}
 
@@ -147,6 +148,7 @@ pub fn (sh mut SpatialHash) add(collider Collider) int {
 		}
 	}
 
+	println('---------- done')
 	sh.items.put(id, &HashItem{collider, bounds})
 	return id
 }
@@ -208,6 +210,7 @@ pub fn (sh mut SpatialHash) update(id int, collider Collider) {
 //#region Bump narrow phase
 
 struct SegmentIntersectionResult {
+mut:
 	collision bool
 	ti1 f32
 	ti2 f32
@@ -218,6 +221,7 @@ struct SegmentIntersectionResult {
 }
 
 pub struct CollisionResult {
+mut:
 	collision bool
 	overlaps bool
 	ti f32
@@ -229,6 +233,13 @@ pub struct CollisionResult {
 	touch_y f32
 	other &Collider
 }
+
+pub struct CollisionReponse {
+pub:
+	x f32
+	y f32
+}
+
 pub fn (c CollisionResult) str() string {
 	return 'col: $c.collision, overlaps: $c.overlaps, ti: $c.ti, move: ($c.move_x,$c.move_y), normal: ($c.normal_x,$c.normal_y), touch: ($c.touch_x,$c.touch_y)'
 }
@@ -342,7 +353,6 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 				ti = col.ti1
 				nx = col.nx1
 				ny = col.ny1
-				println('tunnnels: $ti, $nx, $ny')
 				overlaps = false
 			}
 		}
@@ -428,11 +438,21 @@ pub fn (sh mut SpatialHash) broadphase(id int, goal_x, goal_y f32) []CollisionRe
 	return sh.project(id, item.bounds, goal_x, goal_y)
 }
 
-pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) {
+pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) CollisionReponse {
 	mut item := *HashItem(sh.items.get(id))
 
 	collisions := sh.project(id, item.bounds, goal_x, goal_y)
-	unsafe { collisions.free() }
+	defer {
+		unsafe { collisions.free() }
+	}
+
+	if collisions.len > 0 {
+		return CollisionReponse{
+			x: collisions[0].touch_x
+			y: collisions[0].touch_y
+		}
+	}
+	return CollisionReponse{}
 }
 
 pub fn (sh mut SpatialHash) move(id int, goal_x, goal_y f32) {
