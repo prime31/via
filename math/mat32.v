@@ -139,6 +139,21 @@ pub fn (m mut Mat32) set_transform(x, y, angle, sx, sy, ox, oy f32) {
 	m.data[5] = y - ox * m.data[1] - oy * m.data[3]
 }
 
+pub fn (self &Mat32) to_mat44() Mat44 {
+    mut result := mat44_identity()
+
+    result.data[0] = self.data[0]
+    result.data[1] = self.data[1]
+
+    result.data[4] = self.data[2]
+    result.data[5] = self.data[3]
+    
+    result.data[12] = self.data[4]
+    result.data[13] = self.data[5]
+
+    return result
+}
+
 pub fn (self Mat32) to_mat44_orth() Mat44 {
     mut result := mat44_identity()
 

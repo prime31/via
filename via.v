@@ -1,6 +1,7 @@
 module via
 import via.time
 import via.input
+import via.debug
 import via.filesystem
 import via.libs.flextgl
 import via.libs.sokol
@@ -15,7 +16,7 @@ pub mut:
 	imgui bool
 }
 
-__global vv &Via
+__global _via &Via
 
 pub const (
 	v = &Via{
@@ -28,7 +29,7 @@ pub const (
 fn create_via(config &ViaConfig) &Via {
 	filesystem.init_filesystem(config.identity, config.append_identity)
 
-	vv = &Via {
+	_via = &Via {
 		audio: audio(config)
 		g: graphics(config)
 		win: window(config)
@@ -36,9 +37,9 @@ fn create_via(config &ViaConfig) &Via {
 	}
 
 	// disable imgui for metal
-	$if metal? { vv.imgui = false }
+	$if metal? { _via.imgui = false }
 
-	return vv
+	return _via
 }
 
 fn (v &Via) free() {
@@ -61,6 +62,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 	v.win.create(config)
 	v.g.setup()
+	debug.setup()
 
 	input.set_window_scale(v.win.get_scale())
 
@@ -72,6 +74,8 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	for !v.poll_events() {
 		if v.imgui { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug) }
 
+		w, h := v.win.get_drawable_size()
+		debug.begin(w, h)
 		ctx.update(v)
 		ctx.draw(mut v)
 		sg_commit()

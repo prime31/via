@@ -66,13 +66,13 @@ fn (w mut Window) create_metal_window(config &ViaConfig) {
 	if config.window_highdpi { window_flags = window_flags | C.SDL_WINDOW_ALLOW_HIGHDPI }
 	if config.window_fullscreen { window_flags = window_flags | C.SDL_WINDOW_FULLSCREEN }
 	w.sdl_window = C.SDL_CreateWindow("V SDL2 + Metal + Sokol demo", C.SDL_WINDOWPOS_CENTERED, C.SDL_WINDOWPOS_CENTERED, 512, 384, window_flags)
-	w.id = SDL_GetWindowID(w.sdl_window)
+	w.id = C.SDL_GetWindowID(w.sdl_window)
 
 	sdl_metal_util.init_metal(w.sdl_window)
 }
 
 fn (w &Window) swap() {
-	$if !metal? { SDL_GL_SwapWindow(w.sdl_window) }
+	$if !metal? { C.SDL_GL_SwapWindow(w.sdl_window) }
 }
 
 // returns the drawable size / the window size. Used to scale mouse coords when the OS gives them to us in points.
@@ -87,17 +87,17 @@ pub fn (w &Window) get_drawable_size() (int, int) {
 
 	width := 0
 	height := 0
-	SDL_GL_GetDrawableSize(w.sdl_window, &width, &height)
+	C.SDL_GL_GetDrawableSize(w.sdl_window, &width, &height)
 	return width, height
 }
 
 pub fn (w &Window) get_size() (int, int) {
 	width := 0
 	height := 0
-	SDL_GetWindowSize(w.sdl_window, &width, &height)
+	C.SDL_GetWindowSize(w.sdl_window, &width, &height)
 	return width, height
 }
 
 pub fn (w &Window) set_size(width, height int) {
-	SDL_SetWindowSize(w.sdl_window, width, height)
+	C.SDL_SetWindowSize(w.sdl_window, width, height)
 }

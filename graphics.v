@@ -2,6 +2,7 @@ module via
 import filepath
 import via.math
 import via.fonts
+import via.debug
 import via.graphics
 import via.libs.physfs
 import via.libs.sokol.gfx
@@ -168,7 +169,9 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, pass_
 	if &config.trans_mat != &math.Mat32(0) {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
+		w, h := _via.win.get_drawable_size()
 	}
+	debug.set_proj_mat(proj_mat)
 
 	// save the transform-projection matrix in case a new pipeline is set later
 	g.pass_proj_mat = proj_mat
@@ -178,7 +181,7 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, pass_
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
 pub fn (g mut Graphics) begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	pass_action_cfg.apply(mut g.pass_action)
-	w, h := vv.win.get_drawable_size()
+	w, h := _via.win.get_drawable_size()
 	sg_begin_default_pass(&g.pass_action, w, h)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
@@ -195,7 +198,7 @@ pub fn (g mut Graphics) begin_default_pass(pass_action_cfg PassActionConfig, con
 		math.mat32_ortho_off_center(w, h)
 	}
 
-	// not-blit passes could have a translation matrix
+	// non-blit passes could have a translation matrix
 	if !config.blit_pass && config.trans_mat != &math.Mat32(0) {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
@@ -204,9 +207,11 @@ pub fn (g mut Graphics) begin_default_pass(pass_action_cfg PassActionConfig, con
 	// save the transform-projection matrix in case a new pipeline is set later
 	g.pass_proj_mat = proj_mat
 	g.set_pipeline(mut pip)
+	debug.set_proj_mat(proj_mat)
 }
 
-pub fn (g &Graphics) end_pass() {
+pub fn (g mut Graphics) end_pass() {
+	debug.draw()
 	sg_end_pass()
 }
 
