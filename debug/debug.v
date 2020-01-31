@@ -101,7 +101,7 @@ pub fn draw_hollow_rect(x, y, w, h f32) {
 	C.sgl_v2f(x + w, y)
 	C.sgl_v2f(x + w, y + h)
 	C.sgl_v2f(x, y + h)
-	C.sgl_v2f(x, y)
+	C.sgl_v2f(x, y - 1)
 	C.sgl_end()
 }
 
