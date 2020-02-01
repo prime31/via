@@ -5,7 +5,10 @@ import via.utils
 import via.libs.physfs
 
 pub fn init_filesystem(identity string, append_identity bool) {
-	if physfs.initialize() != 1 { panic('could not initialize PhysFS') }
+	// we might have already initted in mount or exists
+	if !physfs.is_init() {
+		if physfs.initialize() != 1 { panic('could not initialize PhysFS') }
+	}
 
 	physfs.permit_symbolic_links(1)
 	physfs.mount(filepath.dir(os.realpath(os.executable())), '', true)
@@ -16,7 +19,7 @@ pub fn init_filesystem(identity string, append_identity bool) {
 	}
 
 	// setup save directory and add it to search path
-	pref_path_raw := SDL_GetPrefPath(C.NULL, ident.str)
+	pref_path_raw := C.SDL_GetPrefPath(C.NULL, ident.str)
 	pref_path := tos2(pref_path_raw)
 	physfs.set_write_dir(pref_path)
 
@@ -29,6 +32,7 @@ pub fn free() {
 }
 
 pub fn mount(archive, mount_point string, append_to_path bool) bool {
+	if !physfs.is_init() { physfs.initialize() }
 	return physfs.mount(archive, mount_point, append_to_path)
 }
 
@@ -37,7 +41,13 @@ pub fn unmount(archive string) bool {
 }
 
 pub fn exists(fname string) bool {
+	if !physfs.is_init() { physfs.initialize() }
 	return physfs.exists(fname)
+}
+
+pub fn exists_c(fname charptr) bool {
+	if !physfs.is_init() { physfs.initialize() }
+	return physfs.exists_c(fname)
 }
 
 pub fn read_text(fname string) string {

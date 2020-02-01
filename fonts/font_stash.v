@@ -96,10 +96,10 @@ fn render_draw(uptr voidptr, verts_ptr &f32, tcoords_ptr &f32, colors_ptr &u32, 
 	// tcoords := *f32(tcoords_ptr)
 	// colors := *f32(colors_ptr)
 
-	for i in 0..nverts {
+	// for i in 0..nverts {
 		//sgl_v2f_t2f_c1i(verts[2*i+0], verts[2*i+1], tcoords[2*i+0], tcoords[2*i+1], colors[i]);
 		//println('$i: ${verts[i]}')
-	}
+	// }
 }
 
 fn render_delete(uptr voidptr) {

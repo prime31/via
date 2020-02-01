@@ -21,7 +21,7 @@ fn test_spatialhash() {
 
 fn test_collision() {
 	println('------- test_collision ------')
-	mut hash := collections.spatialhash()
+	mut hash := collections.spatialhash(50)
 
 	a := collections.Collider{0, 0, 64, 256}
 	a_id := hash.add(a)
