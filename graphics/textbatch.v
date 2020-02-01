@@ -32,7 +32,7 @@ pub fn textbatch(max_chars int) &TextBatch {
 
 fn (tb &TextBatch) ensure_capacity(chars int) bool {
 	if tb.char_cnt + chars > tb.max_chars {
-		println('Error: textbatch full. Aborting daw.')
+		println('Error: textbatch full. Aborting draw.')
 		return false
 	}
 	return true

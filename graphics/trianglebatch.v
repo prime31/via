@@ -31,7 +31,7 @@ pub fn trianglebatch(max_tris int) &TriangleBatch {
 
 fn (tb &TriangleBatch) ensure_capacity(tris int) bool {
 	if tb.tri_cnt + tris > tb.max_tris {
-		println('Error: TriangleBatch full. Aborting daw.')
+		println('Error: TriangleBatch full. Aborting draw.')
 		return false
 	}
 	return true

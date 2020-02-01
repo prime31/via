@@ -31,7 +31,7 @@ pub fn quadbatch(max_sprites int) &QuadBatch {
 
 fn (qb &QuadBatch) ensure_capacity() bool {
 	if qb.quad_cnt == qb.max_sprites {
-		println('Error: quadbatch full. Aborting daw.')
+		println('Error: quadbatch full. Aborting draw.')
 		return false
 	}
 	return true
