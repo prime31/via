@@ -1,5 +1,6 @@
 module collections
 import via.math
+import via.debug
 
 const (
 	delta = 1e-10
@@ -54,10 +55,12 @@ fn (c &Cell) free() {
 	}
 }
 
-pub fn spatialhash() SpatialHash {
+pub fn spatialhash(cell_size int) &SpatialHash {
 	return &SpatialHash{
 		cells: inthashmap()
 		items: inthashmap()
+		cell_size: cell_size
+		inv_cell_size: 1.0 / f32(cell_size)
 	}
 }
 
@@ -65,6 +68,7 @@ pub fn (sh mut SpatialHash) free() {
 	for x := sh.bounds.x; x <= sh.bounds.right(); x++ {
 		for y := sh.bounds.y; y <= sh.bounds.bottom(); y++ {
 			cell := sh.cell_at_position(x, y, false)
+			if cell == C.NULL { continue }
 			cell.free()
 		}
 	}
@@ -158,6 +162,7 @@ pub fn (sh mut SpatialHash) remove(id int) {
 	for x := p1x; x <= p2x; x++ {
 		for y := p1y; y <= p2y; y++ {
 			mut cell := sh.cell_at_position(x, y, false)
+			if cell == C.NULL { continue }
 			cell.list.delete(id)
 		}
 	}
@@ -188,7 +193,19 @@ pub fn (sh mut SpatialHash) update(id int, collider Collider) {
 	for x := p1x; x <= p2x; x++ {
 		for y := p1y; y <= p2y; y++ {
 			mut cell := sh.cell_at_position(x, y, false)
-			cell.list.delete(cell.list.index(id))
+			if cell == C.NULL { // this should never happen
+				key := get_hashed_key(x, y) as int
+				println('no cell at $x,$y  key: $key')
+				is := key in sh.cells.keys()
+				println('key exists in hashmap: $is')
+				continue
+			}
+			index := cell.list.index(id)
+			if index >= 0 {
+				cell.list.delete(cell.list.index(id))
+			} else {
+				println('cell does not have $id')
+			}
 		}
 	}
 
@@ -501,6 +518,27 @@ pub fn (sh mut SpatialHash) debug() {
 					item := *HashItem(sh.items.get(i))
 					println('	$i: $item.bounds.x, $item.bounds.y, $item.bounds.w, $item.bounds.h')
 				}
+			}
+		}
+	}
+}
+
+pub fn (sh mut SpatialHash) debug_draw() {
+	debug.set_color(math.color_red())
+	half_size := f32(sh.cell_size) / 2.0
+	for x := sh.bounds.x; x <= sh.bounds.right(); x++ {
+		for y := sh.bounds.y; y <= sh.bounds.bottom(); y++ {
+			cell := sh.cell_at_position(x, y, false)
+			if cell == C.NULL { continue }
+
+			if cell.list.len > 0 {
+				len := cell.list.len
+				px := f32(x) * f32(sh.cell_size)
+				py := f32(y) * f32(sh.cell_size)
+
+				debug.draw_hollow_rect(px, py, sh.cell_size, sh.cell_size)
+				debug.draw_text(px + half_size, py + half_size, len.str(), {align:.center_middle scale:3})
+				//debug.draw_text(px, py, '$cell.list', {align:.top scale:2})
 			}
 		}
 	}

@@ -74,10 +74,13 @@ pub fn (hashmap &IntHashMap) has(key int) bool {
 
 pub fn (hashmap mut IntHashMap) put(key int, value voidptr) {
     mut idx := hashmap.put_index(key)
-    if idx < 0 {
-        println('key: $key, idx: $idx, no space, rehashing')
+    for idx < 0 {
+        println('put() key: $key, idx: $idx, no space, rehashing')
         hashmap.rehash()
         idx = hashmap.put_index(key)
+        if idx < 0 {
+            println('put() idx still invalid after rehash!')
+        }
     }
 
     if !hashmap._used[idx] {
@@ -158,8 +161,9 @@ fn (hashmap &IntHashMap) read_index(key int) int {
     }
 
     start_idx := idx
+    mut keyx := key
     for {
-        idx = hashmap.next_index(idx)
+        idx = hashmap.next_index(keyx)
         if idx == start_idx || !hashmap._used[idx] {
             return -1
         }
@@ -167,6 +171,8 @@ fn (hashmap &IntHashMap) read_index(key int) int {
         if hashmap._keys[idx] == key && hashmap._used[idx] {
             return idx
         }
+       // TODO: is bumping the key the right solution?
+        keyx++
     }
 
     return -1
