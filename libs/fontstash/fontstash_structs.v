@@ -15,6 +15,7 @@ pub enum FonsAlign {
 	middle		= 16
 	bottom		= 32
 	baseline	= 64 // Default
+	default		= 65
 	// Combos
 	left_middle = 17
 	center_middle = 18

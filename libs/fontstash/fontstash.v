@@ -93,7 +93,7 @@ pub fn (s &C.FONScontext) set_blur(blur f32) {
 }
 
 [inline]
-pub fn (s &C.FONScontext) set_align(align int) {
+pub fn (s &C.FONScontext) set_align(align FonsAlign) {
 	C.fonsSetAlign(s, align)
 }
 

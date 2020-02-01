@@ -125,6 +125,11 @@ pub fn exists(fname string) bool {
 }
 
 [inline]
+pub fn exists_c(fname charptr) bool {
+	return PHYSFS_exists(fname) == 1
+}
+
+[inline]
 pub fn open_write(filename string) &C.PHYSFS_File {
 	return C.PHYSFS_openWrite(filename.str)
 }
@@ -175,8 +180,8 @@ pub fn flush(handle &C.PHYSFS_File) int {
 }
 
 [inline]
-pub fn is_init() int {
-	return C.PHYSFS_isInit()
+pub fn is_init() bool {
+	return C.PHYSFS_isInit() == 1
 }
 
 [inline]
@@ -229,6 +234,9 @@ pub fn read_bytes(fname string) []byte {
 
 pub fn read_bytes_c(fname charptr) []byte {
 	fp := PHYSFS_openRead(fname)
+	if fp == &PHYSFS_File(0) {
+		panic('could not open file: ${tos3(fname)}')
+	}
 	len := fp.get_length()
 
 	buf := make(int(len), int(len), sizeof(byte))

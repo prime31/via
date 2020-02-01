@@ -7,12 +7,12 @@ pub fn rand() f32 {
 }
 
 [inline]
-pub fn rand_range(min, max f32) f32 {
+pub fn range(min, max f32) f32 {
 	return f32(C.rand()) / C.RAND_MAX * (max - min) + min
 }
 
 [inline]
-pub fn rand_range_int(min, max int) int {
+pub fn range_int(min, max int) int {
 	return C.rand() % (max - min) + min
 }
 
@@ -27,12 +27,12 @@ pub fn rand_int() int {
 }
 
 [inline]
-pub fn rand_int_next(max int) int {
+pub fn int_next(max int) int {
 	return C.rand() % max
 }
 
 [inline]
-pub fn rand_choose_arr<T>(a []T) T {
+pub fn choose_arr<T>(a []T) T {
 	return a[rand_int_next(a.len)]
 }
 
@@ -44,8 +44,8 @@ pub fn rand_choose<T>(a, b T) T {
 }
 
 [inline]
-pub fn rand_choose3<T>(a, b, c T) T {
-	return match rand_int_next(3) {
+pub fn choose3<T>(a, b, c T) T {
+	return match int_next(3) {
 		0 { a }
 		1 { b }
 		else { c }
@@ -53,8 +53,8 @@ pub fn rand_choose3<T>(a, b, c T) T {
 }
 
 [inline]
-pub fn rand_choose4<T>(a, b, c, d T) T {
-	return match rand_int_next(4) {
+pub fn choose4<T>(a, b, c, d T) T {
+	return match int_next(4) {
 		0 { a }
 		1 { b }
 		2 { c }
@@ -63,7 +63,7 @@ pub fn rand_choose4<T>(a, b, c, d T) T {
 }
 
 [inline]
-pub fn rand_choice<T>(args...T) T {
+pub fn choice<T>(args...T) T {
 	assert(true) // TODO: doesnt work yet, tmp.len errors
 	// choice := rand_int_next(tmp.len)
 	return args[0]
