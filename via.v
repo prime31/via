@@ -72,6 +72,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	ctx.initialize(v)
 
 	for !v.poll_events() {
+		time.tick()
 		if v.imgui { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug) }
 
 		w, h := v.win.get_drawable_size()
@@ -82,7 +83,6 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 		if v.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
 		v.win.swap()
-		time.tick()
 	}
 
 	if v.imgui { imgui_shutdown() }

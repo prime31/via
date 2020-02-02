@@ -112,8 +112,8 @@ fn render_delete(uptr voidptr) {
 }
 
 pub fn (font mut FontStash) update_texture() {
-	if font.tex_dirty && time.get_frame_count() != font.last_update {
-		font.last_update = time.get_frame_count()
+	if font.tex_dirty && time.frame_count() != font.last_update {
+		font.last_update = time.frame_count()
 		mut content := sg_image_content{}
 		content.subimage[0][0].ptr = font.stash.texData
 		content.subimage[0][0].size = font.width * font.height

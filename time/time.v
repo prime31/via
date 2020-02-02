@@ -1,4 +1,5 @@
 module time
+import via.libs.sdl2.c
 
 pub struct Time {
 mut:
@@ -8,7 +9,6 @@ mut:
 	last_fps_update u32
 pub mut:
 	dt f32
-	average_dt f32
 	fps int
 	frame_count u32 = u32(1)
 }
@@ -27,41 +27,47 @@ pub fn tick() {
 	t.frame_count++
 	t.frames++
 	t.prev_time = t.curr_time
-	t.curr_time = SDL_GetTicks()
+	t.curr_time = C.SDL_GetTicks()
 	t.dt = 0.001 * f32(t.curr_time - t.prev_time)
 
 	time_since_last := t.curr_time - t.last_fps_update
 	if time_since_last > 1 {
 		fps := f32(t.frames) / f32(time_since_last) + 0.5
 		t.fps = int(fps * 100.0)
-		t.average_dt = f32(time_since_last) / f32(t.frames)
 		t.last_fps_update = t.curr_time
 		t.frames = 0
 	}
 }
 
-pub fn sleep(seconds f32) {
-	SDL_Delay(u32(seconds * 1000))
-}
+[inline]
+pub fn sleep(seconds f32) { SDL_Delay(u32(seconds * 1000)) }
 
-pub fn get_dt() f32 {
-	return time.dt
-}
+[inline]
+pub fn dt() f32 { return time.dt }
 
-pub fn get_time() u64 {
-	return SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency()
-}
+[inline]
+pub fn frame_count() u32 { return time.frame_count }
 
-pub fn get_frame_count() u32 {
-	return time.frame_count
-}
+[inline]
+pub fn ticks() u32 { return SDL_GetTicks() }
 
-pub fn get_ticks() u32 {
-	return SDL_GetTicks()
-}
+[inline]
+pub fn seconds() f32 { return f32(SDL_GetTicks()) / 1000.0 }
 
-pub fn get_seconds() f32 {
-	return f32(SDL_GetTicks()) / 1000.0
-}
-
+[inline]
 pub fn fps() f32 { return time.fps }
+
+[inline]
+pub fn now() u64 { return SDL_GetPerformanceCounter() }
+
+// returns the time in milliseconds since the last call
+pub fn laptime(last_time &u64) u64 {
+	mut tmp := last_time
+	mut dt := u64(0)
+	now := now()
+	if *tmp != 0 {
+		dt = ((now - *tmp) * 1000) / C.SDL_GetPerformanceFrequency()
+	}
+	*tmp = now
+	return dt
+}

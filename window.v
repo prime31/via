@@ -50,6 +50,8 @@ fn (w mut Window) create_gl_window(config &ViaConfig) {
 	SDL_GL_MakeCurrent(w.sdl_window, w.gl_context)
 	if config.window_vsync {
 		SDL_GL_SetSwapInterval(1)
+	} else {
+		SDL_GL_SetSwapInterval(0)
 	}
 
 	flextgl.flext_init()
