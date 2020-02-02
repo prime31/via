@@ -83,7 +83,7 @@ pub:
 	@type EventType   	/**< ::SDL_WINDOWEVENT */
 	timestamp u32       /**< In milliseconds, populated using SDL_GetTicks() */
 	windowID u32        /**< The associated window */
-	event byte          /**< ::SDL_WindowEventID */
+	event WindowEventId          /**< ::SDL_WindowEventID */
 	padding1 byte
 	padding2 byte
 	padding3 byte

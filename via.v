@@ -102,11 +102,13 @@ fn (v &Via) poll_events() bool {
 				return true
 			}
 			.windowevent {
-				if ev.window.windowID == window.win.id && ev.window.event == C.SDL_WINDOWEVENT_CLOSE {
-					return true
+				if ev.window.windowID == window.win.id {
+					if ev.window.event == C.SDL_WINDOWEVENT_CLOSE { return true }
+					window.handle_event(&ev)
 				}
 			}
 			.render_targets_reset { println('render_targets_reset') }
+			.render_device_reset { println('render_device_reset') }
 			else {
 				// defer all other events to input to handle
 				input.handle_event(&ev)
