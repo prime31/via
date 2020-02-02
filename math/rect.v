@@ -15,6 +15,14 @@ pub mut:
 pub fn (r &Rect) str() string { return '$r.x, $r.y, $r.w, $r.h' }
 
 [inline]
+pub fn (r mut Rect) set(x, y, w, h int) {
+	r.x = x
+	r.y = y
+	r.w = w
+	r.h = h
+}
+
+[inline]
 pub fn (r &Rect) right() int { return r.x + r.w }
 
 [inline]

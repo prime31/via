@@ -44,18 +44,18 @@ pub fn (p &OffScreenPass) get_pixel_perfect_config() DrawConfig {
 
 	mut scale := 1
 	aspect_ratio := f32(w) / f32(h)
-	if f32(p.color_tex.width) / f32(p.color_tex.height) > aspect_ratio {
-		scale = w / p.color_tex.width
+	if f32(p.color_tex.w) / f32(p.color_tex.h) > aspect_ratio {
+		scale = w / p.color_tex.w
 	} else {
-		scale = h / p.color_tex.height
+		scale = h / p.color_tex.h
 	}
 
 	if scale == 0 {
 		scale = 1
 	}
 
-	x := (w - (p.color_tex.width * scale)) / 2
-	y := (h - (p.color_tex.height * scale)) / 2
+	x := (w - (p.color_tex.w * scale)) / 2
+	y := (h - (p.color_tex.h * scale)) / 2
 
 	return {x:x y:y sx:scale sy:scale}
 }
@@ -66,11 +66,11 @@ pub fn (p &OffScreenPass) get_pixel_perfect_no_border_config() DrawConfig {
 	// we are going to do some cropping so we need to use floats for the scale then round up
 	mut scale := 1
 	aspect_ratio := f32(w) / f32(h)
-	if f32(p.color_tex.width) / f32(p.color_tex.height) < aspect_ratio {
-		scale_f := f32(w) / p.color_tex.width
+	if f32(p.color_tex.w) / f32(p.color_tex.h) < aspect_ratio {
+		scale_f := f32(w) / p.color_tex.w
 		scale = math.iceil(scale_f)
 	} else {
-		scale_f := f32(h) / p.color_tex.height
+		scale_f := f32(h) / p.color_tex.h
 		scale = math.iceil(scale_f)
 	}
 
@@ -78,8 +78,8 @@ pub fn (p &OffScreenPass) get_pixel_perfect_no_border_config() DrawConfig {
 		scale = 1
 	}
 
-	x := (w - (p.color_tex.width * scale)) / 2
-	y := (h - (p.color_tex.height * scale)) / 2
+	x := (w - (p.color_tex.w * scale)) / 2
+	y := (h - (p.color_tex.h * scale)) / 2
 
 	return {x:x y:y sx:scale sy:scale}
 }

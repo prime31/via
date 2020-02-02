@@ -70,8 +70,8 @@ pub fn (qb mut QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig
 }
 
 pub fn (qb mut QuadBatch) draw(tex Texture, config DrawConfig) {
-	qb.quad.set_image_dimensions(tex.width, tex.height)
-	qb.quad.set_viewport(0, 0, tex.width, tex.height)
+	qb.quad.set_image_dimensions(tex.w, tex.h)
+	qb.quad.set_viewport(0, 0, tex.w, tex.h)
 
 	qb.draw_q_m(tex, qb.quad, config.get_matrix())
 }

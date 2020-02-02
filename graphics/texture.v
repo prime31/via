@@ -6,12 +6,12 @@ pub struct Texture {
 pub mut:
 	img sg_image
 pub:
-	width int
-	height int
+	w int
+	h int
 }
 
 pub fn (t Texture) str() string {
-	return 'w: $t.width, h: $t.height, id: $t.img.id'
+	return 'w: $t.w, h: $t.h, id: $t.img.id'
 }
 
 pub fn (t Texture) eq(other Texture) bool {
@@ -49,8 +49,8 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 
 	tex := Texture{
 		img: sg_make_image(&img_desc)
-		width: img.width
-		height: img.height
+		w: img.width
+		h: img.height
 	}
 	return tex
 }
@@ -75,8 +75,8 @@ pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth
 
 	tex := Texture{
 		img: sg_make_image(&img_desc)
-		width: width
-		height: height
+		w: width
+		h: height
 	}
 	return tex
 }
@@ -107,8 +107,8 @@ fn new_checker_texture() Texture {
 
 	tex := Texture{
 		img: sg_make_image(&img_desc)
-		width: img_desc.width
-		height: img_desc.height
+		w: img_desc.width
+		h: img_desc.height
 	}
     return tex
 }

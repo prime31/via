@@ -39,7 +39,7 @@ pub fn textureatlas(tex Texture, bytes []byte) TextureAtlas {
 				vp_i++
 
 				if vp_i == 4 {
-					atlas.quad_map[quad_name] = math.quad(vp[0], vp[1], vp[2], vp[3], tex.width, tex.height)
+					atlas.quad_map[quad_name] = math.quad(vp[0], vp[1], vp[2], vp[3], tex.w, tex.h)
 					vp_i = 0
 					state = .quad_origin
 				}

@@ -13,7 +13,7 @@ pub mut:
 	win_resizable bool = true				// whether the window should be allowed to be resized
 	win_fullscreen bool = false				// whether the window should be created in fullscreen mode
 	win_vsync bool = true
-	win_highdpi bool = true					// whether the rendering canvas is full-resolution on HighDPI displays
+	win_highdpi bool = false					// whether the rendering canvas is full-resolution on HighDPI displays
 
 	imgui bool = false				// whether imgui should be enabled
 	imgui_gfx_debug bool = false	// whether the Sokol gfx debugger should be enabled

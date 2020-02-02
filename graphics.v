@@ -10,6 +10,8 @@ import via.libs.sokol.gfx
 import via.libs.sokol.sdl_metal_util
 
 struct Graphics {
+pub mut:
+	viewport math.Rect
 mut:
 	min_filter gfx.Filter
 	mag_filter gfx.Filter
@@ -157,6 +159,7 @@ pub fn (g &Graphics) new_offscreen_pass(width, height int) graphics.OffScreenPas
 pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, pass_action_cfg PassActionConfig, config PassConfig) {
 	pass_action_cfg.apply(mut g.pass_action)
 	sg_begin_pass(pass.pass, &g.pass_action)
+	g.viewport.set(0, 0, pass.color_tex.w, pass.color_tex.h)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
 		g.get_default_pipeline()
@@ -166,7 +169,7 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, pass_
 	}
 
 	// projection matrix with flipped y for OpenGL madness
-	mut proj_mat := math.mat32_ortho_off_center(pass.color_tex.width, -pass.color_tex.height)
+	mut proj_mat := math.mat32_ortho_off_center(pass.color_tex.w, -pass.color_tex.h)
 	if &config.trans_mat != &math.Mat32(0) {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
@@ -184,6 +187,7 @@ pub fn (g mut Graphics) begin_default_pass(pass_action_cfg PassActionConfig, con
 	pass_action_cfg.apply(mut g.pass_action)
 	w, h := window.drawable_size()
 	sg_begin_default_pass(&g.pass_action, w, h)
+	g.viewport.set(0, 0, w, h)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {
 		g.get_default_pipeline()

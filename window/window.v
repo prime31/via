@@ -115,6 +115,16 @@ pub fn size() (int, int) {
 	return width, height
 }
 
+pub fn width() int {
+	w, _ := size()
+	return w
+}
+
+pub fn height() int {
+	_, h := size()
+	return h
+}
+
 pub fn set_size(width, height int) {
 	C.SDL_SetWindowSize(win.sdl_window, width, height)
 }

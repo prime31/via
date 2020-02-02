@@ -57,7 +57,7 @@ fn (sb &AtlasBatch) ensure_capacity() bool {
 }
 
 pub fn (sb mut AtlasBatch) set(index int, matrix &math.Mat32) {
-	quad := math.quad(0, 0, sb.tex.width, sb.tex.width, sb.tex.height, sb.tex.height)
+	quad := math.quad(0, 0, sb.tex.w, sb.tex.h, sb.tex.h, sb.tex.h)
 	sb.set_q(index, quad, matrix)
 }
 

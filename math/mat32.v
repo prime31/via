@@ -147,7 +147,7 @@ pub fn (self &Mat32) to_mat44() Mat44 {
 
     result.data[4] = self.data[2]
     result.data[5] = self.data[3]
-    
+
     result.data[12] = self.data[4]
     result.data[13] = self.data[5]
 
@@ -184,6 +184,19 @@ pub fn (self Mat32) get_scale() Vec2 {
 	return Vec2{self.data[0], self.data[3]}
 }
 
+pub fn (self Mat32) inverse() Mat32 {
+	mut res := mat32_zero()
+    s := 1.0 / self.det()
+    res.data[0] = self.data[3] * s
+    res.data[1] = -self.data[1] * s
+    res.data[2] = -self.data[2] * s
+    res.data[3] = self.data[0] * s
+    res.data[4] = (self.data[5] * self.data[2] - self.data[4] * self.data[3]) * s
+    res.data[5] = -(self.data[5] * self.data[1] - self.data[4] * self.data[1]) * s
+    return res
+}
+
+[inline]
 pub fn (self Mat32) transform_vec2(pos Vec2) Vec2 {
     return Vec2{
         x: pos.x * self.data[0] + pos.y * self.data[2] + self.data[4]
@@ -191,7 +204,15 @@ pub fn (self Mat32) transform_vec2(pos Vec2) Vec2 {
     }
 }
 
+[inline]
+pub fn (self Mat32) transform_xy(x, y f32) (f32, f32) {
+    v := Vec2{x,y}
+    vt := self.transform_vec2(v)
+    return vt.x, vt.y
+}
+
 // transforms an array of positions (src) and writes them into the Vertex array (dst)
+[inline]
 pub fn (self Mat32) transform_vec2_arr(dst &Vertex, src &Vec2, size int) {
     mut mut_dst := dst
 
