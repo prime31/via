@@ -62,7 +62,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	v.g.setup()
 	debug.setup()
 
-	input.set_window_scale(window.get_scale())
+	input.set_window_scale(window.scale())
 
 	if v.imgui { imgui_init(window.win.sdl_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 	v.g.init_defaults()
@@ -73,7 +73,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		time.tick()
 		if v.imgui { imgui_new_frame(window.win.sdl_window, config.imgui_gfx_debug) }
 
-		w, h := window.get_drawable_size()
+		w, h := window.drawable_size()
 		debug.begin(w, h)
 		ctx.update(v)
 		ctx.draw(mut v)

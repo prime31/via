@@ -170,7 +170,7 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, pass_
 	if &config.trans_mat != &math.Mat32(0) {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
-		w, h := window.get_drawable_size()
+		w, h := window.drawable_size()
 	}
 	debug.set_proj_mat(proj_mat)
 
@@ -182,7 +182,7 @@ pub fn (g mut Graphics) begin_offscreen_pass(pass &graphics.OffScreenPass, pass_
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
 pub fn (g mut Graphics) begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	pass_action_cfg.apply(mut g.pass_action)
-	w, h := window.get_drawable_size()
+	w, h := window.drawable_size()
 	sg_begin_default_pass(&g.pass_action, w, h)
 
 	mut pip := if config.pipeline == &graphics.Pipeline(0) {

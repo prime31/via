@@ -28,6 +28,12 @@ pub:
 	highdpi bool
 }
 
+pub enum WindowMode {
+	windowed = 0
+	fullscreen = 1
+	desktop = 4097
+}
+
 pub fn create(config &WindowConfig) {
 	mut window_flags := C.SDL_WINDOW_OPENGL | C.SDL_WINDOW_MOUSE_FOCUS
 	if config.resizable { window_flags = window_flags | C.SDL_WINDOW_RESIZABLE }
@@ -87,13 +93,13 @@ pub fn swap() {
 }
 
 // returns the drawable size / the window size. Used to scale mouse coords when the OS gives them to us in points.
-pub fn get_scale() f32 {
-	wx, _ := get_size()
-	dx, _ := get_drawable_size()
+pub fn scale() f32 {
+	wx, _ := size()
+	dx, _ := drawable_size()
 	return dx / wx
 }
 
-pub fn get_drawable_size() (int, int) {
+pub fn drawable_size() (int, int) {
 	$if metal? { return int(sdl_metal_util.width()), int(sdl_metal_util.height()) }
 
 	width := 0
@@ -102,7 +108,7 @@ pub fn get_drawable_size() (int, int) {
 	return width, height
 }
 
-pub fn get_size() (int, int) {
+pub fn size() (int, int) {
 	width := 0
 	height := 0
 	C.SDL_GetWindowSize(win.sdl_window, &width, &height)
@@ -111,4 +117,8 @@ pub fn get_size() (int, int) {
 
 pub fn set_size(width, height int) {
 	C.SDL_SetWindowSize(win.sdl_window, width, height)
+}
+
+pub fn set_fullscreen(mode WindowMode) {
+	C.SDL_SetWindowFullscreen(win.sdl_window, mode)
 }

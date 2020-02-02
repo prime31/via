@@ -40,7 +40,7 @@ pub fn (p &OffScreenPass) free(free_images bool) {
 //#region Resolution Policies for blitting the render target
 
 pub fn (p &OffScreenPass) get_pixel_perfect_config() DrawConfig {
-	w, h := window.get_drawable_size()
+	w, h := window.drawable_size()
 
 	mut scale := 1
 	aspect_ratio := f32(w) / f32(h)
@@ -61,7 +61,7 @@ pub fn (p &OffScreenPass) get_pixel_perfect_config() DrawConfig {
 }
 
 pub fn (p &OffScreenPass) get_pixel_perfect_no_border_config() DrawConfig {
-	w, h := window.get_drawable_size()
+	w, h := window.drawable_size()
 
 	// we are going to do some cropping so we need to use floats for the scale then round up
 	mut scale := 1
