@@ -2,6 +2,7 @@ module via
 import via.time
 import via.input
 import via.debug
+import via.window
 import via.filesystem
 import via.libs.flextgl
 import via.libs.sokol
@@ -12,7 +13,6 @@ pub struct Via {
 pub mut:
 	audio &Audio
 	g &Graphics
-	win &Window
 	imgui bool
 }
 
@@ -22,7 +22,6 @@ pub const (
 	v = &Via{
 		audio: 0
 		g: 0
-		win: 0
 	}
 )
 
@@ -32,7 +31,6 @@ fn create_via(config &ViaConfig) &Via {
 	_via = &Via {
 		audio: audio(config)
 		g: graphics(config)
-		win: window(config)
 		imgui: config.imgui
 	}
 
@@ -44,10 +42,10 @@ fn create_via(config &ViaConfig) &Via {
 
 fn (v &Via) free() {
 	v.audio.free()
-	filesystem.free()
 	v.g.free()
+	window.free()
+	filesystem.free()
 	time.free()
-	v.win.free()
 
 	sg_shutdown()
 
@@ -60,29 +58,29 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		C.SDL_Log(c'Unable to initialize SDL: %s', C.SDL_GetError())
 	}
 
-	v.win.create(config)
+	window.create(config.get_win_config())
 	v.g.setup()
 	debug.setup()
 
-	input.set_window_scale(v.win.get_scale())
+	input.set_window_scale(window.get_scale())
 
-	if v.imgui { imgui_init(v.win.sdl_window, v.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
+	if v.imgui { imgui_init(window.win.sdl_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 	v.g.init_defaults()
 
 	ctx.initialize(v)
 
 	for !v.poll_events() {
 		time.tick()
-		if v.imgui { imgui_new_frame(v.win.sdl_window, config.imgui_gfx_debug) }
+		if v.imgui { imgui_new_frame(window.win.sdl_window, config.imgui_gfx_debug) }
 
-		w, h := v.win.get_drawable_size()
+		w, h := window.get_drawable_size()
 		debug.begin(w, h)
 		ctx.update(v)
 		ctx.draw(mut v)
 		sg_commit()
 
-		if v.imgui { imgui_render(v.win.sdl_window, v.win.gl_context) }
-		v.win.swap()
+		if v.imgui { imgui_render(window.win.sdl_window, window.win.gl_context) }
+		window.swap()
 	}
 
 	if v.imgui { imgui_shutdown() }
@@ -104,7 +102,7 @@ fn (v &Via) poll_events() bool {
 				return true
 			}
 			.windowevent {
-				if ev.window.windowID == v.win.id && ev.window.event == C.SDL_WINDOWEVENT_CLOSE {
+				if ev.window.windowID == window.win.id && ev.window.event == C.SDL_WINDOWEVENT_CLOSE {
 					return true
 				}
 			}

@@ -13,7 +13,7 @@ pub mut:
 	frame_count u32 = u32(1)
 }
 
-pub const (
+const (
 	time = &Time{}
 )
 
