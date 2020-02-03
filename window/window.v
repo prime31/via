@@ -34,6 +34,8 @@ pub enum WindowMode {
 	desktop = 4097
 }
 
+//#region Window Management
+
 pub fn create(config &WindowConfig) {
 	mut window_flags := C.SDL_WINDOW_OPENGL | C.SDL_WINDOW_MOUSE_FOCUS
 	if config.resizable { window_flags = window_flags | C.SDL_WINDOW_RESIZABLE }
@@ -91,6 +93,37 @@ fn create_metal_window(config &WindowConfig, window_flags int) {
 pub fn swap() {
 	$if !metal? { C.SDL_GL_SwapWindow(win.sdl_window) }
 }
+
+//#endregion
+
+//#region Internal event handling
+
+pub fn handle_event(evt &C.SDL_Event) {
+	mut w := win
+
+	match evt.window.event {
+		.moved { println('moved')}
+		.shown { println('shown') }
+		.hidden { println('hidden') }
+		.exposed { println('exposed') }
+		.moved { println('moved') }
+		.resized { println('resized') }
+		.size_changed { println('size_changed') }
+		.minimized { println('minimized') }
+		.maximized { println('maximized') }
+		.restored { println('restored') }
+		.enter { println('enter') }
+		.leave { println('leave') }
+		.focus_gained { println('focus_gained') }
+		.focus_lost { println('focus_lost') }
+		.close { println('close') }
+		.take_focus { println('take_focus') }
+		.hit_test { println('hit_test') }
+		else {}
+	}
+}
+
+//#endregion
 
 // returns the drawable size / the window size. Used to scale mouse coords when the OS gives them to us in points.
 pub fn scale() f32 {
