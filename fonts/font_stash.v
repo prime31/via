@@ -5,6 +5,12 @@ import via.libs.fontstash
 import via.libs.physfs
 import via.libs.sokol.gfx
 
+const (
+	// controls texture type. If true, texture is 4x larger but we can use our standard quad pip to render
+	// text. If false, the tex is r8 and we need to use graphics.get_default_text_pipeline() to render.
+	convert_font_tex_to_rgba = true
+)
+
 pub struct FontStash {
 pub mut:
 	stash &C.FONScontext
@@ -65,7 +71,7 @@ fn render_create(uptr voidptr, width int, height int) int {
 		wrap_u: .clamp_to_edge
 		wrap_v: .clamp_to_edge
 		usage: .dynamic
-		pixel_format: .r8
+		pixel_format: if convert_font_tex_to_rgba { gfx.PixelFormat.rgba8 } else { gfx.PixelFormat.r8 }
 		label: 'FontStash'.str
 		d3d11_texture: 0
 	}
@@ -114,10 +120,34 @@ fn render_delete(uptr voidptr) {
 pub fn (font mut FontStash) update_texture() {
 	if font.tex_dirty && time.frame_count() != font.last_update {
 		font.last_update = time.frame_count()
-		mut content := sg_image_content{}
-		content.subimage[0][0].ptr = font.stash.texData
-		content.subimage[0][0].size = font.width * font.height
-		sg_update_image(font.img, &content)
+
+		if convert_font_tex_to_rgba {
+			tex_area := font.width * font.height
+			unsafe {
+				mut data := malloc(tex_area * 4 * sizeof(byte))
+
+				for i in 0..tex_area {
+					b := font.stash.texData[i]
+					data[i * 4] = 255
+					data[i * 4 + 1] = 255
+					data[i * 4 + 2] = 255
+					data[i * 4 + 3] = b
+				}
+
+				mut content := sg_image_content{}
+				content.subimage[0][0].ptr = data
+				content.subimage[0][0].size = tex_area * 4 * sizeof(byte)
+				sg_update_image(font.img, &content)
+
+				free(data)
+			}
+		} else {
+			mut content := sg_image_content{}
+			content.subimage[0][0].ptr = font.stash.texData
+			content.subimage[0][0].size = font.width * font.height
+			sg_update_image(font.img, &content)
+		}
+
 		font.tex_dirty = false
 	} else {
 		font.tex_dirty = true
