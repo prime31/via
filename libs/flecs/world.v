@@ -23,13 +23,13 @@ pub fn (w &World) new_component(id string, size i64) Entity {
 	}
 }
 
-pub fn (w &World) type_from_entity(entity Entity) C.ecs_type {
+pub fn (w &World) type_from_entity(entity Entity) C.ecs_type_t {
 	return ecs_type_from_entity(w.world, entity.id)
 }
 
-pub fn (w &World) new_system(id string, system_kind int, sig string, action fn(&C.ecs_rows_t)) Entity {
+pub fn (w &World) new_system(id string, kind c.EcsSystemKind, sig string, action fn(&C.ecs_rows_t)) Entity {
 	return Entity {
-		id: ecs_new_system(w.world, id.str, system_kind, sig.str, action)
+		id: ecs_new_system(w.world, id.str, kind, sig.str, action)
 		world: w.world
 	}
 }

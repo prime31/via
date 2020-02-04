@@ -22,6 +22,6 @@ pub fn (e &Entity) set_ptr_t<T>(comp_entity Entity, ptr &T) Entity {
 	}
 }
 
-pub fn (e &Entity) type_from_entity() C.ecs_type {
+pub fn (e &Entity) type_from_entity() C.ecs_type_t {
 	return ecs_type_from_entity(e.world, e.id)
 }

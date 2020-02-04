@@ -1,6 +1,10 @@
 module c
 
-type ecs_type &ecs_vector_t
+// TODO: the ecs_type_t struct should be a typedef
+// type ecs_type &C.ecs_vector_t
+
+pub struct C.ecs_type_t {}
+pub fn (t C.ecs_type_t) str() string { return '${&t}' }
 
 pub enum EcsSystemKind {
 	on_load
@@ -32,8 +36,7 @@ pub enum EcsSystemStatus {
 	deactivated = 4
 }
 
-pub struct C.ecs_world_t {
-}
+pub struct C.ecs_world_t {}
 
 pub struct C.ecs_rows_t {
 pub:
@@ -180,7 +183,7 @@ fn C.ecs_writer_init(world &C.ecs_world_t) C.ecs_writer_t
 fn C.ecs_writer_write(buffer byteptr, size u32, writer &C.ecs_writer_t) int
 fn C._ecs_import(world &C.ecs_world_t, mod fn(&C.ecs_world_t, int), module_name byteptr, flags int, handles_out voidptr, handles_size u32) u64
 fn C.ecs_import_from_library(world &C.ecs_world_t, library_name byteptr, module_name byteptr, flags int) u64
-fn C.ecs_type_from_entity(world &C.ecs_world_t, entity u64) &C.ecs_vector_t
+fn C.ecs_type_from_entity(world &C.ecs_world_t, entity u64) C.ecs_type_t //&C.ecs_vector_t
 fn C.ecs_type_to_entity(world &C.ecs_world_t, typ &C.ecs_vector_t) u64
 fn C.ecs_type_add(world &C.ecs_world_t, typ &C.ecs_vector_t, entity u64) &C.ecs_vector_t
 fn C.ecs_type_remove(world &C.ecs_world_t, typ &C.ecs_vector_t, entity u64) &C.ecs_vector_t
