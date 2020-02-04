@@ -6,7 +6,6 @@ imgui.ini
 **/generator/obj
 
 # per module ignores
-libs/flecs/thirdparty
 libs/flecs/flecs_git
 
 libs/flextgl/thirdparty/flextGL.o
