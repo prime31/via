@@ -1,5 +1,6 @@
 module graphics
 import via.math
+import via.fonts
 import via.utils
 import via.libs.sokol.gfx
 
@@ -10,7 +11,7 @@ mut:
 	max_sprites int
 	quad_cnt int = 0
 	last_appended_quad_cnt int = 0
-	tex Texture
+	tex_id u32
 	quad math.Quad
 }
 
@@ -44,15 +45,15 @@ pub fn (qb mut QuadBatch) end() {
 	qb.flush()
 	qb.last_appended_quad_cnt = 0
 	qb.quad_cnt = 0
-	qb.tex.img.id = 0
+	qb.tex_id = 0
 }
 
-pub fn (qb mut QuadBatch) draw_q_m(tex Texture, quad &math.Quad, matrix &math.Mat32) {
+pub fn (qb mut QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	if !qb.ensure_capacity() { return }
-	if qb.tex.ne(tex) {
+	if qb.tex_id != tex.id {
 		qb.flush()
-		qb.bindings.set_frag_image(0, tex.img)
-		qb.tex = tex
+		qb.bindings.set_frag_image(0, tex)
+		qb.tex_id = tex.id
 	}
 
 	base_vert := qb.quad_cnt * 4
@@ -62,18 +63,46 @@ pub fn (qb mut QuadBatch) draw_q_m(tex Texture, quad &math.Quad, matrix &math.Ma
 	for i in 0..4 {
 		qb.verts[base_vert + i].s = quad.texcoords[i].x
 		qb.verts[base_vert + i].t = quad.texcoords[i].y
+		qb.verts[base_vert + i].color = *color
 	}
 }
 
 pub fn (qb mut QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
-	qb.draw_q_m(tex, quad, config.get_matrix())
+	qb.draw_q_m(tex.img, quad, config.get_matrix(), config.color)
 }
 
 pub fn (qb mut QuadBatch) draw(tex Texture, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(0, 0, tex.w, tex.h)
 
-	qb.draw_q_m(tex, qb.quad, config.get_matrix())
+	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
+}
+
+pub fn (qb mut QuadBatch) draw_text(font &fonts.FontBook, str string, config DrawConfig) {
+	matrix := config.get_matrix()
+
+	mut f := font
+	f.update_texture()
+	iter := C.FONStextIter{}
+	C.fonsTextIterInit(font.stash, &iter, 0, 0, str.str, C.NULL)
+
+	fons_quad := C.FONSquad{}
+	mut iter_result := 1
+	for iter_result == 1 {
+		iter_result = C.fonsTextIterNext(font.stash, &iter, &fons_quad)
+
+		// TODO: maybe make the transform_vec2_arr generic and just use a local fixed array for positions and tex coords?
+		qb.quad.positions[0] = math.Vec2{fons_quad.x0, fons_quad.y0}
+		qb.quad.positions[1] = math.Vec2{fons_quad.x1, fons_quad.y0}
+		qb.quad.positions[2] = math.Vec2{fons_quad.x1, fons_quad.y1}
+		qb.quad.positions[3] = math.Vec2{fons_quad.x0, fons_quad.y1}
+
+		qb.quad.texcoords[0] = math.Vec2{fons_quad.s0, fons_quad.t0}
+		qb.quad.texcoords[1] = math.Vec2{fons_quad.s1, fons_quad.t0}
+		qb.quad.texcoords[2] = math.Vec2{fons_quad.s1, fons_quad.t1}
+		qb.quad.texcoords[3] = math.Vec2{fons_quad.s0, fons_quad.t1}
+		qb.draw_q_m(font.img, qb.quad, matrix, config.color)
+	}
 }
 
 pub fn (qb mut QuadBatch) flush() {

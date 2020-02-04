@@ -11,7 +11,7 @@ const (
 	convert_font_tex_to_rgba = true
 )
 
-pub struct FontStash {
+pub struct FontBook {
 pub mut:
 	stash &C.FONScontext
 	img C.sg_image
@@ -23,8 +23,8 @@ pub mut:
 	tex_dirty bool
 }
 
-pub fn fontstash(width, height int, min_filter, mag_filter gfx.Filter) &FontStash {
-	mut fs := &FontStash{
+pub fn fontbook(width, height int, min_filter, mag_filter gfx.Filter) &FontBook {
+	mut fs := &FontBook{
 		stash: &C.FONScontext(0)
 	}
 
@@ -45,13 +45,13 @@ pub fn fontstash(width, height int, min_filter, mag_filter gfx.Filter) &FontStas
 	return fs
 }
 
-pub fn (fs &FontStash) free() {
+pub fn (fs &FontBook) free() {
 	C.fonsDeleteInternal(fs.stash)
 }
 
 // callbacks
 fn render_create(uptr voidptr, width int, height int) int {
-	mut fs := &FontStash(uptr)
+	mut fs := &FontBook(uptr)
 
     // create or re-create font atlas texture
     if fs.img.id != C.SG_INVALID_ID {
@@ -72,7 +72,7 @@ fn render_create(uptr voidptr, width int, height int) int {
 		wrap_v: .clamp_to_edge
 		usage: .dynamic
 		pixel_format: if convert_font_tex_to_rgba { gfx.PixelFormat.rgba8 } else { gfx.PixelFormat.r8 }
-		label: 'FontStash'.str
+		label: 'FontBook'.str
 		d3d11_texture: 0
 	}
 
@@ -86,13 +86,13 @@ fn render_resize(uptr voidptr, width int, height int) int {
 }
 
 fn render_update(uptr voidptr, rect &int, data byteptr) {
-	mut font := &FontStash(uptr)
+	mut font := &FontBook(uptr)
 	font.update_texture()
 }
 
 fn render_draw(uptr voidptr, verts_ptr &f32, tcoords_ptr &f32, colors_ptr &u32, nverts int) {
 	println('---- FontStash.render_draw called ----')
-	mut fs := &FontStash(uptr)
+	mut fs := &FontBook(uptr)
 
 	if fs.tex_dirty {
 		fs.update_texture()
@@ -110,14 +110,14 @@ fn render_draw(uptr voidptr, verts_ptr &f32, tcoords_ptr &f32, colors_ptr &u32, 
 
 fn render_delete(uptr voidptr) {
 	println('render_delete')
-	mut fs := &FontStash(uptr)
+	mut fs := &FontBook(uptr)
 	if fs.img.id != C.SG_INVALID_ID {
         sg_destroy_image(fs.img)
 	}
 	unsafe { free(fs) }
 }
 
-pub fn (font mut FontStash) update_texture() {
+pub fn (font mut FontBook) update_texture() {
 	if font.tex_dirty && time.frame_count() != font.last_update {
 		font.last_update = time.frame_count()
 
@@ -155,59 +155,60 @@ pub fn (font mut FontStash) update_texture() {
 }
 
 // Add fonts
-pub fn (font &FontStash) add_font(src string) int {
+pub fn (font &FontBook) add_font(src string) int {
 	bytes := physfs.read_bytes(src)
 	return C.fonsAddFontMem(font.stash, src.str, bytes.data, bytes.len, true)
 }
 
-pub fn (font &FontStash) get_font_by_name(name string) int {
+pub fn (font &FontBook) get_font_by_name(name string) int {
 	return C.fonsGetFontByName(font.stash, name.str)
 }
 
 // State handling
-pub fn (font &FontStash) push_state() {
+pub fn (font &FontBook) push_state() {
 	C.fonsPushState(font.stash)
 }
 
-pub fn (font &FontStash) pop_state() {
+pub fn (font &FontBook) pop_state() {
 	C.fonsPopState(font.stash)
 }
 
-pub fn (font &FontStash) clear_state() {
+pub fn (font &FontBook) clear_state() {
 	C.fonsClearState(font.stash)
 }
 
 // State setting
-pub fn (font &FontStash) set_size(size f32) {
+pub fn (font &FontBook) set_size(size f32) {
 	C.fonsSetSize(font.stash, size)
 }
 
-pub fn (font &FontStash) set_color(color math.Color) {
+// DrawConfig handles color for now
+fn (font &FontBook) set_color(color math.Color) {
 	C.fonsSetColor(font.stash, color.value)
 }
 
-pub fn (font &FontStash) set_spacing(spacing f32) {
+pub fn (font &FontBook) set_spacing(spacing f32) {
 	C.fonsSetSpacing(font.stash, spacing)
 }
 
-pub fn (font &FontStash) set_blur(blur f32) {
+pub fn (font &FontBook) set_blur(blur f32) {
 	C.fonsSetBlur(font.stash, blur)
 }
 
-pub fn (font &FontStash) set_align(align fontstash.FonsAlign) {
+pub fn (font &FontBook) set_align(align fontstash.FonsAlign) {
 	C.fonsSetAlign(font.stash, align)
 }
 
-pub fn (fs &FontStash) set_font(font int) {
+pub fn (fs &FontBook) set_font(font int) {
 	C.fonsSetFont(fs.stash, font)
 }
 
-// drawing
-pub fn (font &FontStash) draw_text(x f32, y f32, str string) f32 {
+// private since we dont use the callback method for text drawing
+fn (font &FontBook) draw_text(x f32, y f32, str string) f32 {
 	return C.fonsDrawText(font.stash, x, y, str.str, C.NULL)
 }
 
-pub fn (font &FontStash) iter_text(x f32, y f32, str string) {
+pub fn (font &FontBook) iter_text(x f32, y f32, str string) {
 	iter := C.FONStextIter{}
 	C.fonsTextIterInit(font.stash, &iter, x, y, str.str, C.NULL)
 
@@ -215,6 +216,5 @@ pub fn (font &FontStash) iter_text(x f32, y f32, str string) {
 	mut iter_result := 1
 	for iter_result == 1 {
 		iter_result = C.fonsTextIterNext(font.stash, &iter, &quad)
-		// println('iter $quad')
 	}
 }

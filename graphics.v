@@ -144,8 +144,8 @@ pub fn (g &Graphics) new_atlasbatch(tex graphics.Texture, max_sprites int) &grap
 	return graphics.atlasbatch(tex, max_sprites)
 }
 
-pub fn (g &Graphics) new_fontstash(width, height int) &fonts.FontStash {
-	return fonts.fontstash(width, height, g.min_filter, g.mag_filter)
+pub fn (g &Graphics) new_fontbook(width, height int) &fonts.FontBook {
+	return fonts.fontbook(width, height, g.min_filter, g.mag_filter)
 }
 
 pub fn (g &Graphics) new_offscreen_pass(width, height int) graphics.OffScreenPass {

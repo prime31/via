@@ -59,7 +59,7 @@ fn (tb mut TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.
 	}
 }
 
-pub fn (tb mut TextBatch) draw_text(font &fonts.FontStash, str string, config DrawConfig) {
+pub fn (tb mut TextBatch) draw_text(font &fonts.FontBook, str string, config DrawConfig) {
 	if !tb.ensure_capacity(str.len) { return }
 	if tb.img.id != font.img.id {
 		tb.flush()
@@ -89,7 +89,7 @@ pub fn (tb mut TextBatch) draw_text(font &fonts.FontStash, str string, config Dr
 		tb.quad.texcoords[1] = math.Vec2{fons_quad.s1, fons_quad.t0}
 		tb.quad.texcoords[2] = math.Vec2{fons_quad.s1, fons_quad.t1}
 		tb.quad.texcoords[3] = math.Vec2{fons_quad.s0, fons_quad.t1}
-		tb.draw_q_m(tb.quad, matrix, math.Color{iter.color})
+		tb.draw_q_m(tb.quad, matrix, config.color)
 	}
 }
 

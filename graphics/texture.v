@@ -4,8 +4,7 @@ import via.libs.sokol.gfx
 
 pub struct Texture {
 pub mut:
-	img sg_image
-pub:
+	img C.sg_image
 	w int
 	h int
 }
@@ -55,6 +54,28 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 	return tex
 }
 
+pub fn dyn_texture(width int, height int, min_filter, mag_filter gfx.Filter) Texture {
+	mut img_desc := sg_image_desc{
+		width: width
+		height: height
+		num_mipmaps: 0
+		min_filter: min_filter
+		mag_filter: mag_filter
+		wrap_u: .clamp_to_edge
+		wrap_v: .clamp_to_edge
+		usage: .dynamic
+		label: &byte(0)
+		d3d11_texture: 0
+	}
+
+	tex := Texture{
+		img: sg_make_image(&img_desc)
+		w: width
+		h: height
+	}
+	return tex
+}
+
 pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth_stencil bool) Texture {
 	mut img_desc := sg_image_desc{
 		render_target: true
@@ -81,7 +102,7 @@ pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth
 	return tex
 }
 
-fn new_checker_texture() Texture {
+pub fn new_checker_texture() Texture {
     pixels := [
         u32(0xFFFFFFFF), 0x00000000, 0xFFFFFFFF, 0x00000000,
         0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
@@ -111,4 +132,11 @@ fn new_checker_texture() Texture {
 		h: img_desc.height
 	}
     return tex
+}
+
+pub fn (t &Texture) update_content(data byteptr, size int) {
+	mut content := sg_image_content{}
+	content.subimage[0][0].ptr = data
+	content.subimage[0][0].size = size
+	sg_update_image(t.img, &content)
 }

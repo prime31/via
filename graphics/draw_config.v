@@ -10,6 +10,7 @@ pub mut:
 	sy f32 = 1.0
 	ox f32 = 0.0
 	oy f32 = 0.0
+	color math.Color = math.Color{}
 }
 
 pub fn (c &DrawConfig) get_matrix() math.Mat32 {
