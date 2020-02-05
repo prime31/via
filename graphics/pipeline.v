@@ -40,22 +40,28 @@ pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, pipel
 	for i in 0..4 {
 		u := shader_desc.vs.uniform_blocks[i]
 		if u.size == 0 { break }
-		uniforms << UniformBlock{
-			shader_stage: .vs
-			index: i
-			num_bytes: u.size
-			data: malloc(u.size)
+
+		unsafe {
+			uniforms << UniformBlock{
+				shader_stage: .vs
+				index: i
+				num_bytes: u.size
+				data: malloc(u.size)
+			}
 		}
 	}
 
 	for i in 0..4 {
 		u := shader_desc.fs.uniform_blocks[i]
 		if u.size == 0 { break }
-		uniforms << UniformBlock{
-			shader_stage: .fs
-			index: i
-			num_bytes: u.size
-			data: malloc(u.size)
+
+		unsafe {
+			uniforms << UniformBlock{
+				shader_stage: .fs
+				index: i
+				num_bytes: u.size
+				data: malloc(u.size)
+			}
 		}
 	}
 

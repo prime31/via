@@ -40,9 +40,6 @@ fn (qb &QuadBatch) ensure_capacity() bool {
 	return true
 }
 
-pub fn (qb mut QuadBatch) begin() {
-}
-
 pub fn (qb mut QuadBatch) end() {
 	qb.flush()
 	qb.last_appended_quad_cnt = 0

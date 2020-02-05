@@ -39,8 +39,6 @@ fn (tb &TriangleBatch) ensure_capacity(tris int) bool {
 	return true
 }
 
-pub fn (tb mut TriangleBatch) begin() {}
-
 pub fn (tb mut TriangleBatch) end() {
 	tb.flush()
 	tb.last_appended_tri_cnt = 0
@@ -96,7 +94,8 @@ pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int) {
 	}
 }
 
-pub fn (tb mut TriangleBatch) flush() {
+pub fn (tbb &TriangleBatch) flush() {
+	mut tb := tbb
 	total_tris := (tb.tri_cnt - tb.last_appended_tri_cnt)
 	if total_tris == 0 { return }
 

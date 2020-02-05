@@ -40,9 +40,8 @@ fn (tb &TextBatch) ensure_capacity(chars int) bool {
 	return true
 }
 
-pub fn (tb mut TextBatch) begin() {}
-
-pub fn (tb mut TextBatch) end() {
+pub fn (tbb &TextBatch) end() {
+	mut tb := tbb
 	tb.flush()
 	tb.last_appended_char_cnt = 0
 	tb.char_cnt = 0
