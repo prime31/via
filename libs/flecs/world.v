@@ -16,9 +16,35 @@ pub fn init_world() World {
 	}
 }
 
-pub fn (w &World) new_component(id string, size i64) Entity {
+pub fn (w &World) set_context(ctx voidptr) {
+	C.ecs_set_context(w.world, ctx)
+}
+
+// should be a generic
+pub fn (w &World) get_context() voidptr {
+	return C.ecs_get_context(w.world)
+}
+
+pub fn (w &World) set_system_context(system u64, ctx voidptr) {
+	C.ecs_set_system_context(w.world, system, ctx)
+}
+
+// should be a generic
+pub fn (w &World) get_system_context(system u64) voidptr {
+	return C.ecs_get_system_context(w.world, system)
+}
+
+// runs into generic bug if called with the same T twice.
+pub fn (w &World) new_component<T>(id string) Entity {
 	return Entity {
-		id: ecs_new_component(w.world, id.str, size),
+		id: C.ecs_new_component(w.world, id.str, sizeof(T)),
+		world: w.world
+	}
+}
+
+pub fn (w &World) new_component_t(id string, size int) Entity {
+	return Entity {
+		id: C.ecs_new_component(w.world, id.str, size),
 		world: w.world
 	}
 }

@@ -60,9 +60,11 @@ pub:
 	interrupted_by u64
 }
 
+// runs into generic bug if called with the same T twice.
 pub fn (r &C.ecs_rows_t) column<T>(column u32) &T {
     return *T(C._ecs_column(r, sizeof(T), column))
 }
+
 
 pub struct C.ecs_reference_t {}
 

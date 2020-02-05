@@ -75,7 +75,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 		w, h := window.drawable_size()
 		debug.begin(w, h)
-		ctx.update(v)
+		ctx.update(mut v)
 		ctx.draw(mut v)
 		sg_commit()
 

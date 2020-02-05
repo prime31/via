@@ -15,6 +15,7 @@ pub fn (e &Entity) set_ptr(comp_entity Entity, size i64, ptr voidptr) Entity {
 	}
 }
 
+// doesnt work yet due to a V bug. If you use it twice V generates two of the same method.
 pub fn (e &Entity) set_ptr_t<T>(comp_entity Entity, ptr &T) Entity {
 	return Entity {
 		id: _ecs_set_ptr(e.world, e.id, comp_entity.id, sizeof(T), ptr),
