@@ -16,11 +16,14 @@ mut:
 }
 
 pub fn trianglebatch(max_tris int) &TriangleBatch {
+	// 2x2 white pixel texture
+	pixels := [u32(0xFFFFFFFF), 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]!
+
 	mut tb := &TriangleBatch{
 		// default colors to white
 		verts: utils.new_arr_with_default(max_tris * 3, max_tris * 3, math.Vertex{})
 		max_tris: max_tris
-		tex: new_checker_texture()
+		tex: texture_from_data(2, 2, pixels)
 	}
 
 	indices := new_vert_tri_index_buffer(max_tris)

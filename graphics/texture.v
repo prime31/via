@@ -102,17 +102,10 @@ pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth
 	return tex
 }
 
-pub fn new_checker_texture() Texture {
-    pixels := [
-        u32(0xFFFFFFFF), 0x00000000, 0xFFFFFFFF, 0x00000000,
-        0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
-        0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
-        0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
-	]!
-
+pub fn texture_from_data(width, height int, pixels []u32) Texture {
 	mut img_desc := sg_image_desc{
-		width: 4
-		height: 4
+		width: width
+		height: height
 		pixel_format: .rgba8
 		min_filter: .nearest
 		mag_filter: .nearest
@@ -128,10 +121,20 @@ pub fn new_checker_texture() Texture {
 
 	tex := Texture{
 		img: sg_make_image(&img_desc)
-		w: img_desc.width
-		h: img_desc.height
+		w: width
+		h: height
 	}
     return tex
+}
+
+pub fn checker_texture() Texture {
+    pixels := [
+        u32(0xFFFFFFFF), 0x00000000, 0xFFFFFFFF, 0x00000000,
+        0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+        0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
+        0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+	]!
+	return texture_from_data(4, 4, pixels)
 }
 
 pub fn (t &Texture) update_content(data byteptr, size int) {
