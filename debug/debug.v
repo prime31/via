@@ -5,6 +5,9 @@ import via.libs.fontstash
 import via.libs.sokol.sgl
 import via.libs.sokol.sfons
 
+#flag -I @VMOD/via/debug/thirdparty
+#include "proggytiny.h"
+
 pub const ( used_import = sgl.used_import )
 
 // Note: Debug.draw calls can only be in one pass! If there are calls in multiple passes it will cause sgl
@@ -36,13 +39,8 @@ pub fn setup() {
 
 	mut d := debug
 	d.fons = sfons.create(128, 128, 1)
-	if filesystem.exists_c(c'assets/ProggyTiny.ttf') {
-		bytes := filesystem.read_bytes_c(c'assets/ProggyTiny.ttf')
-		d.def_font = C.fonsAddFontMem(d.fons, 'ProggyTiny', bytes.data, bytes.len, false)
-		d.fons.set_size(10)
-	} else {
-		println('could not find assets/ProggyTiny.ttf. debug.draw_text will not work until a font is loaded.')
-	}
+	d.def_font = C.fonsAddFontMem(d.fons, 'ProggyTiny', C.ProggyTiny_ttf, C.ProggyTiny_ttf_len, false)
+	d.fons.set_size(10)
 }
 
 pub fn begin(w, h int) {

@@ -46,7 +46,7 @@ pub fn (tb mut TriangleBatch) end() {
 	tb.tex.img.id = 0
 }
 
-pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32) {
+pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config DrawConfig) {
 	if !tb.ensure_capacity(1) { return }
 
 	base_vert := tb.tri_cnt * 3
@@ -54,23 +54,26 @@ pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32) {
 
 	tb.verts[base_vert].x = x1
 	tb.verts[base_vert].y = y1
+	tb.verts[base_vert].color = config.color
 	tb.verts[base_vert + 1].x = x2
 	tb.verts[base_vert + 1].y = y2
+	tb.verts[base_vert + 1].color = config.color
 	tb.verts[base_vert + 2].x = x3
 	tb.verts[base_vert + 2].y = y3
+	tb.verts[base_vert + 2].color = config.color
 }
 
-pub fn (tb mut TriangleBatch) draw_rectangle(x, y, width, height f32) {
-	tb.draw_polygon([math.Vec2{x, y}, math.Vec2{x + width, y}, math.Vec2{x + width, y + height}, math.Vec2{x, y + height}]!)
+pub fn (tb mut TriangleBatch) draw_rectangle(x, y, width, height f32, config DrawConfig) {
+	tb.draw_polygon([math.Vec2{x, y}, math.Vec2{x + width, y}, math.Vec2{x + width, y + height}, math.Vec2{x, y + height}]!, config)
 }
 
-pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2) {
+pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2, config DrawConfig) {
 	for i in 1..verts.len - 1 {
-		tb.draw_triangle(verts[0].x, verts[0].y, verts[i].x, verts[i].y, verts[i + 1].x, verts[i + 1].y)
+		tb.draw_triangle(verts[0].x, verts[0].y, verts[i].x, verts[i].y, verts[i + 1].x, verts[i + 1].y, config)
 	}
 }
 
-pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int) {
+pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int, config DrawConfig) {
 	if !tb.ensure_capacity(segments) { return }
 
 	center := math.Vec2{x, y}
@@ -88,7 +91,7 @@ pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int) {
 		sin_cos = math.Vec2{math.cos(theta + increment), math.sin(theta + increment)}
 		v2 := center + sin_cos.scale(radius)
 
-		tb.draw_triangle(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y)
+		tb.draw_triangle(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y, config)
 
 		theta += increment
 	}
