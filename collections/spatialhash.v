@@ -440,7 +440,7 @@ fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) [
 
 	for x := cl; x <= cw; x++ {
 		for y := ct; y <= ch; y++ {
-			mut cell := sh.cell_at_position(x, y, false)
+			cell := sh.cell_at_position(x, y, false)
 			if cell != C.NULL {
 				for item_id in cell.list {
 					if item_id == id || item_id in visited {
@@ -468,8 +468,9 @@ fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) [
 }
 
 // gets all the potential overlaps. Note that the array must be freed
-pub fn (sh mut SpatialHash) broadphase(id int, goal_x, goal_y f32) []CollisionResult {
-	mut item := *HashItem(sh.items.get(id))
+pub fn (shh &SpatialHash) broadphase(id int, goal_x, goal_y f32) []CollisionResult {
+	mut sh := shh
+	item := *HashItem(sh.items.get(id))
 	return sh.project(id, item.bounds, goal_x, goal_y)
 }
 
@@ -490,7 +491,7 @@ pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) CollisionReponse {
 	return CollisionReponse{goal_x, goal_y}
 }
 
-pub fn (sh mut SpatialHash) move(id int, goal_x, goal_y f32) {
+pub fn (sh &SpatialHash) move(id int, goal_x, goal_y f32) {
 	// sh.check(id, goal_x, goal_y)
 }
 
