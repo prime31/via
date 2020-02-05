@@ -16,27 +16,20 @@ pub mut:
 	imgui bool
 }
 
-__global _via &Via
-
-pub const (
-	v = &Via{
-		g: 0
-	}
-)
 
 fn create_via(config &ViaConfig) &Via {
 	filesystem.init_filesystem(config.identity, config.append_identity)
 	audio.create()
 
-	_via = &Via {
+	mut via := &Via {
 		g: graphics(config)
 		imgui: config.imgui
 	}
 
 	// disable imgui for metal
-	$if metal? { _via.imgui = false }
+	$if metal? { via.imgui = false }
 
-	return _via
+	return via
 }
 
 fn (v &Via) free() {

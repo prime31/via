@@ -27,11 +27,8 @@ fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool)
 fn imgui_handle_event(evt &C.SDL_Event) bool {
 	if ImGui_ImplSDL2_ProcessEvent(evt) {
 		match evt.@type {
-			.mousewheel { return C.igGetIO().WantCaptureMouse }
-			.mousebuttondown { return C.igGetIO().WantCaptureMouse }
-			.textinput { return C.igGetIO().WantCaptureKeyboard }
-			.keydown { return C.igGetIO().WantCaptureKeyboard }
-			.keyup { return C.igGetIO().WantCaptureKeyboard }
+			.mousewheel, .mousebuttondown { return C.igGetIO().WantCaptureMouse }
+			.textinput, .keydown, .keyup { return C.igGetIO().WantCaptureKeyboard }
 			.windowevent { return true }
 			else { return false }
 		}
