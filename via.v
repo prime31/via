@@ -2,6 +2,7 @@ module via
 import via.time
 import via.input
 import via.debug
+import via.audio
 import via.window
 import via.filesystem
 import via.libs.flextgl
@@ -11,7 +12,6 @@ import via.libs.sdl2
 
 pub struct Via {
 pub mut:
-	audio &Audio
 	g &Graphics
 	imgui bool
 }
@@ -20,16 +20,15 @@ __global _via &Via
 
 pub const (
 	v = &Via{
-		audio: 0
 		g: 0
 	}
 )
 
 fn create_via(config &ViaConfig) &Via {
 	filesystem.init_filesystem(config.identity, config.append_identity)
+	audio.create()
 
 	_via = &Via {
-		audio: audio(config)
 		g: graphics(config)
 		imgui: config.imgui
 	}
@@ -41,7 +40,7 @@ fn create_via(config &ViaConfig) &Via {
 }
 
 fn (v &Via) free() {
-	v.audio.free()
+	audio.free()
 	v.g.free()
 	window.free()
 	filesystem.free()
