@@ -1,5 +1,10 @@
 module math
-import rand as unused
+
+fn C.rand() int
+
+pub fn seed(s int) {
+	C.srand(s)
+}
 
 [inline]
 pub fn rand() f32 {

@@ -99,8 +99,6 @@ pub fn swap() {
 //#region Internal event handling
 
 pub fn handle_event(evt &C.SDL_Event) {
-	mut w := win
-
 	match evt.window.event {
 		.moved { println('moved')}
 		.shown { println('shown') }

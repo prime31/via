@@ -17,6 +17,12 @@ pub fn (c &Camera) trans_mat() math.Mat32 {
 	return math.mat32_transform(c.pos.x, c.pos.y, c.rot, c.scale.x, c.scale.y, 0, 0)
 }
 
+// set the camera scale. A value of 3 would be zoom in 3x and a value of 0.5 would be zoomed out 2x
+pub fn (c mut Camera) zoom(zoom f32) {
+	c.scale.x = zoom
+	c.scale.y = zoom
+}
+
 pub fn (c &Camera) screen_to_world(x, y int) (int, int) {
 	// we use an offcenter ortho projection so we first shift the coordinates by half the drawable size
 	w, h := window.drawable_size()

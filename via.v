@@ -57,7 +57,6 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	input.set_window_scale(window.scale())
 
 	if v.imgui { imgui_init(window.win.sdl_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
-	v.g.init_defaults()
 
 	ctx.initialize(v)
 

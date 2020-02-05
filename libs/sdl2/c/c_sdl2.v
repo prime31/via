@@ -1,5 +1,9 @@
 module c
 
+pub const (
+	used_import = 1
+)
+
 #flag linux  `sdl2-config --cflags --libs`
 #flag darwin `sdl2-config --cflags --libs`
 

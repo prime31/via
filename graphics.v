@@ -28,6 +28,7 @@ pub:
 	stencil_action gfx.Action = .clear
 	stencil_val byte = byte(0)
 }
+
 fn (cfg &PassActionConfig) apply(pa mut C.sg_pass_action) {
 	pa.colors[0].action = cfg.color_action
 	pa.colors[0].val[0] = cfg.color.r_f()
@@ -59,7 +60,7 @@ fn (g &Graphics) free() {
 	unsafe { free(g) }
 }
 
-fn (g &Graphics) setup() {
+fn (g mut Graphics) setup() {
 	desc := sg_desc{
 		mtl_device: sdl_metal_util.get_metal_device()
 		mtl_renderpass_descriptor_cb: C.mu_get_render_pass_descriptor
@@ -70,9 +71,7 @@ fn (g &Graphics) setup() {
 		d3d11_depth_stencil_view_cb: 0
 	}
 	sg_setup(&desc)
-}
 
-fn (g mut Graphics) init_defaults() {
 	g.def_pip = graphics.pipeline_new_default()
 	g.def_text_pip = graphics.pipeline_new_default_text()
 }

@@ -1,6 +1,8 @@
 module sdl2
 import via.libs.sdl2.c
 
+pub const ( used_import = c.used_import )
+
 pub struct C.SDL_Keysym {
 pub:
 	scancode Scancode	/**< SDL physical key code - see ::SDL_Scancode for details */
