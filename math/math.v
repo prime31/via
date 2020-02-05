@@ -158,13 +158,6 @@ pub fn modf(x f32) (f32, f32) {
 	return i, x - i
 }
 
-// Returns b if c is true, a otherwise
-[inline]
-pub fn choose(a, b f32, c bool) f32 {
-	if c { return b }
-	return a
-}
-
 // Computes a step function. Returns 1 when x >= y, 0 otherwise
 [inline]
 pub fn step(y, x f32) f32 { return choose(0.0, 1.0, x >= y) }

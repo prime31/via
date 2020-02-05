@@ -2,6 +2,8 @@ module fmod
 import via.libs.fmod.core.c as c_core
 import via.libs.fmod.studio.c as c_studio
 
+pub const ( used_import = c_core.used_import + c_studio.used_import )
+
 #flag -I @VMOD/via/libs/fmod/thirdparty/core
 #flag -I @VMOD/via/libs/fmod/thirdparty/studio
 
@@ -16,10 +18,6 @@ import via.libs.fmod.studio.c as c_studio
 #include "fmod_studio.h"
 #include "fmod_errors.h"
 
-
-pub const (
-	version = 1
-)
 
 
 fn C.FMOD_ErrorString(errcode int) byteptr

@@ -1,5 +1,7 @@
 module sokol
 
+pub const ( used_import = 0 )
+
 #flag -I @VMOD/via/libs/sokol/thirdparty
 #flag -I @VMOD/via/libs/sokol/thirdparty/util
 

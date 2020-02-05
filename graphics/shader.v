@@ -2,6 +2,8 @@ module graphics
 import via.math
 import via.libs.sokol.gfx
 
+pub const ( shd_import = gfx.used_import )
+
 pub struct ShaderSourceConfig {
 pub:
 	vert string = string{0, 0}

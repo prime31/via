@@ -5,6 +5,8 @@ import via.libs.fontstash
 import via.libs.sokol.sgl
 import via.libs.sokol.sfons
 
+pub const ( used_import = sgl.used_import )
+
 // Note: Debug.draw calls can only be in one pass! If there are calls in multiple passes it will cause sgl
 // to attempt to update buffers multiple times in a frame.
 struct Debug {

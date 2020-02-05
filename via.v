@@ -4,15 +4,17 @@ import via.input
 import via.debug
 import via.audio
 import via.window
+import via.graphics
 import via.filesystem
 import via.libs.flextgl
 import via.libs.sokol
 import via.libs.sokol.gfx
 import via.libs.sdl2
 
+pub const ( used_import = gfx.used_import + debug.used_import + sokol.used_import + sdl2.used_import + flextgl.used_import )
+
 pub struct Via {
 pub mut:
-	g &Graphics
 	imgui bool
 }
 
@@ -22,7 +24,6 @@ fn create_via(config &ViaConfig) &Via {
 	audio.create()
 
 	mut via := &Via {
-		g: graphics(config)
 		imgui: config.imgui
 	}
 
@@ -34,7 +35,7 @@ fn create_via(config &ViaConfig) &Via {
 
 fn (v &Via) free() {
 	audio.free()
-	v.g.free()
+	graphics.free()
 	window.free()
 	filesystem.free()
 	time.free()
@@ -51,14 +52,14 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	}
 
 	window.create(config.get_win_config())
-	v.g.setup()
+	graphics.setup()
 	debug.setup()
 
 	input.set_window_scale(window.scale())
 
 	if v.imgui { imgui_init(window.win.sdl_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 
-	ctx.initialize(v)
+	ctx.initialize()
 
 	for !v.poll_events() {
 		time.tick()
@@ -66,8 +67,8 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 		w, h := window.drawable_size()
 		debug.begin(w, h)
-		ctx.update(mut v)
-		ctx.draw(mut v)
+		ctx.update()
+		ctx.draw()
 		sg_commit()
 
 		if v.imgui { imgui_render(window.win.sdl_window, window.win.gl_context) }

@@ -1,5 +1,4 @@
 module window
-import via.libs.sdl2
 import via.libs.flextgl
 import via.libs.sokol.sdl_metal_util
 

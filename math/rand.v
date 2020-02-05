@@ -36,14 +36,21 @@ pub fn int_next(max int) int {
 	return C.rand() % max
 }
 
+// Returns b if c is true, a otherwise
+[inline]
+pub fn choose(a, b f32, c bool) f32 {
+	if c { return b }
+	return a
+}
+
 [inline]
 pub fn choose_arr<T>(a []T) T {
-	return a[rand_int_next(a.len)]
+	return a[int_next(a.len)]
 }
 
 // randomly returns a or b
 [inline]
-pub fn rand_choose<T>(a, b T) T {
+pub fn choose_t<T>(a, b T) T {
 	if rand_01() > 0.5 { return b }
 	return a
 }

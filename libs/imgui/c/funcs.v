@@ -31,14 +31,3 @@ fn C.igEndMainMenuBar()
 // multiple viewport
 fn C.igUpdatePlatformWindows()
 fn C.igRenderPlatformWindowsDefault(voidptr, voidptr)
-
-// ImGui SDL2 and OpenGL3 implementation
-fn C.ImGui_ImplSDL2_InitForOpenGL(window voidptr, sdl_gl_context voidptr) bool
-fn C.ImGui_ImplSDL2_ProcessEvent(event voidptr) bool
-fn C.ImGui_ImplSDL2_NewFrame(window voidptr)
-fn C.ImGui_ImplSDL2_Shutdown()
-
-fn C.ImGui_ImplOpenGL3_Init(glsl_version byteptr) bool
-fn C.ImGui_ImplOpenGL3_NewFrame()
-fn C.ImGui_ImplOpenGL3_RenderDrawData(draw_data voidptr)
-fn C.ImGui_ImplOpenGL3_Shutdown()

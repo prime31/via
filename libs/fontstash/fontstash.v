@@ -1,5 +1,7 @@
 module fontstash
 
+pub const ( used_import = 1 )
+
 #flag -I @VMOD/via/libs/fontstash/thirdparty
 
 #define FONTSTASH_IMPLEMENTATION

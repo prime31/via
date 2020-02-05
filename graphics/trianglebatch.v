@@ -3,6 +3,8 @@ import via.math
 import via.utils
 import via.libs.sokol.gfx
 
+pub const ( trib_import = gfx.used_import )
+
 pub struct TriangleBatch {
 mut:
 	bindings sg_bindings
@@ -81,7 +83,7 @@ pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int) {
 	v0 := center + sin_cos.scale(radius)
 	theta += increment
 
-	for i in 1..segments - 1 {
+	for _ in 1..segments - 1 {
 		sin_cos = math.Vec2{math.cos(theta), math.sin(theta)}
 		v1 := center + sin_cos.scale(radius)
 

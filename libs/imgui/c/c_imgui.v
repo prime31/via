@@ -1,5 +1,7 @@
 module c
 
+pub const ( used_import = 1 )
+
 // if we are using Flextgl we need to set this flag! ImGui defaults to gl3w
 #flag -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #flag -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1

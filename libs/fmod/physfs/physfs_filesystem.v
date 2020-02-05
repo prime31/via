@@ -1,7 +1,5 @@
 module physfs
-import via.libs.physfs
 import via.libs.fmod.core as fmod
-
 
 pub fn set_physfs_file_system(s &fmod.System) int {
 	return s.set_file_system(physfs_open_cb, physfs_close_cb, physfs_read_cb, physfs_seek_cb, voidptr(0), voidptr(0), 2048)

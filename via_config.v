@@ -1,6 +1,5 @@
 module via
 import via.window
-import via.libs.sokol.gfx
 
 pub struct ViaConfig {
 pub mut:

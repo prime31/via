@@ -1,5 +1,7 @@
 module flextgl
 
+pub const ( used_import = 0 )
+
 #flag darwin -framework OpenGL -framework Cocoa -framework QuartzCore
 
 #flag -I @VMOD/via/libs/flextgl/thirdparty

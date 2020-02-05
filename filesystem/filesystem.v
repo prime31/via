@@ -1,7 +1,6 @@
 module filesystem
 import os
 import filepath
-import via.utils
 import via.libs.physfs
 
 pub fn init_filesystem(identity string, append_identity bool) {

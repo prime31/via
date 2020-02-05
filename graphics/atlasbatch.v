@@ -3,6 +3,8 @@ import via.math
 import via.utils
 import via.libs.sokol.gfx
 
+pub const ( used_import = gfx.used_import )
+
 pub struct AtlasBatch {
 mut:
 	bindings sg_bindings

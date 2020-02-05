@@ -1,6 +1,8 @@
 module core
 import via.libs.fmod
 
+pub const ( used_import = fmod.used_import )
+
 pub struct System {
 pub:
 	sys &FMOD_SYSTEM

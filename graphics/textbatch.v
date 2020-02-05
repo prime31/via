@@ -4,6 +4,8 @@ import via.utils
 import via.fonts
 import via.libs.sokol.gfx
 
+pub const ( tb_import = gfx.used_import )
+
 pub struct TextBatch {
 mut:
 	bindings sg_bindings

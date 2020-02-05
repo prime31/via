@@ -4,6 +4,8 @@ import via.fonts
 import via.utils
 import via.libs.sokol.gfx
 
+const ( used = gfx.used_import )
+
 pub struct QuadBatch {
 mut:
 	bindings sg_bindings

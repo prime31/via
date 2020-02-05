@@ -1,5 +1,6 @@
 module c
 
+pub const ( used_import = 1 )
 
 pub struct C.FMOD_SYSTEM {}
 pub struct C.FMOD_SOUND {}

@@ -1,6 +1,8 @@
 module time
 import via.libs.sdl2.c
 
+pub const ( used_import = c.used_import )
+
 pub struct Time {
 mut:
 	fps_frames u32

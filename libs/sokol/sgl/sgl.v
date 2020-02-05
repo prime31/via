@@ -1,6 +1,8 @@
 module sgl
 import via.libs.sokol
 
+pub const ( used_import = sokol.used_import )
+
 #define SOKOL_GL_IMPL
 #include "util/sokol_gl.h"
 

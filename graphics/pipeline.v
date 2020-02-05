@@ -1,5 +1,4 @@
 module graphics
-import via.math
 import via.libs.sokol.gfx
 
 fn C.memcmp() int
