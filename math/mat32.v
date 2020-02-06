@@ -154,7 +154,7 @@ pub fn (self &Mat32) to_mat44() Mat44 {
     return result
 }
 
-pub fn (self Mat32) to_mat44_orth() Mat44 {
+pub fn (self &Mat32) to_mat44_orth() Mat44 {
     mut result := mat44_identity()
 
     result.data[0] = self.data[0]
@@ -164,27 +164,27 @@ pub fn (self Mat32) to_mat44_orth() Mat44 {
     return result
 }
 
-pub fn (self Mat32) det() f32 {
+pub fn (self &Mat32) det() f32 {
     return self.data[0] * self.data[3] - self.data[2] * self.data[1]
 }
 
-pub fn (self Mat32) get_translation() Vec2 {
+pub fn (self &Mat32) get_translation() Vec2 {
 	return Vec2{self.data[4], self.data[5]}
 }
 
-pub fn (self Mat32) get_radians() f32 {
+pub fn (self &Mat32) get_radians() f32 {
 	return atan2(self.data[2], self.data[1])
 }
 
-pub fn (self Mat32) get_degrees() f32 {
+pub fn (self &Mat32) get_degrees() f32 {
 	return degrees(self.get_radians())
 }
 
-pub fn (self Mat32) get_scale() Vec2 {
+pub fn (self &Mat32) get_scale() Vec2 {
 	return Vec2{self.data[0], self.data[3]}
 }
 
-pub fn (self Mat32) inverse() Mat32 {
+pub fn (self &Mat32) inverse() Mat32 {
 	mut res := mat32_zero()
     s := 1.0 / self.det()
     res.data[0] = self.data[3] * s
@@ -196,8 +196,31 @@ pub fn (self Mat32) inverse() Mat32 {
     return res
 }
 
+pub fn (m mut Mat32) translate(x, y f32) {
+    m.data[4] = m.data[0] * x + m.data[2] * y + m.data[4]
+    m.data[5] = m.data[1] * x + m.data[3] * y + m.data[5]
+}
+
+pub fn (m mut Mat32) rotate(rads f32) {
+    sin, cos := sincos(rads)
+    nm0 := m.data[0] * cos + m.data[2] * sin
+    nm1 := m.data[1] * cos + m.data[3] * sin
+
+    m.data[2] = m.data[0] * -sin + m.data[2] * cos
+    m.data[3] = m.data[1] * -sin + m.data[3] * cos
+    m.data[0] = nm0
+    m.data[1] = nm1
+}
+
+pub fn (m mut Mat32) scale(x, y f32) {
+    m.data[0] *= x
+    m.data[1] *= x
+    m.data[2] *= y
+    m.data[3] *= y
+}
+
 [inline]
-pub fn (self Mat32) transform_vec2(pos Vec2) Vec2 {
+pub fn (self &Mat32) transform_vec2(pos Vec2) Vec2 {
     return Vec2{
         x: pos.x * self.data[0] + pos.y * self.data[2] + self.data[4]
         y: pos.x * self.data[1] + pos.y * self.data[3] + self.data[5]
@@ -205,7 +228,7 @@ pub fn (self Mat32) transform_vec2(pos Vec2) Vec2 {
 }
 
 [inline]
-pub fn (self Mat32) transform_xy(x, y f32) (f32, f32) {
+pub fn (self &Mat32) transform_xy(x, y f32) (f32, f32) {
     v := Vec2{x,y}
     vt := self.transform_vec2(v)
     return vt.x, vt.y
@@ -213,7 +236,7 @@ pub fn (self Mat32) transform_xy(x, y f32) (f32, f32) {
 
 // transforms an array of positions (src) and writes them into the Vertex array (dst)
 [inline]
-pub fn (self Mat32) transform_vec2_arr(dst &Vertex, src &Vec2, size int) {
+pub fn (self &Mat32) transform_vec2_arr(dst &Vertex, src &Vec2, size int) {
     mut mut_dst := dst
 
     for i in 0..size {
