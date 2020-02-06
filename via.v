@@ -52,7 +52,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	}
 
 	window.create(config.get_win_config())
-	graphics.setup()
+	graphics.setup(config.max_quad_count, config.max_tri_count)
 	debug.setup()
 
 	input.set_window_scale(window.scale())
@@ -69,6 +69,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		debug.begin(w, h)
 		ctx.update()
 		ctx.draw()
+		graphics.end_frame()
 		sg_commit()
 
 		if v.imgui { imgui_render(window.win.sdl_window, window.win.gl_context) }

@@ -12,6 +12,8 @@ struct Graphics {
 pub mut:
 	viewport math.Rect
 mut:
+	quad_batch &QuadBatch
+	tri_batch &TriangleBatch
 	min_filter gfx.Filter
 	mag_filter gfx.Filter
 	pass_action C.sg_pass_action
@@ -21,7 +23,9 @@ mut:
 }
 
 pub const (
-	graphics = &Graphics{
+	g = &Graphics{
+		tri_batch: 0
+		quad_batch: 0
 		min_filter: .nearest
  		mag_filter: .nearest
 	}
@@ -53,14 +57,18 @@ pub:
 	blit_pass bool = false
 }
 
+//#region setup and config
+
 pub fn free() {
-	graphics.def_pip.free()
-	graphics.def_text_pip.free()
-	unsafe { free(graphics) }
+	g.quad_batch.free()
+	g.tri_batch.free()
+	g.def_pip.free()
+	g.def_text_pip.free()
+	unsafe { free(g) }
 }
 
-pub fn setup() {
-	mut g := graphics
+pub fn setup(max_quad_cnt, max_tri_cnt int) {
+	mut gg := g
 
 	desc := sg_desc{
 		mtl_device: sdl_metal_util.get_metal_device()
@@ -73,31 +81,35 @@ pub fn setup() {
 	}
 	sg_setup(&desc)
 
-	g.def_pip = pipeline_new_default()
-	g.def_text_pip = pipeline_new_default_text()
+	gg.quad_batch = quadbatch(max_quad_cnt)
+	gg.tri_batch = trianglebatch(max_tri_cnt)
+	gg.def_pip = pipeline_new_default()
+	gg.def_text_pip = pipeline_new_default_text()
 }
 
 pub fn get_default_pipeline() &Pipeline {
-	g := graphics
-	return &g.def_pip
+	gg := g
+	return &gg.def_pip
 }
 
 pub fn get_default_text_pipeline() &Pipeline {
-	g := graphics
-	return &g.def_text_pip
+	gg := g
+	return &gg.def_text_pip
 }
 
 pub fn set_default_filter(min, mag gfx.Filter) {
-	mut g := graphics
-	g.min_filter = min
-	g.mag_filter = mag
+	mut gg := g
+	gg.min_filter = min
+	gg.mag_filter = mag
 }
+
+//#endregion
 
 //#region create graphics resources
 
 pub fn new_texture(src string) Texture {
 	buf := physfs.read_bytes(src)
-	tex := texture(buf, graphics.min_filter, graphics.mag_filter)
+	tex := texture(buf, g.min_filter, g.mag_filter)
 	unsafe { buf.free() }
 	return tex
 }
@@ -148,23 +160,29 @@ pub fn new_atlasbatch(tex Texture, max_sprites int) &AtlasBatch {
 }
 
 pub fn new_fontbook(width, height int) &fonts.FontBook {
-	return fonts.fontbook(width, height, graphics.min_filter, graphics.mag_filter)
+	return fonts.fontbook(width, height, g.min_filter, g.mag_filter)
 }
 
 pub fn new_offscreen_pass(width, height int) OffScreenPass {
-	return offscreenpass(width, height, graphics.min_filter, graphics.mag_filter)
+	return offscreenpass(width, height, g.min_filter, g.mag_filter)
 }
 
 //#endregion
 
 //#region rendering
 
-pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfig, config PassConfig) {
-	mut g := graphics
+pub fn end_frame() {
+	mut gg := g
+	gg.quad_batch.end()
+	gg.tri_batch.end()
+}
 
-	pass_action_cfg.apply(mut g.pass_action)
-	sg_begin_pass(pass.pass, &g.pass_action)
-	g.viewport.set(0, 0, pass.color_tex.w, pass.color_tex.h)
+pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfig, config PassConfig) {
+	mut gg := g
+
+	pass_action_cfg.apply(mut gg.pass_action)
+	sg_begin_pass(pass.pass, &gg.pass_action)
+	gg.viewport.set(0, 0, pass.color_tex.w, pass.color_tex.h)
 
 	mut pip := if config.pipeline == &Pipeline(0) {
 		get_default_pipeline()
@@ -182,18 +200,18 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 	debug.set_proj_mat(proj_mat)
 
 	// save the transform-projection matrix in case a new pipeline is set later
-	g.pass_proj_mat = proj_mat
+	gg.pass_proj_mat = proj_mat
 	set_pipeline(mut pip)
 }
 
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
 pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
-	mut g := graphics
+	mut gg := g
 
-	pass_action_cfg.apply(mut g.pass_action)
+	pass_action_cfg.apply(mut gg.pass_action)
 	w, h := window.drawable_size()
-	sg_begin_default_pass(&g.pass_action, w, h)
-	g.viewport.set(0, 0, w, h)
+	sg_begin_default_pass(&gg.pass_action, w, h)
+	gg.viewport.set(0, 0, w, h)
 
 	mut pip := if config.pipeline == &Pipeline(0) {
 		get_default_pipeline()
@@ -216,26 +234,33 @@ pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	}
 
 	// save the transform-projection matrix in case a new pipeline is set later
-	g.pass_proj_mat = proj_mat
+	gg.pass_proj_mat = proj_mat
 	set_pipeline(mut pip)
 	debug.set_proj_mat(proj_mat)
 }
 
 pub fn end_pass() {
+	mut gg := g
+	gg.quad_batch.flush()
+	gg.tri_batch.flush()
+
 	debug.draw()
 	sg_end_pass()
 }
 
 pub fn set_pipeline(pipeline mut Pipeline) {
-	g := graphics
+	mut gg := g
+	gg.quad_batch.flush()
+	gg.tri_batch.flush()
+
 	sg_apply_pipeline(pipeline.pip)
-	pipeline.set_uniform_raw(.vs, 0, &g.pass_proj_mat)
+	pipeline.set_uniform_raw(.vs, 0, &gg.pass_proj_mat)
 	pipeline.apply_uniforms()
 }
 
 pub fn set_default_pipeline() {
-	g := graphics
-	set_pipeline(mut g.def_pip)
+	mut gg := g
+	set_pipeline(mut gg.def_pip)
 }
 
 //#endregion
