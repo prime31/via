@@ -271,4 +271,8 @@ pub fn flush() {
 	gg.tri_batch.flush()
 }
 
+pub fn spritebatch() &QuadBatch { return g.quad_batch }
+
+pub fn tribatch() &TriangleBatch { return g.tri_batch }
+
 //#endregion
