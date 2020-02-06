@@ -65,11 +65,9 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		time.tick()
 		if v.imgui { imgui_new_frame(window.win.sdl_window, config.imgui_gfx_debug) }
 
-		w, h := window.drawable_size()
-		debug.begin(w, h)
+		debug.begin()
 		ctx.update()
 		ctx.draw()
-		graphics.end_frame()
 		sg_commit()
 
 		if v.imgui { imgui_render(window.win.sdl_window, window.win.gl_context) }

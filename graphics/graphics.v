@@ -20,6 +20,7 @@ mut:
 	def_pip Pipeline
 	def_text_pip Pipeline
 	pass_proj_mat math.Mat32
+	in_default_pass bool
 }
 
 pub const (
@@ -36,7 +37,7 @@ pub:
 	color math.Color = math.Color{}
 	color_action gfx.Action = gfx.Action.clear
 	stencil_action gfx.Action = .clear
-	stencil_val byte = byte(0)
+	stencil byte = byte(0)
 }
 
 fn (cfg &PassActionConfig) apply(pa mut C.sg_pass_action) {
@@ -47,7 +48,7 @@ fn (cfg &PassActionConfig) apply(pa mut C.sg_pass_action) {
 	pa.colors[0].val[3] = cfg.color.a_f()
 
 	pa.stencil.action = cfg.stencil_action
-	pa.stencil.val = cfg.stencil_val
+	pa.stencil.val = cfg.stencil
 }
 
 pub struct PassConfig {
@@ -171,12 +172,6 @@ pub fn new_offscreen_pass(width, height int) OffScreenPass {
 
 //#region rendering
 
-pub fn end_frame() {
-	mut gg := g
-	gg.quad_batch.end()
-	gg.tri_batch.end()
-}
-
 pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfig, config PassConfig) {
 	mut gg := g
 
@@ -207,6 +202,7 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
 pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	mut gg := g
+	gg.in_default_pass = true
 
 	pass_action_cfg.apply(mut gg.pass_action)
 	w, h := window.drawable_size()
@@ -240,9 +236,15 @@ pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 }
 
 pub fn end_pass() {
-	mut gg := g
-	gg.quad_batch.flush()
-	gg.tri_batch.flush()
+	// if we are in our default pass this is the end of rendering to close out the batches
+	if g.in_default_pass {
+		mut gg := g
+		gg.in_default_pass = false
+		gg.quad_batch.end()
+		gg.tri_batch.end()
+	} else {
+		flush()
+	}
 
 	debug.draw()
 	sg_end_pass()
@@ -261,6 +263,12 @@ pub fn set_pipeline(pipeline mut Pipeline) {
 pub fn set_default_pipeline() {
 	mut gg := g
 	set_pipeline(mut gg.def_pip)
+}
+
+pub fn flush() {
+	mut gg := g
+	gg.quad_batch.flush()
+	gg.tri_batch.flush()
 }
 
 //#endregion

@@ -1,5 +1,6 @@
 module debug
 import via.math
+import via.window
 import via.filesystem
 import via.libs.fontstash
 import via.libs.sokol.sgl
@@ -43,13 +44,14 @@ pub fn setup() {
 	d.fons.set_size(10)
 }
 
-pub fn begin(w, h int) {
+pub fn begin() {
 	mut d := debug
 	d.did_draw = false
 
 	C.sgl_defaults()
 	C.sgl_matrix_mode_projection()
 
+	w, h := window.drawable_size()
 	mat := math.mat32_ortho_off_center(w, h)
 	set_proj_mat(mat)
 }
