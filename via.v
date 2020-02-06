@@ -52,7 +52,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 	}
 
 	window.create(config.get_win_config())
-	graphics.setup(config.max_quads, config.max_tris)
+	graphics.setup(config.max_quads, config.max_tris, config.min_filter, config.mag_filter)
 	debug.setup()
 
 	input.set_window_scale(window.scale())

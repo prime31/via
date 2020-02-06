@@ -1,5 +1,6 @@
 module via
 import via.window
+import via.libs.sokol.gfx
 
 pub struct ViaConfig {
 pub mut:
@@ -8,6 +9,8 @@ pub mut:
 
 	max_quads int = 5000				// max number of quads allowed to be rendered per frame (sprites and text)
 	max_tris int = 500					// max number of triangles allowed to be rendered per frame (shapes and lines)
+	min_filter gfx.Filter = gfx.Filter.nearest	// min filter used for all textures created, modifiable via graphics.set_default_filter
+	mag_filter gfx.Filter = .nearest			// mag filter used for all textures created
 
 	win_title string = 'V is for via'	// the window title as UTF-8 encoded string
 	win_width int = 1024				// the preferred width of the window / canvas
