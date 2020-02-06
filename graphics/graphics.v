@@ -68,7 +68,7 @@ pub fn free() {
 	unsafe { free(g) }
 }
 
-pub fn setup(max_quad_cnt, max_tri_cnt int) {
+pub fn setup(max_quads, max_tris int) {
 	mut gg := g
 
 	desc := sg_desc{
@@ -82,8 +82,8 @@ pub fn setup(max_quad_cnt, max_tri_cnt int) {
 	}
 	sg_setup(&desc)
 
-	gg.quad_batch = quadbatch(max_quad_cnt)
-	gg.tri_batch = trianglebatch(max_tri_cnt)
+	gg.quad_batch = quadbatch(max_quads)
+	gg.tri_batch = trianglebatch(max_tris)
 	gg.def_pip = pipeline_new_default()
 	gg.def_text_pip = pipeline_new_default_text()
 }

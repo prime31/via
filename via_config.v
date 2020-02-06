@@ -6,8 +6,8 @@ pub mut:
 	identity string						// save directory name
 	append_identity bool = false 		// search files in src dir before save dir
 
-	max_quad_count int = 5000			// max number of quads allowed to be rendered per frame (sprites and text)
-	max_tri_count int = 500				// max number of triangles allowed to be rendered per frame (shapes and lines)
+	max_quads int = 5000				// max number of quads allowed to be rendered per frame (sprites and text)
+	max_tris int = 500					// max number of triangles allowed to be rendered per frame (shapes and lines)
 
 	win_title string = 'V is for via'	// the window title as UTF-8 encoded string
 	win_width int = 1024				// the preferred width of the window / canvas
