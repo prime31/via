@@ -2,7 +2,7 @@ module fonts
 import via.math
 import via.time
 import via.libs.fontstash
-import via.libs.physfs
+import via.filesystem
 import via.libs.sokol.gfx
 
 const (
@@ -156,7 +156,7 @@ pub fn (font mut FontBook) update_texture() {
 
 // Add fonts
 pub fn (font &FontBook) add_font(src string) int {
-	bytes := physfs.read_bytes(src)
+	bytes := filesystem.read_bytes(src)
 	return C.fonsAddFontMem(font.stash, src.str, bytes.data, bytes.len, true)
 }
 

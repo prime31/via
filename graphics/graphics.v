@@ -4,7 +4,7 @@ import via.math
 import via.fonts
 import via.debug
 import via.window
-import via.libs.physfs
+import via.filesystem
 import via.libs.sokol.gfx
 import via.libs.sokol.sdl_metal_util
 
@@ -110,7 +110,7 @@ pub fn set_default_filter(min, mag gfx.Filter) {
 //#region create graphics resources
 
 pub fn new_texture(src string) Texture {
-	buf := physfs.read_bytes(src)
+	buf := filesystem.read_bytes(src)
 	tex := texture(buf, g.min_filter, g.mag_filter)
 	unsafe { buf.free() }
 	return tex
@@ -120,7 +120,7 @@ pub fn new_texture_atlas(src string) TextureAtlas {
 	tex_src := src.replace(filepath.ext(src), '.png')
 	tex := new_texture(tex_src)
 
-	buf := physfs.read_bytes(src)
+	buf := filesystem.read_bytes(src)
 	return textureatlas(tex, buf)
 }
 
@@ -128,7 +128,7 @@ pub fn new_shader(src ShaderSourceConfig, shader_desc &sg_shader_desc) C.sg_shad
 	mut vert_needs_free := false
 	vert_src := if src.vert.len > 0 && src.vert.ends_with('.vert') {
 		vert_needs_free = true
-		physfs.read_text(src.vert)
+		filesystem.read_text(src.vert)
 	} else {
 		src.vert
 	}
@@ -136,7 +136,7 @@ pub fn new_shader(src ShaderSourceConfig, shader_desc &sg_shader_desc) C.sg_shad
 	mut frag_needs_free := false
 	frag_src := if src.frag.len > 0 && src.frag.ends_with('.frag') {
 		frag_needs_free = true
-		physfs.read_text(src.frag)
+		filesystem.read_text(src.frag)
 	} else {
 		src.frag
 	}
