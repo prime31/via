@@ -20,9 +20,14 @@ pub:
 	scale f32 = 1.0
 }
 
-pub fn (policy ResolutionPolicy) get_scaler(rt_w, rt_h int) ResolutionScaler {
+pub fn (policy ResolutionPolicy) get_scaler(design_w, design_h int) ResolutionScaler {
+	assert (policy == .default && design_w > 0 && design_h > 0) || policy != .default
 	// common config
 	w, h := window.drawable_size()
+
+	// our render target size will be full screen for .default
+	rt_w := if policy == .default { w } else { design_w }
+	rt_h := if policy == .default { h } else { design_h }
 
 	// scale of the screen size / render target size, used by both pixel perfect and non-pp
 	res_x := f32(w) / rt_w
@@ -57,7 +62,7 @@ pub fn (policy ResolutionPolicy) get_scaler(rt_w, rt_h int) ResolutionScaler {
 			x := (f32(w) - (f32(rt_w) * res_scale)) / 2.0
 			y := (f32(h) - (f32(rt_h) * res_scale)) / 2.0
 
-			return ResolutionScaler{x:int(x) y:int(y) w:w h:h scale:res_scale}
+			return ResolutionScaler{x:int(x) y:int(y) w:rt_w h:rt_h scale:res_scale}
 		}
 		.no_border_pixel_perfect, .show_all_pixel_perfect {
 			// the only difference is that no_border rounds up (instead of down) and crops. Because
@@ -69,7 +74,7 @@ pub fn (policy ResolutionPolicy) get_scaler(rt_w, rt_h int) ResolutionScaler {
 
 			x := (w - (rt_w * scale)) / 2
 			y := (h - (rt_h * scale)) / 2
-			return ResolutionScaler{x:x y:y w:w h:h scale:scale}
+			return ResolutionScaler{x:x y:y w:rt_w h:rt_h scale:scale}
 		}
 		.best_fit {
 			// TODO: move this into some sort of safe area config
@@ -85,7 +90,7 @@ pub fn (policy ResolutionPolicy) get_scaler(rt_w, rt_h int) ResolutionScaler {
 			x := (f32(w) - (f32(rt_w) * final_scale)) / 2.0
 			y := (f32(h) - (f32(rt_h) * final_scale)) / 2.0
 
-			return ResolutionScaler{x:int(x) y:int(y) w:w h:h scale:final_scale}
+			return ResolutionScaler{x:int(x) y:int(y) w:rt_w h:rt_h scale:final_scale}
 		}
 		else { return ResolutionScaler{} }
 	}
