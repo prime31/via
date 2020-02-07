@@ -1,6 +1,7 @@
 module graphics
-import via.libs.sokol.gfx
+import via.window
 import via.math
+import via.libs.sokol.gfx
 
 pub struct Mesh {
 	vert_usage gfx.Usage
@@ -33,14 +34,32 @@ pub fn mesh_new_dynamic(verts []math.Vertex, vert_usage gfx.Usage, indices []u16
 }
 
 // TODO: take in width/height
-pub fn mesh_new_quad() &Mesh {
+pub fn mesh_new_quad(usage gfx.Usage) &Mesh {
 	verts := [
-		math.Vertex{ -1, -1,	0, 0,	math.Color{} }, // tl
-		math.Vertex{  1, -1,	1, 0,	math.Color{} }, // tr
-		math.Vertex{  1,  1, 	1, 1,	math.Color{} }, // br
-		math.Vertex{ -1,  1,	0, 1,	math.Color{} }  // bl
+		math.Vertex{-1,-1,	0, 0,	math.Color{}}, // tl
+		math.Vertex{ 1,-1,	1, 0,	math.Color{}}, // tr
+		math.Vertex{ 1, 1, 	1, 1,	math.Color{}}, // br
+		math.Vertex{-1, 1,	0, 1,	math.Color{}}  // bl
 	]!
 	indices := [u16(0), 1, 2, 0, 2, 3]!
+
+	if usage == .immutable {
+		return mesh_new_immutable(verts, indices)
+	}
+	return mesh_new_dynamic(verts, usage, indices, usage)
+}
+
+pub fn mesh_new_fullscreen_quad() &Mesh {
+	w, h := window.drawable_size()
+
+	verts := [
+		math.Vertex{-w/2,-h/2,	0,0,	math.Color{}}, // tl
+		math.Vertex{ w/2,-h/2,	1,0,	math.Color{}}, // tr
+		math.Vertex{ w/2, h/2, 	1,1,	math.Color{}}, // br
+		math.Vertex{-w/2, h/2,	0,1,	math.Color{}}  // bl
+	]!
+	indices := [u16(0), 1, 2, 0, 2, 3]!
+
 	return mesh_new_dynamic(verts, .dynamic, indices, .dynamic)
 }
 

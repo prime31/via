@@ -21,7 +21,9 @@ pub:
 }
 
 pub fn (policy ResolutionPolicy) get_scaler(design_w, design_h int) ResolutionScaler {
-	assert (policy == .default && design_w > 0 && design_h > 0) || policy != .default
+	// non-default policy requires a design size
+	assert (policy != .default && design_w > 0 && design_h > 0) || (policy == .default)
+
 	// common config
 	w, h := window.drawable_size()
 
