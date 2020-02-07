@@ -9,8 +9,6 @@ import via.libs.sokol.gfx
 import via.libs.sokol.sdl_metal_util
 
 struct Graphics {
-pub mut:
-	viewport math.Rect
 mut:
 	quad_batch &QuadBatch
 	tri_batch &TriangleBatch
@@ -187,7 +185,6 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 
 	pass_action_cfg.apply(mut gg.pass_action)
 	sg_begin_pass(pass.pass, &gg.pass_action)
-	gg.viewport.set(0, 0, pass.color_tex.w, pass.color_tex.h)
 
 	mut pip := if config.pipeline == &Pipeline(0) {
 		get_default_pipeline()
@@ -209,7 +206,7 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 	set_pipeline(mut pip)
 }
 
-pub fn begain_default_offscreen_pass(pass_action_cfg PassActionConfig, config PassConfig) {
+pub fn begin_default_offscreen_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	begin_offscreen_pass(g.def_pass.offscreen_pass, pass_action_cfg, config)
 }
 
@@ -221,7 +218,6 @@ pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	pass_action_cfg.apply(mut gg.pass_action)
 	w, h := window.drawable_size()
 	sg_begin_default_pass(&gg.pass_action, w, h)
-	gg.viewport.set(0, 0, w, h)
 
 	mut pip := if config.pipeline == &Pipeline(0) {
 		get_default_pipeline()
