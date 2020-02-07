@@ -9,6 +9,10 @@ pub fn (c &Channel) set_pitch(pitch f32) int {
 	return FMOD_Channel_SetPitch(c.ch, pitch)
 }
 
+pub fn (c &Channel) set_volume(volume f32) int {
+	return C.FMOD_Channel_SetVolume(c.ch, volume)
+}
+
 pub fn (c &Channel) add_dsp(index int, dsp Dsp) int {
 	return FMOD_Channel_AddDSP(c.ch, index, dsp.dsp)
 }
