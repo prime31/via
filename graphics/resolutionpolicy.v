@@ -36,13 +36,11 @@ pub fn (policy ResolutionPolicy) config(rt_w, rt_h int) ResolutionScaler {
 	rt_aspect_ratio := f32(rt_w) / f32(rt_h)
 
 	if policy != .default {
-		scale_f = if rt_aspect_ratio > aspect_ratio {
-			res_x
-		} else {
-			res_y
-		}
-		if scale_f < 0 { scale_f = 1 }
+		scale_f = if rt_aspect_ratio > aspect_ratio { res_x } else { res_y }
 		scale = math.ifloor(scale_f)
+		if scale < 1 {
+			scale = 1
+		}
 	}
 
 	match policy {
@@ -67,12 +65,7 @@ pub fn (policy ResolutionPolicy) config(rt_w, rt_h int) ResolutionScaler {
 			// the only difference is that no_border rounds up (instead of down) and crops. Because
 			// of the round up, we flip the compare of the rt aspect ratio vs the screen aspect ratio.
 			if policy == .no_border_pixel_perfect {
-				scale_f = if rt_aspect_ratio < aspect_ratio {
-					f32(w) / rt_w
-				} else {
-					f32(h) / rt_h
-				}
-				if scale_f < 0 { scale_f = 1 }
+				scale_f = if rt_aspect_ratio < aspect_ratio { res_x } else { res_y }
 				scale = math.iceil(scale_f)
 			}
 

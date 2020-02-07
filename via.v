@@ -51,8 +51,8 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		C.SDL_Log(c'Unable to initialize SDL: %s', C.SDL_GetError())
 	}
 
-	window.create(config.get_win_config())
-	graphics.setup(config.max_quads, config.max_tris, config.min_filter, config.mag_filter)
+	window.create(config.window_config())
+	graphics.setup(config.graphics_config())
 	debug.setup()
 
 	input.set_window_scale(window.scale())

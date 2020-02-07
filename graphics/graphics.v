@@ -68,7 +68,7 @@ pub fn free() {
 	unsafe { free(g) }
 }
 
-pub fn setup(max_quads, max_tris int, min_filter, mag_filter gfx.Filter) {
+pub fn setup(config GraphicsConfig) {
 	mut gg := g
 
 	desc := sg_desc{
@@ -82,9 +82,9 @@ pub fn setup(max_quads, max_tris int, min_filter, mag_filter gfx.Filter) {
 	}
 	sg_setup(&desc)
 
-	set_default_filter(min_filter, mag_filter)
-	gg.quad_batch = quadbatch(max_quads)
-	gg.tri_batch = trianglebatch(max_tris)
+	set_default_filter(config.min_filter, config.mag_filter)
+	gg.quad_batch = quadbatch(config.max_quads)
+	gg.tri_batch = trianglebatch(config.max_tris)
 	gg.def_pip = pipeline_new_default()
 	gg.def_text_pip = pipeline_new_default_text()
 }
