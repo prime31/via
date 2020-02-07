@@ -49,20 +49,6 @@ pub fn mesh_new_quad(usage gfx.Usage) &Mesh {
 	return mesh_new_dynamic(verts, usage, indices, usage)
 }
 
-pub fn mesh_new_fullscreen_quad() &Mesh {
-	w, h := window.drawable_size()
-
-	verts := [
-		math.Vertex{-w/2,-h/2,	0,0,	math.Color{}}, // tl
-		math.Vertex{ w/2,-h/2,	1,0,	math.Color{}}, // tr
-		math.Vertex{ w/2, h/2, 	1,1,	math.Color{}}, // br
-		math.Vertex{-w/2, h/2,	0,1,	math.Color{}}  // bl
-	]!
-	indices := [u16(0), 1, 2, 0, 2, 3]!
-
-	return mesh_new_dynamic(verts, .dynamic, indices, .dynamic)
-}
-
 pub fn mesh_new_immutable(verts []math.Vertex, indices []u16) &Mesh {
 	return &Mesh{
 		vert_usage: .immutable
@@ -99,6 +85,7 @@ pub fn (m &Mesh) apply_bindings() {
 	sg_apply_bindings(&m.bindings)
 }
 
+// TODO: uniforms should probably by handled by Pipeline
 pub fn (m &Mesh) apply_uniforms(shader_stage gfx.ShaderStage, index int, data voidptr, num_bytes int) {
 	sg_apply_uniforms(shader_stage, index, data, num_bytes)
 }
