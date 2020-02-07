@@ -210,6 +210,15 @@ pub fn begin_default_offscreen_pass(pass_action_cfg PassActionConfig, config Pas
 	begin_offscreen_pass(g.def_pass.offscreen_pass, pass_action_cfg, config)
 }
 
+// TODO: horrible name
+pub fn blit_default_offscreen(letterbox_color math.Color) {
+	mut gg := g
+	begin_default_pass({color:letterbox_color}, {blit_pass:true})
+	scaler := g.def_pass.scaler
+	gg.quad_batch.draw(g.def_pass.offscreen_pass.color_tex, {x:scaler.x y:scaler.y sx:scaler.scale sy:scaler.scale})
+	end_pass()
+}
+
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
 pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	mut gg := g
@@ -281,6 +290,7 @@ pub fn flush() {
 	gg.tri_batch.flush()
 }
 
+// TODO: temporarily just return the batches until their api solidifies
 pub fn spritebatch() &QuadBatch { return g.quad_batch }
 
 pub fn tribatch() &TriangleBatch { return g.tri_batch }
