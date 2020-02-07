@@ -173,11 +173,11 @@ pub fn mouse_pos() (int, int) {
 
 // gets the scaled mouse position based on the currently bound render texture scale and offset
 // as calcuated in OffscreenPass. scale should be scale and offset_n is the calculated x, y value.
-pub fn mouse_pos_scaled(scale_x, scale_y f32, offset_x, offset_y f32) (int, int) {
+pub fn mouse_pos_scaled(sx, sy f32, offset_x, offset_y f32) (int, int) {
 	x, y := mouse_pos()
 	xf := f32(x) - offset_x
 	yf := f32(y) - offset_y
-	return int(xf / scale_x), int(yf / scale_y)
+	return int(xf / sx), int(yf / sy)
 }
 
 pub fn mouse_rel_motion() (int, int) {

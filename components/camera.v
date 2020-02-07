@@ -40,12 +40,12 @@ pub fn (c &Camera) screen_to_world(x, y int) (int, int) {
 	return int(trans_x), int(trans_y)
 }
 
-// x.y should be the scaled mouse coordinates. os_w,os_h are the render target width/height.
+// x.y should be the scaled mouse coordinates. rt_w,rt_h are the render target width/height.
 // sx,sy are the final render scale values from the OffscreenPass
-pub fn (c &Camera) screen_to_offscreen_world(x, y, os_w, os_h int, sx, sy f32) (int, int) {
+pub fn (c &Camera) screen_to_offscreen_world(x, y, rt_w, rt_h int, sx, sy f32) (int, int) {
 	// offset the mouse pos by half the render target width due to offcenter ortho projection
-	tx := f32(x - os_w / 2)
-	ty := f32(y - os_h / 2)
+	tx := f32(x - rt_w / 2)
+	ty := f32(y - rt_h / 2)
 
 	trans_x, trans_y := c.inv_transform_xy(tx, ty)
 	return int(trans_x), int(trans_y)
