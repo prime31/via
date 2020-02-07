@@ -19,6 +19,7 @@ mut:
 	pass_action C.sg_pass_action
 	def_pip Pipeline
 	def_text_pip Pipeline
+	def_pass &DefaultOffScreenPass
 	pass_proj_mat math.Mat32
 	in_default_pass bool
 }
@@ -29,6 +30,7 @@ pub const (
 		quad_batch: 0
 		min_filter: .nearest
  		mag_filter: .nearest
+		def_pass: 0
 	}
 )
 
@@ -65,6 +67,7 @@ pub fn free() {
 	g.tri_batch.free()
 	g.def_pip.free()
 	g.def_text_pip.free()
+	g.def_pass.free()
 	unsafe { free(g) }
 }
 
@@ -87,6 +90,7 @@ pub fn setup(config GraphicsConfig) {
 	gg.tri_batch = trianglebatch(config.max_tris)
 	gg.def_pip = pipeline_new_default()
 	gg.def_text_pip = pipeline_new_default_text()
+	gg.def_pass = defaultoffscreenpass(config.design_width, config.design_height, config.resolution_policy)
 }
 
 pub fn get_default_pipeline() &Pipeline {
@@ -103,6 +107,11 @@ pub fn set_default_filter(min, mag gfx.Filter) {
 	mut gg := g
 	gg.min_filter = min
 	gg.mag_filter = mag
+}
+
+pub fn get_resolution_scaler() &ResolutionScaler {
+	mut gg := g
+	return &gg.def_pass.scaler
 }
 
 //#endregion
@@ -198,6 +207,10 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 	// save the transform-projection matrix in case a new pipeline is set later
 	gg.pass_proj_mat = proj_mat
 	set_pipeline(mut pip)
+}
+
+pub fn begain_default_offscreen_pass(pass_action_cfg PassActionConfig, config PassConfig) {
+	begin_offscreen_pass(g.def_pass.offscreen_pass, pass_action_cfg, config)
 }
 
 // TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such

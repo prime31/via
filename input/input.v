@@ -1,4 +1,6 @@
 module input
+import via.events
+import via.graphics
 import via.libs.sdl2
 
 struct Input {
@@ -11,6 +13,7 @@ mut:
 	mouse_rel_x int
 	mouse_rel_y int
 	window_scale int = 1
+	res_scaler &graphics.ResolutionScaler
 }
 
 pub enum MouseButton {
@@ -20,7 +23,9 @@ pub enum MouseButton {
 }
 
 const (
-	input = &Input{}
+	input = &Input{
+		res_scaler: 0
+	}
 	released = 1 // true only the frame the key is released
 	down = 2 // true the entire time the key is down
 	pressed = 3 // only true if down this frame and not down the previous frame
@@ -40,6 +45,9 @@ pub fn free() {
 pub fn set_window_scale(scale f32) {
 	mut i := input
 	i.window_scale = int(scale)
+
+	// TODO: this is a bit of a cheat, but we know that graphics is all set here so we fetch the scaler
+	i.res_scaler = graphics.get_resolution_scaler()
 }
 
 // clears any released keys
@@ -173,11 +181,11 @@ pub fn mouse_pos() (int, int) {
 
 // gets the scaled mouse position based on the currently bound render texture scale and offset
 // as calcuated in OffscreenPass. scale should be scale and offset_n is the calculated x, y value.
-pub fn mouse_pos_scaled(sx, sy f32, offset_x, offset_y f32) (int, int) {
+pub fn mouse_pos_scaled() (int, int) {
 	x, y := mouse_pos()
-	xf := f32(x) - offset_x
-	yf := f32(y) - offset_y
-	return int(xf / sx), int(yf / sy)
+	xf := f32(x) - input.res_scaler.x
+	yf := f32(y) - input.res_scaler.y
+	return int(xf / input.res_scaler.scale), int(yf / input.res_scaler.scale)
 }
 
 pub fn mouse_rel_motion() (int, int) {

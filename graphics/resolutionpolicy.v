@@ -11,8 +11,6 @@ pub enum ResolutionPolicy {
 	best_fit
 }
 
-// camera needs:	x, y, rt_w, rt_h, sx, sy
-// input needs:		x, y, sx, sy
 pub struct ResolutionScaler {
 pub:
 	x int
@@ -22,7 +20,7 @@ pub:
 	scale f32 = 1.0
 }
 
-pub fn (policy ResolutionPolicy) config(rt_w, rt_h int) ResolutionScaler {
+pub fn (policy ResolutionPolicy) get_scaler(rt_w, rt_h int) ResolutionScaler {
 	// common config
 	w, h := window.drawable_size()
 

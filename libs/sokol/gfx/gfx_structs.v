@@ -449,8 +449,6 @@ pub mut:
     mip_level int
     face int
 
-    // image sg_image
-    // mip_level int
     // union {
     //     face int
     //     layer int

@@ -20,13 +20,13 @@ pub fn pipeline_make_default_text() (sg_pipeline, sg_shader) {
 	return sg_make_pipeline(&pipeline_desc), shader
 }
 
-pub fn pipeline_desc_make_default(shader sg_shader) sg_pipeline_desc {
+pub fn pipeline_desc_make_default(shader sg_shader) C.sg_pipeline_desc {
 	mut desc := pipeline_get_default_desc()
 	desc.shader = shader
 	return desc
 }
 
-pub fn pipeline_get_default_desc() sg_pipeline_desc {
+pub fn pipeline_get_default_desc() C.sg_pipeline_desc {
 	return sg_pipeline_desc{
 		layout: layout_desc_make_default()
 		index_type: .uint16
@@ -41,7 +41,7 @@ pub fn pipeline_get_default_desc() sg_pipeline_desc {
 	}
 }
 
-pub fn layout_desc_make_default() sg_layout_desc {
+pub fn layout_desc_make_default() C.sg_layout_desc {
 	mut layout := sg_layout_desc{}
 	layout.attrs[0] = sg_vertex_attr_desc{
 		format: .float2 // position
