@@ -9,8 +9,12 @@ mut:
 	bindings sg_bindings
 	verts []math.Vertex
 	last_vert_update_frame u32
+	width int
+	height int
 }
 
+// FullscreenQuad keeps itself sized for the DefaultOffScreenPass rendering. It is used for blitting back and forth
+// between offscreen passes when applying post processing.
 pub fn fullscreenquad() &FullscreenQuad {
 	verts := [
 		math.Vertex{0,0,	0,0,	math.Color{}}, // tl
@@ -33,21 +37,22 @@ pub fn fullscreenquad() &FullscreenQuad {
 // updates the verts to match the current window drawable size
 pub fn (q mut FullscreenQuad) update_verts() {
 	if q.last_vert_update_frame < time.frame_count() {
-		w, h := window.drawable_size()
-		half_w := f32(w) / 2
-		half_h := f32(h) / 2
+		scaler := get_resolution_scaler()
+		if scaler.w != q.width || scaler.h != q.height {
+			q.verts[0].x = 0	// tl
+			q.verts[0].y = 0
+			q.verts[1].x = scaler.w	// tr
+			q.verts[1].y = 0
+			q.verts[2].x = scaler.w	// br
+			q.verts[2].y = scaler.h
+			q.verts[3].x = 0	// bl
+			q.verts[3].y = scaler.h
 
-		q.verts[0].x = -half_w	// tl
-		q.verts[0].y = -half_h
-		q.verts[1].x = half_w	// tr
-		q.verts[1].y = -half_h
-		q.verts[2].x = half_w	// br
-		q.verts[2].y = half_h
-		q.verts[3].x = -half_w	// bl
-		q.verts[3].y = half_h
-
-		sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * q.verts.len)
-		q.last_vert_update_frame = time.frame_count()
+			sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * q.verts.len)
+			q.last_vert_update_frame = time.frame_count()
+			q.width = scaler.w
+			q.height = scaler.h
+		}
 	}
 }
 

@@ -18,6 +18,7 @@ mut:
 	def_pip Pipeline
 	def_text_pip Pipeline
 	def_pass &DefaultOffScreenPass
+	fs_quad &FullscreenQuad // TODO: create this on the fly only if post processing is needed
 	pass_proj_mat math.Mat32
 	in_default_pass bool
 }
@@ -29,6 +30,7 @@ pub const (
 		min_filter: .nearest
  		mag_filter: .nearest
 		def_pass: 0
+		fs_quad: 0
 	}
 )
 
@@ -66,6 +68,7 @@ pub fn free() {
 	g.def_pip.free()
 	g.def_text_pip.free()
 	g.def_pass.free()
+	g.fs_quad.free()
 	unsafe { free(g) }
 }
 
@@ -89,6 +92,7 @@ pub fn setup(config GraphicsConfig) {
 	gg.def_pip = pipeline_new_default()
 	gg.def_text_pip = pipeline_new_default_text()
 	gg.def_pass = defaultoffscreenpass(config.design_width, config.design_height, config.resolution_policy)
+	gg.fs_quad = fullscreenquad()
 }
 
 pub fn get_default_pipeline() &Pipeline {
@@ -195,19 +199,44 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 
 	// projection matrix with flipped y for OpenGL madness
 	mut proj_mat := math.mat32_ortho_off_center(pass.color_tex.w, -pass.color_tex.h)
-	if &config.trans_mat != &math.Mat32(0) {
+	if config.trans_mat != 0 {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
 	}
-	debug.set_proj_mat(proj_mat)
 
 	// save the transform-projection matrix in case a new pipeline is set later
 	gg.pass_proj_mat = proj_mat
 	set_pipeline(mut pip)
+	debug.set_proj_mat(proj_mat)
 }
 
 pub fn begin_default_offscreen_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	begin_offscreen_pass(g.def_pass.offscreen_pass, pass_action_cfg, config)
+}
+
+// TODO: implement and properly name
+pub fn postprocess_default_offscreen() {
+	mut gg := g
+
+	// we need to have two OffScreenPasses to bounce back and forth for the post processing
+	// perhaps DefaultOffScreenPass can manage a second OffScreenPass and create it on the fly when needed?
+	// - set pass_proj_mat so all pipelines bound will get the projection matrix
+	// - sg_begin_pass() with 2nd OffScreenPass
+	// - set_pipeline()
+	// - fs_quad.bind_texture() with 1st OffScreenPass rt and somehow let post processor pipelines set other textures
+	// - fs_quad.draw()
+	// - 	repeat previous 4 steps swapping to the 1st OffScreenPass and then back to the 2nd if there are more post processors
+	// - end_pass()
+	//
+	// - blit_default_offscreen() making sure to use the last written to OffScreenPass
+
+	gg.pass_proj_mat = math.mat32_ortho(w, -h)
+	sg_begin_pass(gg.def_pass.offscreen_pass.pass, &gg.pass_action)
+
+	begin_default_pass({color:math.color_from_floats(0.3, 0.0, 0.3, 1.0)}, {blit_pass:true})
+	gg.fs_quad.bind_texture(0, g.def_pass.offscreen_pass.color_tex)
+	gg.fs_quad.draw()
+	end_pass()
 }
 
 // TODO: horrible name
@@ -219,7 +248,6 @@ pub fn blit_default_offscreen(letterbox_color math.Color) {
 	end_pass()
 }
 
-// TODO: might need a separate version for offscreen-to-backbuffer to deal with post processors and such
 pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	mut gg := g
 	gg.in_default_pass = true
@@ -243,7 +271,7 @@ pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	}
 
 	// non-blit passes could have a translation matrix
-	if !config.blit_pass && config.trans_mat != &math.Mat32(0) {
+	if !config.blit_pass && config.trans_mat != 0 {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
 	}
@@ -255,7 +283,7 @@ pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 }
 
 pub fn end_pass() {
-	// if we are in our default pass this is the end of rendering to close out the batches
+	// if we are in our default pass this is the end of rendering so close out the batches
 	if g.in_default_pass {
 		mut gg := g
 		gg.in_default_pass = false
