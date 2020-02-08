@@ -230,10 +230,10 @@ pub fn postprocess_default_offscreen() {
 	//
 	// - blit_default_offscreen() making sure to use the last written to OffScreenPass
 
-	gg.pass_proj_mat = math.mat32_ortho(w, -h)
-	sg_begin_pass(gg.def_pass.offscreen_pass.pass, &gg.pass_action)
+	gg.pass_proj_mat = math.mat32_ortho(gg.def_pass.offscreen_pass.color_tex.w, -gg.def_pass.offscreen_pass.color_tex.h)
 
-	begin_default_pass({color:math.color_from_floats(0.3, 0.0, 0.3, 1.0)}, {blit_pass:true})
+	sg_begin_pass(gg.def_pass.offscreen_pass.pass, &gg.pass_action)
+	// set_pipeline()
 	gg.fs_quad.bind_texture(0, g.def_pass.offscreen_pass.color_tex)
 	gg.fs_quad.draw()
 	end_pass()
