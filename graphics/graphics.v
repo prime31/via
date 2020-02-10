@@ -208,29 +208,11 @@ pub fn begin_default_offscreen_pass(pass_action_cfg PassActionConfig, config Pas
 	begin_offscreen_pass(g.def_pass.offscreen_pass, pass_action_cfg, config)
 }
 
-// TODO: implement and properly name
-pub fn postprocess_default_offscreen() {
+// TODO: horrible name
+pub fn postprocess_default_offscreen(pp &PostProcessStack) {
 	mut gg := g
-
-	// we need to have two OffScreenPasses to bounce back and forth for the post processing
-	// perhaps DefaultOffScreenPass can manage a second OffScreenPass and create it on the fly when needed?
-	// - set pass_proj_mat so all pipelines bound will get the projection matrix
-	// - sg_begin_pass() with 2nd OffScreenPass
-	// - set_pipeline()
-	// - fs_quad.bind_texture() with 1st OffScreenPass rt and somehow let post processor pipelines set other textures
-	// - fs_quad.draw()
-	// - 	repeat previous 4 steps swapping to the 1st OffScreenPass and then back to the 2nd if there are more post processors
-	// - end_pass()
-	//
-	// - blit_default_offscreen() making sure to use the last written to OffScreenPass
-
 	gg.pass_proj_mat = math.mat32_ortho(gg.def_pass.offscreen_pass.color_tex.w, -gg.def_pass.offscreen_pass.color_tex.h)
-
-	sg_begin_pass(gg.def_pass.offscreen_pass.pass, &gg.pass_action)
-	// set_pipeline()
-	// gg.fs_quad.bind_texture(0, g.def_pass.offscreen_pass.color_tex)
-	// gg.fs_quad.draw()
-	end_pass()
+	pp.process(g.def_pass.offscreen_pass)
 }
 
 // TODO: horrible name
