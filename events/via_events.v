@@ -17,16 +17,16 @@ pub const (
 
 pub fn subscribe(evt ViaEvents, callback EventHandlerFn, context voidptr, once bool) {
 	mut v := via
-	v.emitter.subscribe(evt as int, callback, context, once)
+	v.emitter.subscribe(int(evt), callback, context, once)
 }
 
 pub fn unsubscribe(evt ViaEvents, callback EventHandlerFn) {
 	mut v := via
-	v.emitter.unsubscribe(evt as int, callback)
+	v.emitter.unsubscribe(int(evt), callback)
 }
 
 pub fn publish(evt ViaEvents) {
 	arg := 666
 	mut v := via
-	v.emitter.publish(evt as int, v, &arg)
+	v.emitter.publish(int(evt), v, &arg)
 }

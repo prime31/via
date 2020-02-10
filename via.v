@@ -11,7 +11,7 @@ import via.libs.sokol
 import via.libs.sokol.gfx
 import via.libs.sdl2
 
-pub const ( used_import = gfx.used_import + debug.used_import + sokol.used_import + sdl2.used_import + flextgl.used_import )
+const ( used_import = gfx.used_import + debug.used_import + sokol.used_import + sdl2.used_import + flextgl.used_import )
 
 pub struct Via {
 pub mut:
