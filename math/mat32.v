@@ -14,8 +14,8 @@ pub:
 }
 
 pub fn (self Mat32) str() string {
-    return  '${self.data[0]} ${self.data[2]} ${self.data[4]}\n' +
-            '${self.data[1]} ${self.data[3]} ${self.data[5]}'
+    return  '[${self.data[0]} ${self.data[2]} ${self.data[4]}\n' +
+            '${self.data[1]} ${self.data[3]} ${self.data[5]}]'
 }
 
 pub fn (self Mat32) + (other Mat32) Mat32 {
@@ -202,7 +202,7 @@ pub fn (self &Mat32) inverse() Mat32 {
     res.data[2] = -self.data[2] * s
     res.data[3] = self.data[0] * s
     res.data[4] = (self.data[5] * self.data[2] - self.data[4] * self.data[3]) * s
-    res.data[5] = -(self.data[5] * self.data[1] - self.data[4] * self.data[1]) * s
+    res.data[5] = -(self.data[5] * self.data[0] - self.data[4] * self.data[1]) * s
     return res
 }
 
