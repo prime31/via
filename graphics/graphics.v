@@ -18,9 +18,7 @@ mut:
 	def_pip Pipeline
 	def_text_pip Pipeline
 	def_pass &DefaultOffScreenPass
-	fs_quad &FullscreenQuad // TODO: create this on the fly only if post processing is needed
 	pass_proj_mat math.Mat32
-	in_default_pass bool
 }
 
 pub const (
@@ -30,7 +28,6 @@ pub const (
 		min_filter: .nearest
  		mag_filter: .nearest
 		def_pass: 0
-		fs_quad: 0
 	}
 )
 
@@ -57,7 +54,6 @@ pub struct PassConfig {
 pub:
 	pipeline &Pipeline
 	trans_mat &math.Mat32 = &math.Mat32(0)
-	blit_pass bool = false
 }
 
 //#region setup and config
@@ -68,7 +64,6 @@ pub fn free() {
 	g.def_pip.free()
 	g.def_text_pip.free()
 	g.def_pass.free()
-	g.fs_quad.free()
 	unsafe { free(g) }
 }
 
@@ -92,7 +87,6 @@ pub fn setup(config GraphicsConfig) {
 	gg.def_pip = pipeline_new_default()
 	gg.def_text_pip = pipeline_new_default_text()
 	gg.def_pass = defaultoffscreenpass(config.design_width, config.design_height, config.resolution_policy)
-	gg.fs_quad = fullscreenquad()
 }
 
 pub fn get_default_pipeline() &Pipeline {
@@ -193,19 +187,13 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 	mut pip := if config.pipeline == 0 {
 		get_default_pipeline()
 	} else {
-		println('offscreen pass: use custom pip')
 		config.pipeline
 	}
 
 	// projection matrix with flipped y for OpenGL madness
-	// blitting offscreen textures does not need an ortho off-center matrix so we set the rect to 0,0,w,h
-	mut proj_mat := if config.blit_pass {
-		math.mat32_ortho_inverted(pass.color_tex.w, -pass.color_tex.h)
-	} else {
-		math.mat32_ortho_off_center(pass.color_tex.w, -pass.color_tex.h)
-	}
+	mut proj_mat := math.mat32_ortho_inverted(pass.color_tex.w, -pass.color_tex.h)
 
-	if !config.blit_pass && config.trans_mat != 0 {
+	if config.trans_mat != 0 {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
 	}
@@ -240,15 +228,15 @@ pub fn postprocess_default_offscreen() {
 
 	sg_begin_pass(gg.def_pass.offscreen_pass.pass, &gg.pass_action)
 	// set_pipeline()
-	gg.fs_quad.bind_texture(0, g.def_pass.offscreen_pass.color_tex)
-	gg.fs_quad.draw()
+	// gg.fs_quad.bind_texture(0, g.def_pass.offscreen_pass.color_tex)
+	// gg.fs_quad.draw()
 	end_pass()
 }
 
 // TODO: horrible name
 pub fn blit_default_offscreen(letterbox_color math.Color) {
 	mut gg := g
-	begin_default_pass({color:letterbox_color}, {blit_pass:true})
+	begin_default_pass({color:letterbox_color}, {})
 	scaler := g.def_pass.scaler
 	gg.quad_batch.draw(g.def_pass.offscreen_pass.color_tex, {x:scaler.x y:scaler.y sx:scaler.scale sy:scaler.scale})
 	end_pass()
@@ -256,7 +244,6 @@ pub fn blit_default_offscreen(letterbox_color math.Color) {
 
 pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	mut gg := g
-	gg.in_default_pass = true
 
 	pass_action_cfg.apply(mut gg.pass_action)
 	w, h := window.drawable_size()
@@ -269,15 +256,9 @@ pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 		config.pipeline
 	}
 
-	// blitting offscreen textures does not need an ortho off-center matrix so we set the rect to 0,0,w,h
-	mut proj_mat := if config.blit_pass {
-		math.mat32_ortho(w, h)
-	} else {
-		math.mat32_ortho_off_center(w, h)
-	}
+	mut proj_mat := math.mat32_ortho(w, h)
 
-	// non-blit passes could have a translation matrix
-	if !config.blit_pass && config.trans_mat != 0 {
+	if config.trans_mat != 0 {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
 	}
@@ -289,17 +270,8 @@ pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 }
 
 pub fn end_pass() {
-	// if we are in our default pass this is the end of rendering so close out the batches
-	if g.in_default_pass {
-		mut gg := g
-		gg.in_default_pass = false
-		gg.quad_batch.end()
-		gg.tri_batch.end()
-	} else {
-		flush()
-	}
-
-	// TODO: can debug drawing be setup to properly render last and work accross all passes?
+	flush()
+	// TODO: can debug drawing be setup to properly render last and work across all passes?
 	debug.draw()
 	sg_end_pass()
 }
@@ -323,6 +295,13 @@ pub fn flush() {
 	mut gg := g
 	gg.quad_batch.flush()
 	gg.tri_batch.flush()
+}
+
+pub fn commit() {
+	mut gg := g
+	gg.quad_batch.end()
+	gg.tri_batch.end()
+	C.sg_commit()
 }
 
 // TODO: temporarily just return the batches until their api solidifies

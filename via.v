@@ -68,7 +68,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		debug.begin()
 		ctx.update()
 		ctx.draw()
-		sg_commit()
+		graphics.commit()
 
 		if v.imgui { imgui_render(window.win.sdl_window, window.win.gl_context) }
 		window.swap()

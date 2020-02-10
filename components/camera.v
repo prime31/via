@@ -1,6 +1,6 @@
 module components
 import via.math
-import via.window
+import via.input
 import via.graphics
 
 pub struct Camera {
@@ -19,7 +19,9 @@ pub fn camera() Camera {
 }
 
 pub fn (c &Camera) trans_mat() math.Mat32 {
-	return math.mat32_transform(c.pos.x, c.pos.y, c.rot, c.scale.x, c.scale.y, 0, 0)
+	// TODO: why do we get offset rotation when using ox, oy? instead, we just add the offset to the x/y here
+	return math.mat32_transform(c.pos.x + c.res_scaler.w / 2, c.pos.y + c.res_scaler.h / 2, c.rot, c.scale.x, c.scale.y, 0, 0)
+	// return math.mat32_transform(c.pos.x, c.pos.y, c.rot, c.scale.x, c.scale.y, -c.res_scaler.w / 2, -c.res_scaler.h / 2)
 }
 
 // set the camera scale. A value of 3 would be zoom in 3x and a value of 0.5 would be zoomed out 2x
@@ -35,23 +37,14 @@ fn (c &Camera) inv_transform_xy(x, y f32) (f32, f32) {
 	return inv_mat.transform_xy(x, y)
 }
 
+// x,y should be the scaled mouse coordinates
 pub fn (c &Camera) screen_to_world(x, y int) (int, int) {
-	// we use an offcenter ortho projection so we first shift the coordinates by half the drawable size
-	w, h := window.drawable_size()
-	tx := x - w / 2
-	ty := y - h / 2
-
-	trans_x, trans_y := c.inv_transform_xy(tx, ty)
+	trans_x, trans_y := c.inv_transform_xy(x, y)
 	return int(trans_x), int(trans_y)
 }
 
-// x.y should be the scaled mouse coordinates. rt_w,rt_h are the render target width/height.
-// sx,sy are the final render scale values from the OffscreenPass
-pub fn (c &Camera) screen_to_offscreen_world(x, y int) (int, int) {
-	// offset the mouse pos by half the render target width due to offcenter ortho projection
-	tx := f32(x - c.res_scaler.w / 2)
-	ty := f32(y - c.res_scaler.h / 2)
-
-	trans_x, trans_y := c.inv_transform_xy(tx, ty)
+pub fn (c &Camera) mouse_to_world() (int, int) {
+	x, y := input.mouse_pos_scaled()
+	trans_x, trans_y := c.inv_transform_xy(x, y)
 	return int(trans_x), int(trans_y)
 }

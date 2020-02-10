@@ -47,6 +47,14 @@ pub fn (qb mut QuadBatch) end() {
 	qb.tex_id = 0
 }
 
+// binds a frag shader image to an additional slot other than 0, which is reserved for the main texture
+pub fn (qb mut QuadBatch) bind_texture(index int, tex Texture) {
+	assert index != 0
+	qb.bindings.set_frag_image(index, tex.img)
+}
+
+//#region drawing methods
+
 pub fn (qb mut QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	if !qb.ensure_capacity() { return }
 	if qb.tex_id != tex.id {
@@ -103,6 +111,8 @@ pub fn (qb mut QuadBatch) draw_text(font &fonts.FontBook, str string, config Dra
 		qb.draw_q_m(font.img, qb.quad, matrix, config.color)
 	}
 }
+
+//#endregion
 
 pub fn (qb mut QuadBatch) flush() {
 	total_quads := (qb.quad_cnt - qb.last_appended_quad_cnt)

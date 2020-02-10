@@ -1,5 +1,4 @@
 module input
-import via.events
 import via.graphics
 import via.libs.sdl2
 
