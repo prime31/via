@@ -20,7 +20,7 @@ pub fn (h1 &Collider) eq(h2 &Collider) bool {
 }
 
 pub fn (i &Collider) get_bounds() math.Rect {
-	return math.Rect{i.x as int, i.y as int, i.w as int, i.h as int}
+	return math.Rect{int(i.x), int(i.y), int(i.w), int(i.h)}
 }
 
 
@@ -107,7 +107,7 @@ fn (sh &SpatialHash) cell_coordsi(x, y int) (int, int) {
 }
 
 fn (sh mut SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell {
-	key := get_hashed_key(x, y) as int
+	key := int(get_hashed_key(x, y))
 	if sh.cells.has(key) {
 		return *Cell(sh.cells.get(key))
 	} else {
@@ -194,7 +194,7 @@ pub fn (sh mut SpatialHash) update(id int, collider Collider) {
 		for y := p1y; y <= p2y; y++ {
 			mut cell := sh.cell_at_position(x, y, false)
 			if cell == C.NULL { // this should never happen
-				key := get_hashed_key(x, y) as int
+				key := int(get_hashed_key(x, y))
 				println('no cell at $x,$y  key: $key')
 				is := key in sh.cells.keys()
 				println('key exists in hashmap: $is')

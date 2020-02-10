@@ -15,7 +15,7 @@ pub:
 	calloc fn(u32, u32) voidptr
 	free fn(voidptr)
 	strdup fn(byteptr) byteptr
-	thread_new fn(ThreadNewFn, voidptr) u32
+	thread_new fn(voidptr /* ThreadNewFn */, voidptr) u32
 	thread_join fn(u32) voidptr
 	mutex_new fn() u32
 	mutex_free fn(u32)

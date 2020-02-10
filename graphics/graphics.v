@@ -16,7 +16,6 @@ mut:
 	mag_filter gfx.Filter
 	pass_action C.sg_pass_action
 	def_pip Pipeline
-	def_text_pip Pipeline
 	def_pass &DefaultOffScreenPass
 	pass_proj_mat math.Mat32
 }
@@ -62,7 +61,6 @@ pub fn free() {
 	g.quad_batch.free()
 	g.tri_batch.free()
 	g.def_pip.free()
-	g.def_text_pip.free()
 	g.def_pass.free()
 	unsafe { free(g) }
 }
@@ -85,7 +83,6 @@ pub fn setup(config GraphicsConfig) {
 	gg.quad_batch = quadbatch(config.max_quads)
 	gg.tri_batch = trianglebatch(config.max_tris)
 	gg.def_pip = pipeline_new_default()
-	gg.def_text_pip = pipeline_new_default_text()
 	gg.def_pass = defaultoffscreenpass(config.design_width, config.design_height, config.resolution_policy)
 }
 
@@ -95,8 +92,9 @@ pub fn get_default_pipeline() &Pipeline {
 }
 
 pub fn get_default_text_pipeline() &Pipeline {
-	gg := g
-	return &gg.def_text_pip
+	println('---- beware: text_pipelines are no longer supported so a new one is returned every call')
+	text_pip := pipeline_new_default_text()
+	return &text_pip
 }
 
 pub fn set_default_filter(min, mag gfx.Filter) {
@@ -176,7 +174,18 @@ pub fn new_offscreen_pass(width, height int) OffScreenPass {
 
 //#endregion
 
-//#region rendering
+//#region NEW API render passes
+
+// combine both params into a single one
+// pub fn begin_pass(pass_action_cfg PassActionConfig, config PassConfig) {}
+
+// pub fn blit_to_screen(letterbox_color math.Color, pp &PostProcessStack) {}
+
+// pub fn end_pass() {}
+
+//#endregion
+
+//#region render passes
 
 pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfig, config PassConfig) {
 	mut gg := g
@@ -215,7 +224,7 @@ pub fn postprocess_default_offscreen(pp &PostProcessStack) {
 	pp.process(g.def_pass.offscreen_pass)
 }
 
-// TODO: horrible name
+// TODO: horrible name. blits the default render target to the backbuffer
 pub fn blit_default_offscreen(letterbox_color math.Color) {
 	mut gg := g
 	begin_default_pass({color:letterbox_color}, {})
@@ -273,12 +282,16 @@ pub fn set_default_pipeline() {
 	set_pipeline(mut gg.def_pip)
 }
 
+//#endregion
+
+// flushes the batches
 pub fn flush() {
 	mut gg := g
 	gg.quad_batch.flush()
 	gg.tri_batch.flush()
 }
 
+// called by Via once at the end of each frame. Ends the batches and commits rendering to the GPU.
 pub fn commit() {
 	mut gg := g
 	gg.quad_batch.end()
