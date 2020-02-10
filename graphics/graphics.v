@@ -190,7 +190,7 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 	pass_action_cfg.apply(mut gg.pass_action)
 	sg_begin_pass(pass.pass, &gg.pass_action)
 
-	mut pip := if config.pipeline == &Pipeline(0) {
+	mut pip := if config.pipeline == 0 {
 		get_default_pipeline()
 	} else {
 		println('offscreen pass: use custom pip')
@@ -198,8 +198,14 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 	}
 
 	// projection matrix with flipped y for OpenGL madness
-	mut proj_mat := math.mat32_ortho_off_center(pass.color_tex.w, -pass.color_tex.h)
-	if config.trans_mat != 0 {
+	// blitting offscreen textures does not need an ortho off-center matrix so we set the rect to 0,0,w,h
+	mut proj_mat := if config.blit_pass {
+		math.mat32_ortho_inverted(pass.color_tex.w, -pass.color_tex.h)
+	} else {
+		math.mat32_ortho_off_center(pass.color_tex.w, -pass.color_tex.h)
+	}
+
+	if !config.blit_pass && config.trans_mat != 0 {
 		// TODO: shouldnt this be translation * projection?!?!
 		proj_mat = proj_mat * *config.trans_mat
 	}
@@ -293,6 +299,7 @@ pub fn end_pass() {
 		flush()
 	}
 
+	// TODO: can debug drawing be setup to properly render last and work accross all passes?
 	debug.draw()
 	sg_end_pass()
 }

@@ -1,7 +1,6 @@
 module graphics
 import via.time
 import via.math
-import via.window
 import via.libs.sokol.gfx
 
 pub struct FullscreenQuad {

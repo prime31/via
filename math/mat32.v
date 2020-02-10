@@ -105,6 +105,16 @@ pub fn mat32_ortho(width, height f32) Mat32 {
     return result
 }
 
+// useful when blitting to offscreen textures in OpenGL. Flips the y-axis.
+pub fn mat32_ortho_inverted(width, height f32) Mat32 {
+    mut result := mat32_zero()
+    result.data[0] = 2.0 / width
+    result.data[3] = -2.0 / height
+    result.data[4] = -1.0
+    result.data[5] = -1.0
+    return result
+}
+
 pub fn mat32_ortho_off_center(width, height int) Mat32 {
 	half_w := int(f32(width) / 2)
 	half_h := int(f32(height) / 2)

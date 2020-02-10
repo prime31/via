@@ -17,6 +17,8 @@ pub:
 	scaler ResolutionScaler
 }
 
+
+
 pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Filter) OffScreenPass {
 	color_tex := rendertexture(width, height, min_filter, mag_filter, false)
 	depth_tex := rendertexture(width, height, min_filter, mag_filter, true)
