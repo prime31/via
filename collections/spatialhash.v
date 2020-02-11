@@ -50,7 +50,7 @@ mut:
 
 fn (c &Cell) free() {
 	unsafe {
-		//c.list.free()
+		c.list.free()
 		free(c)
 	}
 }
