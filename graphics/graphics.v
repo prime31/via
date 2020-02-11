@@ -144,8 +144,12 @@ pub fn new_fontbook(width, height int) &fonts.FontBook {
 	return fonts.fontbook(width, height, g.min_filter, g.mag_filter)
 }
 
-pub fn new_offscreen_pass(width, height int) OffScreenPass {
+pub fn new_offscreenpass(width, height int) OffScreenPass {
 	return offscreenpass(width, height, g.min_filter, g.mag_filter)
+}
+
+pub fn new_effectstack() &EffectStack {
+	return effectstack()
 }
 
 //#endregion
@@ -192,7 +196,7 @@ pub fn end_pass() {
 	sg_end_pass()
 }
 
-pub fn postprocess(pp &PostProcessStack) {
+pub fn postprocess(pp &EffectStack) {
 	mut gg := g
 	gg.pass_proj_mat = math.mat32_ortho_inverted(gg.def_pass.offscreen_pass.color_tex.w, -gg.def_pass.offscreen_pass.color_tex.h)
 	pp.process(g.def_pass.offscreen_pass)

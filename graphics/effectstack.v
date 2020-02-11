@@ -1,18 +1,18 @@
 module graphics
 
-pub struct PostProcessStack {
+pub struct EffectStack {
 mut:
-	callbacks []PostProcessorFn
+	callbacks []EffectStackProcessFn
 	contexts []voidptr
 }
 
-pub type PostProcessorFn fn(voidptr, voidptr /* &Texture */, &PostProcessStack)
+pub type EffectStackProcessFn fn(voidptr, voidptr /* &Texture */, &EffectStack)
 
-pub fn postprocessstack() &PostProcessStack {
-	return &PostProcessStack{}
+fn effectstack() &EffectStack {
+	return &EffectStack{}
 }
 
-fn (pp &PostProcessStack) free() {
+fn (pp &EffectStack) free() {
 	unsafe {
 		pp.callbacks.free()
 		pp.contexts.free()
@@ -20,16 +20,16 @@ fn (pp &PostProcessStack) free() {
 	}
 }
 
-pub fn (pp mut PostProcessStack) add(ctx voidptr, callback PostProcessorFn) {
+pub fn (pp mut EffectStack) add(ctx voidptr, callback EffectStackProcessFn) {
 	pp.callbacks << callback
 	pp.contexts << ctx
 }
 
-pub fn (pp &PostProcessStack) remove(ctx voidptr) {
+pub fn (pp &EffectStack) remove(ctx voidptr) {
 	panic('implement remove')
 }
 
-fn (pp &PostProcessStack) process(pass OffScreenPass) {
+fn (pp &EffectStack) process(pass OffScreenPass) {
 	for i in 0..pp.callbacks.len {
 		cb := pp.callbacks[i]
 		ctx := pp.contexts[i]
@@ -40,7 +40,7 @@ fn (pp &PostProcessStack) process(pass OffScreenPass) {
 
 // helper method for taking the final texture from a postprocessor and blitting it. Simple postprocessors
 // can get away with just calling this method directly.
-pub fn (pp &PostProcessStack) blit(tex Texture, pip mut Pipeline) {
+pub fn (pp &EffectStack) blit(tex Texture, pip mut Pipeline) {
 	begin_pass({color_action:.dontcare pipeline:pip})
 	spritebatch().draw(tex, {x:0 y:0})
 	end_pass()
