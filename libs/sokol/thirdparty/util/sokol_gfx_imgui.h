@@ -2684,7 +2684,10 @@ _SOKOL_PRIVATE void _sg_imgui_draw_embedded_image(sg_imgui_t* ctx, sg_image img,
             igSliderFloat("Scale", scale, 0.125f, 8.0f, "%.3f", 2.0f);
             float w = (float)img_ui->desc.width * (*scale);
             float h = (float)img_ui->desc.height * (*scale);
-            igImage((ImTextureID)(intptr_t)img.id, IMVEC2(w, h), IMVEC2(0,0), IMVEC2(1,1), IMVEC4(1,1,1,1), IMVEC4(0,0,0,0));
+
+            // MIKEWASHERE
+            unsigned int gl_img_id = sg_get_gl_tex_id(img);
+            igImage((ImTextureID)(intptr_t)gl_img_id, IMVEC2(w, h), IMVEC2(0,0), IMVEC2(1,1), IMVEC4(1,1,1,1), IMVEC4(0,0,0,0));
             igPopID();
         }
         else {

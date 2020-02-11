@@ -3266,7 +3266,7 @@ _SOKOL_PRIVATE bool _sg_is_compressed_pixel_format(sg_pixel_format fmt) {
         case SG_PIXELFORMAT_ETC2_RGB8A1:
         case SG_PIXELFORMAT_ETC2_RGBA8:
         case SG_PIXELFORMAT_ETC2_RG11:
-        case SG_PIXELFORMAT_ETC2_RG11SN:        
+        case SG_PIXELFORMAT_ETC2_RG11SN:
             return true;
         default:
             return false;
@@ -3373,7 +3373,7 @@ _SOKOL_PRIVATE int _sg_row_pitch(sg_pixel_format fmt, int width) {
         case SG_PIXELFORMAT_BC7_RGBA:
         case SG_PIXELFORMAT_ETC2_RGBA8:
         case SG_PIXELFORMAT_ETC2_RG11:
-        case SG_PIXELFORMAT_ETC2_RG11SN:        
+        case SG_PIXELFORMAT_ETC2_RG11SN:
             pitch = ((width + 3) / 4) * 16;
             pitch = pitch < 16 ? 16 : pitch;
             break;
@@ -3417,7 +3417,7 @@ _SOKOL_PRIVATE int _sg_surface_pitch(sg_pixel_format fmt, int width, int height)
         case SG_PIXELFORMAT_ETC2_RGB8A1:
         case SG_PIXELFORMAT_ETC2_RGBA8:
         case SG_PIXELFORMAT_ETC2_RG11:
-        case SG_PIXELFORMAT_ETC2_RG11SN:        
+        case SG_PIXELFORMAT_ETC2_RG11SN:
         case SG_PIXELFORMAT_BC2_RGBA:
         case SG_PIXELFORMAT_BC3_RGBA:
         case SG_PIXELFORMAT_BC5_RG:
@@ -11608,6 +11608,17 @@ SOKOL_API_IMPL sg_buffer_info sg_query_buffer_info(sg_buffer buf_id) {
         #endif
     }
     return info;
+}
+
+// MIKEWASHERE
+SOKOL_API_IMPL unsigned int sg_get_gl_tex_id(sg_image img_id) {
+#if defined(SOKOL_GLCORE33) || defined(SOKOL_GLES2) || defined(SOKOL_GLES3)
+    SOKOL_ASSERT(_sg.valid);
+    const _sg_image_t* img = _sg_lookup_image(&_sg.pools, img_id.id);
+    return img->gl_tex[0];
+#else
+    return 0;
+#endif
 }
 
 SOKOL_API_IMPL sg_image_info sg_query_image_info(sg_image img_id) {
