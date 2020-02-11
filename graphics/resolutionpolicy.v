@@ -50,7 +50,10 @@ pub fn (policy ResolutionPolicy) get_scaler(design_w, design_h int) ResolutionSc
 
 	match policy {
 		.default {
-			return ResolutionScaler{w:w h:h}
+			win_scale := window.scale()
+			width := int(f32(w) / win_scale)
+			height := int(f32(h) / win_scale)
+			return ResolutionScaler{w:width h:height scale:win_scale}
 		}
 		.no_border, .show_all {
 			res_scale := if policy == .no_border {
