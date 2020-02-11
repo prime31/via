@@ -101,13 +101,13 @@ pub fn (p &Pipeline) get_uniform_index(shader_stage gfx.ShaderStage, index int) 
 
 pub fn (p mut Pipeline) set_uniform(uniform_index int, data voidptr) {
 	assert(uniform_index >= 0 && uniform_index < p.uniforms.len)
+
 	mut uni := p.uniforms[uniform_index]
 	// only set and dirty the uniform if it changed
 	if C.memcmp(data, uni.data, uni.num_bytes) != 0 {
 		p.uniforms[uniform_index].dirty = true
 		C.memcpy(uni.data, data, uni.num_bytes)
 	}
-
 }
 
 pub fn (p mut Pipeline) set_uniform_raw(shader_stage gfx.ShaderStage, index int, data voidptr) {
