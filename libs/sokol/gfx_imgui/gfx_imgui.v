@@ -93,6 +93,29 @@ pub fn draw_capabilities_window(ctx &C.sg_imgui_t) {
 
 [inline]
 pub fn draw_menu(ctx &C.sg_imgui_t) {
+	// add shift+right-click to display menu
+	io := C.igGetIO()
+	if C.igIsMouseClicked(1, false) && io.KeyShift {
+		C.igOpenPopup(c'gfx-debug-popup')
+	}
+
+	if C.igBeginPopup(c'gfx-debug-popup', C.ImGuiWindowFlags_MenuBar) {
+		if C.igBeginMenuBar() {
+			if C.igBeginMenu(c'gfx-debug', true) {
+				C.igMenuItemBoolPtr(c'Buffers', c'', &ctx.buffers.open, true)
+				C.igMenuItemBoolPtr(c'Images', c'', &ctx.images.open, true)
+				C.igMenuItemBoolPtr(c'Shaders', c'', &ctx.shaders.open, true)
+				C.igMenuItemBoolPtr(c'Pipelines', c'', &ctx.pipelines.open, true)
+				C.igMenuItemBoolPtr(c'Passes', c'', &ctx.passes.open, true)
+				C.igMenuItemBoolPtr(c'Calls', c'', &ctx.capture.open, true)
+				C.igEndMenu()
+			}
+			C.igEndMenuBar()
+		}
+		C.igEndPopup()
+	}
+
+	// default menu bar. might et annoying.
 	if C.igBeginMainMenuBar() {
 		if C.igBeginMenu(c'sokol-gfx', true) {
 			C.igMenuItemBoolPtr(c'Buffers', c'', &ctx.buffers.open, true)
