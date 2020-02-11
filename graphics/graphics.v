@@ -18,6 +18,7 @@ mut:
 	def_pip Pipeline
 	def_pass &DefaultOffScreenPass
 	pass_proj_mat math.Mat32
+	blitted_to_screen bool
 }
 
 pub const (
@@ -29,31 +30,6 @@ pub const (
 		def_pass: 0
 	}
 )
-
-pub struct PassActionConfig {
-pub:
-	color math.Color = math.Color{}
-	color_action gfx.Action = gfx.Action.clear
-	stencil_action gfx.Action = .clear
-	stencil byte = byte(0)
-}
-
-fn (cfg &PassActionConfig) apply(pa mut C.sg_pass_action) {
-	pa.colors[0].action = cfg.color_action
-	pa.colors[0].val[0] = cfg.color.r_f()
-	pa.colors[0].val[1] = cfg.color.g_f()
-	pa.colors[0].val[2] = cfg.color.b_f()
-	pa.colors[0].val[3] = cfg.color.a_f()
-
-	pa.stencil.action = cfg.stencil_action
-	pa.stencil.val = cfg.stencil
-}
-
-pub struct PassConfig {
-pub:
-	pipeline &Pipeline
-	trans_mat &math.Mat32 = &math.Mat32(0)
-}
 
 //#region setup and config
 
@@ -177,9 +153,53 @@ pub fn new_offscreen_pass(width, height int) OffScreenPass {
 //#region NEW API render passes
 
 // combine both params into a single one
-// pub fn begin_pass(pass_action_cfg PassActionConfig, config PassConfig) {}
+pub fn begin_pass(config PassConfig) {
+	mut gg := g
+	config.apply(mut gg.pass_action)
 
-// pub fn blit_to_screen(letterbox_color math.Color, pp &PostProcessStack) {}
+	mut proj_mat := math.Mat32{}
+
+	// if we already blitted to the screen we have to use a default pass
+	if gg.blitted_to_screen {
+		w, h := window.drawable_size()
+		sg_begin_default_pass(&gg.pass_action, w, h)
+		proj_mat = math.mat32_ortho(w, h)
+	} else {
+		pass := if config.pass == 0 { &gg.def_pass.offscreen_pass } else { config.pass }
+		C.sg_begin_pass(pass.pass, &gg.pass_action)
+
+		// projection matrix with flipped y for OpenGL madness when rendering offscreen
+		proj_mat = math.mat32_ortho_inverted(pass.color_tex.w, -pass.color_tex.h)
+	}
+
+	mut pip := if config.pipeline == 0 { get_default_pipeline() } else { config.pipeline }
+
+	if config.trans_mat != 0 {
+		// TODO: shouldnt this be translation * projection?!?!
+		proj_mat = proj_mat * *config.trans_mat
+	}
+
+	// save the transform-projection matrix in case a new pipeline is set later
+	gg.pass_proj_mat = proj_mat
+	set_pipeline(mut pip)
+	debug.set_proj_mat(proj_mat)
+}
+
+pub fn postprocess(pp &PostProcessStack) {
+	mut gg := g
+	gg.pass_proj_mat = math.mat32_ortho_inverted(gg.def_pass.offscreen_pass.color_tex.w, -gg.def_pass.offscreen_pass.color_tex.h)
+	pp.process(g.def_pass.offscreen_pass)
+}
+
+pub fn blit_to_screen(letterbox_color math.Color) {
+	mut gg := g
+	gg.blitted_to_screen = true
+
+	begin_pass({color:letterbox_color})
+	scaler := g.def_pass.scaler
+	gg.quad_batch.draw(g.def_pass.offscreen_pass.color_tex, {x:scaler.x y:scaler.y sx:scaler.scale sy:scaler.scale})
+	end_pass()
+}
 
 // pub fn end_pass() {}
 
@@ -215,13 +235,6 @@ pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfi
 
 pub fn begin_default_offscreen_pass(pass_action_cfg PassActionConfig, config PassConfig) {
 	begin_offscreen_pass(g.def_pass.offscreen_pass, pass_action_cfg, config)
-}
-
-// TODO: horrible name
-pub fn postprocess_default_offscreen(pp &PostProcessStack) {
-	mut gg := g
-	gg.pass_proj_mat = math.mat32_ortho(gg.def_pass.offscreen_pass.color_tex.w, -gg.def_pass.offscreen_pass.color_tex.h)
-	pp.process(g.def_pass.offscreen_pass)
 }
 
 // TODO: horrible name. blits the default render target to the backbuffer
@@ -267,6 +280,8 @@ pub fn end_pass() {
 	sg_end_pass()
 }
 
+//#endregion
+
 pub fn set_pipeline(pipeline mut Pipeline) {
 	mut gg := g
 	gg.quad_batch.flush()
@@ -282,8 +297,6 @@ pub fn set_default_pipeline() {
 	set_pipeline(mut gg.def_pip)
 }
 
-//#endregion
-
 // flushes the batches
 pub fn flush() {
 	mut gg := g
@@ -296,12 +309,15 @@ pub fn commit() {
 	mut gg := g
 	gg.quad_batch.end()
 	gg.tri_batch.end()
+	gg.blitted_to_screen = false
 	C.sg_commit()
 }
 
 // TODO: temporarily just return the batches until their api solidifies
+[inline]
 pub fn spritebatch() &QuadBatch { return g.quad_batch }
 
+[inline]
 pub fn tribatch() &TriangleBatch { return g.tri_batch }
 
 //#endregion
