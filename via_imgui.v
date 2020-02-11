@@ -53,8 +53,8 @@ fn imgui_render(win voidptr, gl_context voidptr) {
 	ImGui_ImplOpenGL3_RenderDrawData(C.igGetDrawData())
 
 	if (io.ConfigFlags & C.ImGuiConfigFlags_ViewportsEnable) != 0 {
-		igUpdatePlatformWindows()
-		igRenderPlatformWindowsDefault(C.NULL, C.NULL)
+		C.igUpdatePlatformWindows()
+		C.igRenderPlatformWindowsDefault(C.NULL, C.NULL)
 		SDL_GL_MakeCurrent(win, gl_context)
 	}
 }
