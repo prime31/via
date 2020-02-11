@@ -185,6 +185,13 @@ pub fn begin_pass(config PassConfig) {
 	debug.set_proj_mat(proj_mat)
 }
 
+pub fn end_pass() {
+	flush()
+	// TODO: can debug drawing be setup to properly render last and work across all passes?
+	debug.draw()
+	sg_end_pass()
+}
+
 pub fn postprocess(pp &PostProcessStack) {
 	mut gg := g
 	gg.pass_proj_mat = math.mat32_ortho_inverted(gg.def_pass.offscreen_pass.color_tex.w, -gg.def_pass.offscreen_pass.color_tex.h)
@@ -199,85 +206,6 @@ pub fn blit_to_screen(letterbox_color math.Color) {
 	scaler := g.def_pass.scaler
 	gg.quad_batch.draw(g.def_pass.offscreen_pass.color_tex, {x:scaler.x y:scaler.y sx:scaler.scale sy:scaler.scale})
 	end_pass()
-}
-
-// pub fn end_pass() {}
-
-//#endregion
-
-//#region render passes
-
-pub fn begin_offscreen_pass(pass &OffScreenPass, pass_action_cfg PassActionConfig, config PassConfig) {
-	mut gg := g
-
-	pass_action_cfg.apply(mut gg.pass_action)
-	sg_begin_pass(pass.pass, &gg.pass_action)
-
-	mut pip := if config.pipeline == 0 {
-		get_default_pipeline()
-	} else {
-		config.pipeline
-	}
-
-	// projection matrix with flipped y for OpenGL madness
-	mut proj_mat := math.mat32_ortho_inverted(pass.color_tex.w, -pass.color_tex.h)
-
-	if config.trans_mat != 0 {
-		// TODO: shouldnt this be translation * projection?!?!
-		proj_mat = proj_mat * *config.trans_mat
-	}
-
-	// save the transform-projection matrix in case a new pipeline is set later
-	gg.pass_proj_mat = proj_mat
-	set_pipeline(mut pip)
-	debug.set_proj_mat(proj_mat)
-}
-
-pub fn begin_default_offscreen_pass(pass_action_cfg PassActionConfig, config PassConfig) {
-	begin_offscreen_pass(g.def_pass.offscreen_pass, pass_action_cfg, config)
-}
-
-// TODO: horrible name. blits the default render target to the backbuffer
-pub fn blit_default_offscreen(letterbox_color math.Color) {
-	mut gg := g
-	begin_default_pass({color:letterbox_color}, {})
-	scaler := g.def_pass.scaler
-	gg.quad_batch.draw(g.def_pass.offscreen_pass.color_tex, {x:scaler.x y:scaler.y sx:scaler.scale sy:scaler.scale})
-	end_pass()
-}
-
-pub fn begin_default_pass(pass_action_cfg PassActionConfig, config PassConfig) {
-	mut gg := g
-
-	pass_action_cfg.apply(mut gg.pass_action)
-	w, h := window.drawable_size()
-	sg_begin_default_pass(&gg.pass_action, w, h)
-
-	mut pip := if config.pipeline == &Pipeline(0) {
-		get_default_pipeline()
-	} else {
-		println('def pass: use custom pip')
-		config.pipeline
-	}
-
-	mut proj_mat := math.mat32_ortho(w, h)
-
-	if config.trans_mat != 0 {
-		// TODO: shouldnt this be translation * projection?!?!
-		proj_mat = proj_mat * *config.trans_mat
-	}
-
-	// save the transform-projection matrix in case a new pipeline is set later
-	gg.pass_proj_mat = proj_mat
-	set_pipeline(mut pip)
-	debug.set_proj_mat(proj_mat)
-}
-
-pub fn end_pass() {
-	flush()
-	// TODO: can debug drawing be setup to properly render last and work across all passes?
-	debug.draw()
-	sg_end_pass()
 }
 
 //#endregion

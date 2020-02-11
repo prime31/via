@@ -1,6 +1,5 @@
 module graphics
 import via.math
-import via.window
 import via.libs.sokol.gfx
 
 pub struct OffScreenPass {
