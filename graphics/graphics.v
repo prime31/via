@@ -154,7 +154,7 @@ pub fn new_effectstack() &EffectStack {
 
 //#endregion
 
-//#region NEW API render passes
+//#region render passes
 
 // combine both params into a single one
 pub fn begin_pass(config PassConfig) {
@@ -206,7 +206,7 @@ pub fn blit_to_screen(letterbox_color math.Color) {
 	mut gg := g
 	gg.blitted_to_screen = true
 
-	begin_pass({color:letterbox_color})
+	begin_pass({color:letterbox_color trans_mat:0 pipeline:0 pass:0})
 	scaler := g.def_pass.scaler
 	gg.quad_batch.draw(g.def_pass.offscreen_pass.color_tex, {x:scaler.x y:scaler.y sx:scaler.scale sy:scaler.scale})
 	end_pass()
@@ -239,6 +239,12 @@ pub fn flush() {
 // called by Via once at the end of each frame. Ends the batches and commits rendering to the GPU.
 pub fn commit() {
 	mut gg := g
+
+	// if we havent yet blitted to the screen do so now
+	if !gg.blitted_to_screen {
+		blit_to_screen(math.color_black())
+	}
+
 	gg.quad_batch.end()
 	gg.tri_batch.end()
 	gg.blitted_to_screen = false
