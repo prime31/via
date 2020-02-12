@@ -8,8 +8,11 @@ pub enum ColliderType {
 
 //#region Collider
 
+// all colliders must have all of these fields in this order in their struct
 pub struct Collider {
 	kind ColliderType
+	trigger bool
+	filter CollisionFilter
 }
 
 pub fn (c &Collider) get_bounds() math.RectF {
@@ -32,6 +35,8 @@ pub fn (c &Collider) get_bounds() math.RectF {
 
 pub struct AabbCollider {
 	kind ColliderType
+	trigger bool
+	filter CollisionFilter
 	x f32
 	y f32
 	w f32
@@ -48,6 +53,8 @@ pub fn (c &AabbCollider) get_bounds() math.RectF {
 
 pub struct CircleCollider {
 	kind ColliderType
+	trigger bool
+	filter CollisionFilter
 	x f32
 	y f32
 	r f32
