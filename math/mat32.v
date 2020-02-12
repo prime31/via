@@ -250,10 +250,21 @@ pub fn (self &Mat32) transform_vec2_arr(dst &Vertex, src &Vec2, size int) {
     mut mut_dst := dst
 
     for i in 0..size {
-        x := src[i].x * self.data[0] + src[i].y * self.data[2] + self.data[4]
-        y := src[i].x * self.data[1] + src[i].y * self.data[3] + self.data[5]
+        mut_dst[i].x = src[i].x * self.data[0] + src[i].y * self.data[2] + self.data[4]
+        mut_dst[i].y = src[i].x * self.data[1] + src[i].y * self.data[3] + self.data[5]
+    }
+}
 
-        // we defer setting in case src and dst are the same
+// transforms an array of positions (src) and writes them into the Vertex array (dst)
+[inline]
+pub fn (self &Mat32) transform_vertex_arr(dst &Vertex, size int) {
+    mut mut_dst := dst
+
+    for i in 0..size {
+        x := dst[i].x * self.data[0] + dst[i].y * self.data[2] + self.data[4]
+        y := dst[i].x * self.data[1] + dst[i].y * self.data[3] + self.data[5]
+
+        // we defer setting because src and dst are the same
         mut_dst[i].x = x
         mut_dst[i].y = y
     }

@@ -64,10 +64,15 @@ pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config D
 	tb.verts[base_vert + 2].x = x3
 	tb.verts[base_vert + 2].y = y3
 	tb.verts[base_vert + 2].color = config.color
+
+	matrix := config.get_matrix()
+	matrix.transform_vertex_arr(&tb.verts[base_vert], 3)
 }
 
-pub fn (tb mut TriangleBatch) draw_rectangle(x, y, width, height f32, config DrawConfig) {
-	tb.draw_polygon([math.Vec2{x, y}, math.Vec2{x + width, y}, math.Vec2{x + width, y + height}, math.Vec2{x, y + height}]!, config)
+pub fn (tb mut TriangleBatch) draw_rectangle(width, height f32, config DrawConfig) {
+	half_w := width * 0.5
+	half_h := height * 0.5
+	tb.draw_polygon([math.Vec2{-half_w, -half_h}, math.Vec2{half_w, -half_h}, math.Vec2{half_w, half_h}, math.Vec2{-half_w, half_h}]!, config)
 }
 
 pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2, config DrawConfig) {
@@ -76,10 +81,10 @@ pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2, config DrawConfig)
 	}
 }
 
-pub fn (tb mut TriangleBatch) draw_circle(x, y, radius f32, segments int, config DrawConfig) {
+pub fn (tb mut TriangleBatch) draw_circle(radius f32, segments int, config DrawConfig) {
 	if !tb.ensure_capacity(segments) { return }
 
-	center := math.Vec2{x, y}
+	center := math.Vec2{}
 	increment := math.pi * 2.0 / segments
 	mut theta := 0.0
 
