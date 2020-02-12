@@ -80,7 +80,7 @@ pub fn set_default_filter(min, mag gfx.Filter) {
 }
 
 pub fn get_resolution_scaler() &ResolutionScaler {
-	mut gg := g
+	gg := g
 	return &gg.def_pass.scaler
 }
 

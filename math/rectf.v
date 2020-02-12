@@ -36,8 +36,8 @@ pub fn (r &RectF) contains(x, y f32) bool {
 
 [inline]
 pub fn (r &RectF) contains_pt(x, y f32) bool {
-	return f32(x - r.x) > delta && f32(y - r.y) > delta &&
-		f32(r.x + r.w - x) > delta && f32(r.y + r.h - y) > delta
+	return x - r.x > delta && y - r.y > delta &&
+		r.x + r.w - x > delta && r.y + r.h - y > delta
 }
 
 pub fn (r1 &RectF) union_rect(r2 &RectF) RectF {

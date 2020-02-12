@@ -105,6 +105,26 @@ pub fn (tb mut TriangleBatch) draw_circle(radius f32, segments int, config DrawC
 	}
 }
 
+pub fn (tb mut TriangleBatch) draw_line(x1, y1, x2, y2, thickness f32, color math.Color) {
+	v1 := x1 - x2
+	v2 := y1 - y2
+	dist := math.sqrt(v1 * v1 + v2 * v2)
+	angle := math.angle_between_points(x1, y1, x2, y2)
+	half_thick := thickness * 0.5
+
+	verts := [math.Vec2{0, -half_thick}, math.Vec2{dist, -half_thick}, math.Vec2{dist, half_thick}, math.Vec2{0, half_thick}]!
+	tb.draw_polygon(verts, {x:x1 y:y1 rot:math.degrees(angle) color:color})
+}
+
+pub fn (tb mut TriangleBatch) draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
+	half_thick := thickness * 0.5
+
+	tb.draw_line(x - half_thick, y, x + width + half_thick, y, thickness, color)
+	tb.draw_line(x + width, y, x + width, y + height, thickness, color)
+	tb.draw_line(x - half_thick, y + height, x + width + half_thick, y + height, thickness, color)
+	tb.draw_line(x, y + height, x, y, thickness, color)
+}
+
 pub fn (tbb &TriangleBatch) flush() {
 	mut tb := tbb
 	total_tris := (tb.tri_cnt - tb.last_appended_tri_cnt)

@@ -232,3 +232,13 @@ pub fn rotate_around(pos Vec2, speed, time f32) Vec2 {
 	x, y := sincos(time * speed)
 	return Vec2{pos.x + x, pos.y + y}
 }
+
+[inline]
+pub fn angle_between_vectors(from, to Vec2) f32 {
+	return atan2(to.y - from.y, to.x - from.x)
+}
+
+[inline]
+pub fn angle_between_points(x1, y1, x2, y2 f32) f32 {
+	return atan2(y2 - y1, x2 - x1)
+}

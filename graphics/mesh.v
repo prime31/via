@@ -1,5 +1,4 @@
 module graphics
-import via.window
 import via.math
 import via.libs.sokol.gfx
 
