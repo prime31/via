@@ -1,6 +1,7 @@
 module imgui
 import via.libs.imgui.c
 
+const ( imgui_used_import = c.used_import )
 
 [inline]
 pub fn create_context(shared_font_atlas &C.ImFontAtlas) &C.ImGuiContext {

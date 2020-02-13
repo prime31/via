@@ -2,12 +2,17 @@ module graphics
 import via.math
 import via.fonts
 import via.utils
+import via.fonts
 import via.libs.sokol.gfx
+
+#flag -I @VMOD/via/graphics/thirdparty
+#include "proggytiny.h"
 
 const ( used = gfx.used_import )
 
 pub struct QuadBatch {
 mut:
+	fontbook &fonts.FontBook
 	bindings sg_bindings
 	verts []math.Vertex
 	max_sprites int
@@ -19,17 +24,31 @@ mut:
 
 pub fn quadbatch(max_sprites int) &QuadBatch {
 	mut qb := &QuadBatch{
-		// default colors to white
+		fontbook: new_fontbook(128, 128)
 		verts: utils.new_arr_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
 		max_sprites: max_sprites
 		quad: math.quad(0, 0, 1, 1, 1, 1)
 	}
+
+	qb.fontbook.add_font_memory('ProggyTiny', C.ProggyTiny_ttf, C.ProggyTiny_ttf_len, false)
+	qb.fontbook.set_size(10)
 
 	indices := new_vert_quad_index_buffer(max_sprites)
 	qb.bindings = bindings_create(qb.verts, .stream, indices, .immutable)
 	unsafe { indices.free() }
 
 	return qb
+}
+
+pub fn (qb &QuadBatch) free() {
+	qb.fontbook.free()
+	qb.bindings.vertex_buffers[0].free()
+	qb.bindings.index_buffer.free()
+
+	unsafe {
+		qb.verts.free()
+		free(qb)
+	}
 }
 
 fn (qb &QuadBatch) ensure_capacity() bool {
@@ -85,8 +104,9 @@ pub fn (qb mut QuadBatch) draw(tex Texture, config DrawConfig) {
 	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
 }
 
-pub fn (qb mut QuadBatch) draw_text(font &fonts.FontBook, str string, config DrawConfig) {
+pub fn (qb mut QuadBatch) draw_text(str string, config TextDrawConfig) {
 	matrix := config.get_matrix()
+	font := if config.fontbook != 0 { config.fontbook } else { qb.fontbook }
 
 	mut f := font
 	f.update_texture()
@@ -125,14 +145,4 @@ pub fn (qb mut QuadBatch) flush() {
 
 	sg_apply_bindings(&qb.bindings)
 	sg_draw(0, total_quads * 6, 1)
-}
-
-pub fn (qb &QuadBatch) free() {
-	qb.bindings.vertex_buffers[0].free()
-	qb.bindings.index_buffer.free()
-
-	unsafe {
-		qb.verts.free()
-		free(qb)
-	}
 }

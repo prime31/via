@@ -1,6 +1,5 @@
 module collections
 import via.math
-import via.debug
 import via.graphics
 
 const (
@@ -538,7 +537,7 @@ pub fn (sh mut SpatialHash) debug_draw() {
 				py := f32(y) * f32(sh.cell_size)
 
 				graphics.tribatch().draw_hollow_rect(px, py, sh.cell_size, sh.cell_size, 1, math.color_red())
-				graphics.spritebatch().draw_text(debug.get_fontbook(), len.str(), {x:px + half_size y:py + half_size align:.center_middle sx:3 sy:3})
+				graphics.spritebatch().draw_text(len.str(), {x:px + half_size y:py + half_size align:.center_middle sx:3 sy:3})
 			}
 		}
 	}

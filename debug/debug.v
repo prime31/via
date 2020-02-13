@@ -1,31 +1,4 @@
 module debug
-import via.fonts
-import via.graphics
-
-#flag -I @VMOD/via/debug/thirdparty
-#include "proggytiny.h"
-
-struct Debug {
-mut:
-	fontbook &fonts.FontBook
-	def_font int
-}
-
-const (
-	debug = &Debug{
-		fontbook: 0
-	}
-)
-
-pub fn get_fontbook() &fonts.FontBook {
-	if debug.fontbook == 0 {
-		mut d := debug
-		d.fontbook = graphics.new_fontbook(128, 128)
-		d.def_font = d.fontbook.add_font_memory('ProggyTiny', C.ProggyTiny_ttf, C.ProggyTiny_ttf_len, false)
-		d.fontbook.set_size(10)
-	}
-	return debug.fontbook
-}
 
 //#region Logging
 
