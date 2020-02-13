@@ -1,5 +1,6 @@
 module graphics
 import via.math
+import via.libs.fontstash
 
 pub struct DrawConfig {
 pub mut:
@@ -10,6 +11,7 @@ pub mut:
 	sy f32 = 1.0
 	ox f32 = 0.0
 	oy f32 = 0.0
+	align fontstash.FonsAlign = fontstash.FonsAlign.default
 	color math.Color = math.Color{}
 }
 

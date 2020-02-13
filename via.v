@@ -1,7 +1,6 @@
 module via
 import via.time
 import via.input
-import via.debug
 import via.audio
 import via.window
 import via.graphics
@@ -11,7 +10,7 @@ import via.libs.sokol
 import via.libs.sokol.gfx
 import via.libs.sdl2
 
-const ( used_import = gfx.used_import + debug.used_import + sokol.used_import + sdl2.used_import + flextgl.used_import )
+const ( used_import = gfx.used_import + sokol.used_import + sdl2.used_import + flextgl.used_import )
 
 pub struct Via {
 pub mut:
@@ -53,7 +52,6 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 	window.create(config.window_config())
 	graphics.setup(config.graphics_config())
-	debug.setup()
 
 	input.set_window_scale(window.scale())
 
@@ -65,7 +63,6 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 		time.tick()
 		if v.imgui { imgui_new_frame(window.win.sdl_window, config.imgui_gfx_debug) }
 
-		debug.begin()
 		ctx.update()
 		ctx.draw()
 		graphics.commit()

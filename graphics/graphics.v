@@ -2,7 +2,6 @@ module graphics
 import filepath
 import via.math
 import via.fonts
-import via.debug
 import via.window
 import via.filesystem
 import via.libs.sokol.gfx
@@ -186,13 +185,10 @@ pub fn begin_pass(config PassConfig) {
 	// save the transform-projection matrix in case a new pipeline is set later
 	gg.pass_proj_mat = proj_mat
 	set_pipeline(mut pip)
-	debug.set_proj_mat(proj_mat)
 }
 
 pub fn end_pass() {
 	flush()
-	// TODO: can debug drawing be setup to properly render last and work across all passes?
-	debug.draw()
 	sg_end_pass()
 }
 

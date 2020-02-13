@@ -90,6 +90,7 @@ pub fn (qb mut QuadBatch) draw_text(font &fonts.FontBook, str string, config Dra
 
 	mut f := font
 	f.update_texture()
+	f.set_align(config.align)
 	iter := C.FONStextIter{}
 	C.fonsTextIterInit(font.stash, &iter, 0, 0, str.str, C.NULL)
 
