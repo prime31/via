@@ -70,6 +70,7 @@ pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config D
 }
 
 pub fn (tb mut TriangleBatch) draw_rectangle(width, height f32, config DrawConfig) {
+	// TODO: should this be from center or top-left?
 	half_w := width * 0.5
 	half_h := height * 0.5
 	tb.draw_polygon([math.Vec2{-half_w, -half_h}, math.Vec2{half_w, -half_h}, math.Vec2{half_w, half_h}, math.Vec2{-half_w, half_h}]!, config)

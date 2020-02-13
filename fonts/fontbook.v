@@ -160,6 +160,10 @@ pub fn (font &FontBook) add_font(src string) int {
 	return C.fonsAddFontMem(font.stash, src.str, bytes.data, bytes.len, true)
 }
 
+pub fn (font &FontBook) add_font_memory(name string, bytes byteptr, len int, free_data bool) int {
+	return C.fonsAddFontMem(font.stash, name.str, bytes, len, free_data)
+}
+
 pub fn (font &FontBook) get_font_by_name(name string) int {
 	return C.fonsGetFontByName(font.stash, name.str)
 }
