@@ -1,19 +1,32 @@
-module tilemap
+module tilemaps
 
 pub struct Map {
     width int
     height int
 	tile_size int
-	tileset []Tileset // TODO: support multiple Tilesets
+pub mut:
+	tilesets []Tileset // TODO: support multiple Tilesets
 	tile_layers []TileLayer
 	object_layers []ObjectLayer
+	group_layers []GroupLayer
+	// image_layers []ImageLayer
+}
+
+pub fn (m Map) str() string {
+	return '[Map] w:$m.width, h:$m.height, ts:$m.tile_size\ntilesets:$m.tilesets\ntile_layers:$m.tile_layers\nobject_layers:$m.object_layers\ngroup_layers:$m.group_layers'
 }
 
 pub fn (m &Map) free() {
 	unsafe {
-		m.tileset.free()
+		for ts in m.tilesets { ts.free() }
+		for tl in m.tile_layers { tl.free() }
+		for ol in m.object_layers { ol.free() }
+		for gl in m.group_layers { gl.free() }
+
+		m.tilesets.free()
 		m.tile_layers.free()
 		m.object_layers.free()
+		m.group_layers.free()
 	}
 }
 

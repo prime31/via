@@ -6,7 +6,7 @@ const (
 	flipped_d = 0x20000000
 )
 
-[flags]
+[flag]
 pub enum Flipped {
 	no
 	horizontal
@@ -14,17 +14,29 @@ pub enum Flipped {
 	diagonally
 }
 
-	
+
 pub struct Tile {
 	id int
+mut:
 	flipped Flipped
 }
 
 fn tile(id int) Tile {
-	mut flipped = Flipped.no
-	
-	return Tile{
+	mut t := Tile{
 		id: id & ~(flipped_h | flipped_v | flipped_d)
-		flipped: flipped
 	}
+
+	if (id & flipped_h) != 0 {
+		t.flipped.set(.horizontal)
+	}
+
+	if (id & flipped_v) != 0 {
+		t.flipped.set(.vertical)
+	}
+
+	if (id & flipped_d) != 0 {
+		t.flipped.set(.diagonally)
+	}
+
+	return t
 }
