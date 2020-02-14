@@ -5,6 +5,7 @@ const FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 var vMapFormat = {
     name: 'V Tiled Format',
     extension: 'json',
+	images: [],
 
 	getTileId: function(cell) {
 		var id = cell.tileId;
@@ -18,6 +19,7 @@ var vMapFormat = {
 	},
 
 	cleanImagePath: function(path) {
+		vMapFormat.images.push(path);
 		return path.split('\\').pop().split('/').pop();
 	},
 
@@ -160,6 +162,22 @@ var vMapFormat = {
 		var file = new TextFile(fileName, TextFile.WriteOnly);
 		file.write(JSON.stringify(m, null, 4));
         file.commit();
+
+		// copy over our images
+		var dstFolder = fileName.substring(0, fileName.lastIndexOf("/"));
+		for (var i = 0; i < vMapFormat.images.length; i++) {
+			var src = vMapFormat.images[i];
+			var filename = src.split('\\').pop().split('/').pop();
+			var dst = dstFolder + '/' + filename;
+
+			tiled.log('copying ' + src + ' to ' + dst);
+			var srcFile = new BinaryFile(src, BinaryFile.ReadOnly);
+			var bytes = srcFile.readAll();
+
+			var dstFile = new BinaryFile(dst, BinaryFile.WriteOnly);
+			dstFile.write(bytes);
+			dstFile.commit();
+		}
     },
 }
 
