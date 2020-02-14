@@ -1,5 +1,7 @@
 module tilemaps
 
+//#region ObjectLayer
+
 pub struct ObjectLayer {
 pub mut:
 	name string
@@ -17,6 +19,9 @@ pub fn (o &ObjectLayer) free() {
 	}
 }
 
+//#endregion
+
+//#region ImageLayer
 
 pub struct ImageLayer {
 pub mut:
@@ -32,6 +37,9 @@ pub fn (i &ImageLayer) free() {
 	}
 }
 
+//#endregion
+
+//#region GroupLayer
 
 pub struct GroupLayer {
 pub mut:
@@ -55,3 +63,5 @@ pub fn (g &GroupLayer) free() {
 		g.object_layers.free()
 	}
 }
+
+//#endregion
