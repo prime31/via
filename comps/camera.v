@@ -1,4 +1,4 @@
-module components
+module comps
 import via.math
 import via.input
 import via.graphics
