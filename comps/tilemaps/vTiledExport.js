@@ -177,6 +177,8 @@ var vMapFormat = {
 			var dstFile = new BinaryFile(dst, BinaryFile.WriteOnly);
 			dstFile.write(bytes);
 			dstFile.commit();
+
+			srcFile.close();
 		}
     },
 }
