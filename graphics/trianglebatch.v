@@ -69,6 +69,10 @@ pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config D
 	matrix.transform_vertex_arr(&tb.verts[base_vert], 3)
 }
 
+pub fn (tb mut TriangleBatch) draw_point(x, y, size f32, color math.Color) {
+	tb.draw_rectangle(size, size, {x:x y:y color:color})
+}
+
 pub fn (tb mut TriangleBatch) draw_rectangle(width, height f32, config DrawConfig) {
 	// TODO: should this be from center or top-left?
 	half_w := width * 0.5
@@ -101,6 +105,27 @@ pub fn (tb mut TriangleBatch) draw_circle(radius f32, segments int, config DrawC
 		v2 := center + sin_cos.scale(radius)
 
 		tb.draw_triangle(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y, config)
+
+		theta += increment
+	}
+}
+
+pub fn (tb mut TriangleBatch) draw_hollow_circle(radius f32, segments int, config DrawConfig) {
+	center := math.Vec2{config.x, config.y}
+	increment := math.pi * 2.0 / segments
+	mut theta := 0.0
+
+	mut sin_cos := math.Vec2{math.cos(theta), math.sin(theta)}
+	theta += increment
+
+	for _ in 1..segments + 1 {
+		sin_cos = math.Vec2{math.cos(theta), math.sin(theta)}
+		v1 := center + sin_cos.scale(radius)
+
+		sin_cos = math.Vec2{math.cos(theta + increment), math.sin(theta + increment)}
+		v2 := center + sin_cos.scale(radius)
+
+		tb.draw_line(v1.x, v1.y, v2.x, v2.y, 1, config.color)
 
 		theta += increment
 	}

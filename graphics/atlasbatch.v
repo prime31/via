@@ -14,13 +14,14 @@ mut:
 	sprite_cnt int
 	max_sprites int
 	tex Texture
+	quad math.Quad
 }
 
 pub fn atlasbatch(tex Texture, max_sprites int) &AtlasBatch {
 	mut sb := &AtlasBatch{
-		// set default colors to white
 		verts: utils.new_arr_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
 		max_sprites: max_sprites
+		quad: math.quad(0, 0, 1, 1, tex.w, tex.h)
 	}
 
 	indices := new_vert_quad_index_buffer(max_sprites)
@@ -46,34 +47,35 @@ pub fn (sb mut AtlasBatch) set_texture(tex Texture) {
 	sb.tex = tex
 }
 
-pub fn (sb mut AtlasBatch) clear() {
-	sb.sprite_cnt = 0
+pub fn (ab mut AtlasBatch) clear() {
+	ab.sprite_cnt = 0
 }
 
-fn (sb &AtlasBatch) ensure_capacity() bool {
-	if sb.sprite_cnt == sb.max_sprites {
+fn (ab &AtlasBatch) ensure_capacity() bool {
+	if ab.sprite_cnt == ab.max_sprites {
 		println('Error: sprite batch full. Aborting Add.')
 		return false
 	}
 	return true
 }
 
-pub fn (sb mut AtlasBatch) set(index int, matrix &math.Mat32) {
-	quad := math.quad(0, 0, sb.tex.w, sb.tex.h, sb.tex.h, sb.tex.h)
-	sb.set_q(index, quad, matrix)
-}
-
-pub fn (sb mut AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32) {
+pub fn (ab mut AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := index * 4
 
-	matrix.transform_vec2_arr(&sb.verts[base_vert], &quad.positions[0], 4)
+	matrix.transform_vec2_arr(&ab.verts[base_vert], &quad.positions[0], 4)
 
 	for i in 0..4 {
-		sb.verts[base_vert + i].s = quad.texcoords[i].x
-		sb.verts[base_vert + i].t = quad.texcoords[i].y
+		ab.verts[base_vert + i].s = quad.texcoords[i].x
+		ab.verts[base_vert + i].t = quad.texcoords[i].y
+		ab.verts[base_vert + i].color = *color
 	}
 
-	sb.v_buffer_dirty = true
+	ab.v_buffer_dirty = true
+}
+
+pub fn (ab mut AtlasBatch) set(index int, config DrawConfig) {
+	ab.quad.set_viewport(0, 0, ab.tex.w, ab.tex.h)
+	ab.set_q(index, ab.quad, config.get_matrix(), config.color)
 }
 
 pub fn (sb mut AtlasBatch) add(config DrawConfig) int {
@@ -81,7 +83,7 @@ pub fn (sb mut AtlasBatch) add(config DrawConfig) int {
 		return -1
 	}
 
-	sb.set(sb.sprite_cnt, config.get_matrix())
+	sb.set(sb.sprite_cnt, config)
 
 	sb.v_buffer_dirty = true
 	sb.sprite_cnt++
@@ -93,29 +95,34 @@ pub fn (sb mut AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
 		return -1
 	}
 
-	sb.set_q(sb.sprite_cnt, quad, config.get_matrix())
+	sb.set_q(sb.sprite_cnt, quad, config.get_matrix(), config.color)
 
 	sb.v_buffer_dirty = true
 	sb.sprite_cnt++
 	return sb.sprite_cnt - 1
 }
 
-pub fn (sb mut AtlasBatch) draw() {
-	if sb.v_buffer_dirty {
-		sb.update_verts()
-	}
-
-	sg_apply_bindings(&sb.bindings)
-	sg_draw(0, sb.sprite_cnt * 6, 1)
-	sb.v_buffer_safe_to_update = true
+pub fn (ab mut AtlasBatch) add_vp(viewport math.Rect, config DrawConfig) {
+	ab.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
+	ab.add_q(ab.quad, config)
 }
 
-pub fn (sb &AtlasBatch) free() {
-	sb.bindings.vertex_buffers[0].free()
-	sb.bindings.index_buffer.free()
+pub fn (ab mut AtlasBatch) draw() {
+	if ab.v_buffer_dirty {
+		ab.update_verts()
+	}
+
+	sg_apply_bindings(&ab.bindings)
+	sg_draw(0, ab.sprite_cnt * 6, 1)
+	ab.v_buffer_safe_to_update = true
+}
+
+pub fn (ab &AtlasBatch) free() {
+	ab.bindings.vertex_buffers[0].free()
+	ab.bindings.index_buffer.free()
 
 	unsafe {
-		sb.verts.free()
-		free(sb)
+		ab.verts.free()
+		free(ab)
 	}
 }
