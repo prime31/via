@@ -1,4 +1,5 @@
 module tilemaps
+import via.graphics
 
 pub struct Property {
 pub:
@@ -22,6 +23,10 @@ pub fn (t &Tileset) free() {
 	unsafe { t.tiles.free() }
 }
 
+pub fn (t &Tileset) prepare() {
+
+}
+
 /* cache the Viewports for each tile
 var id = firstGid;
 for (var y = tileset.Margin; y < tileset.Image.Height - tileset.Margin; y += tileset.TileHeight + tileset.Spacing)
@@ -39,7 +44,7 @@ for (var y = tileset.Margin; y < tileset.Image.Height - tileset.Margin; y += til
 
 pub struct TilesetTile {
 pub:
-	id int // TODO: do we need this? id should always be array index for non-image tilesets
+	id u32 // TODO: do we need this? id should always be array index for non-image tilesets
 	props []Property
 	//props map[string]string
 }

@@ -97,6 +97,13 @@ pub fn (qb mut QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig
 	qb.draw_q_m(tex.img, quad, config.get_matrix(), config.color)
 }
 
+pub fn (qb mut QuadBatch) draw_vp(tex Texture, viewport math.Rect, config DrawConfig) {
+	qb.quad.set_image_dimensions(tex.w, tex.h)
+	qb.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
+
+	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
+}
+
 pub fn (qb mut QuadBatch) draw(tex Texture, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(0, 0, tex.w, tex.h)

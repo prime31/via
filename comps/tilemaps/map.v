@@ -30,6 +30,13 @@ pub fn (m &Map) free() {
 	}
 }
 
+// after reconstituting from disk this should be called to let the data structures set themselves up
+pub fn (m &Map) prepare() {
+	for ts in m.tilesets {
+		ts.prepare()
+	}
+}
+
 pub fn (m &Map) world_width() int {
 	return m.width * m.tile_size
 }

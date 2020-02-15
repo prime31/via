@@ -32,6 +32,6 @@ pub fn (l &TileLayer) get_tile(x, y int) &Tile {
 		return t
 	}
 
-	t := tile(id)
+	t := tile(id, -1)
 	return &t
 }

@@ -1,20 +1,32 @@
-const FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-const FLIPPED_VERTICALLY_FLAG = 0x40000000;
-const FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+const FLIPPED_HORIZONTALLY_FLAG = 0x08000000;
+const FLIPPED_VERTICALLY_FLAG = 0x04000000;
+const FLIPPED_DIAGONALLY_FLAG = 0x02000000;
 
 var vMapFormat = {
     name: 'V Tiled Format',
     extension: 'json',
 	images: [],
 
-	getTileId: function(cell) {
+	getTileId: function(cell, flags) {
 		var id = cell.tileId;
-		if (cell.flippedAntiDiagonally)
-			id += FLIPPED_HORIZONTALLY_FLAG;
-		if (cell.flippedVertically)
-			id += FLIPPED_VERTICALLY_FLAG;
-		if (cell.flippedDiagonally)
-			id += FLIPPED_DIAGONALLY_FLAG;
+
+		// it seems these bools arent properly set all the time so we use flags instead
+		if (cell.flippedAntiDiagonally || cell.flippedVertically || cell.flippedDiagonally) {
+			if (cell.flippedAntiDiagonally)
+				id += FLIPPED_HORIZONTALLY_FLAG;
+			if (cell.flippedVertically)
+				id += FLIPPED_VERTICALLY_FLAG;
+			if (cell.flippedDiagonally)
+				id += FLIPPED_DIAGONALLY_FLAG;
+		} else if (flags > 0) {
+			if (flags == 1)
+				id += FLIPPED_HORIZONTALLY_FLAG;
+			if (flags == 2)
+				id += FLIPPED_VERTICALLY_FLAG;
+			if (flags == 3)
+				id += FLIPPED_DIAGONALLY_FLAG;
+		}
+
 		return id;
 	},
 
@@ -64,7 +76,7 @@ var vMapFormat = {
 
         for (var y = 0; y < layer.height; y++) {
             for (var x = 0; x < layer.width; x++) {
-				var id = vMapFormat.getTileId(layer.cellAt(x, y));
+				var id = vMapFormat.getTileId(layer.cellAt(x, y), layer.flagsAt(x, y));
 				l.tiles.push(id);
             }
         }
