@@ -1,4 +1,4 @@
-module tilemaps
+module tilemap
 
 pub struct TileLayer {
 	name string
@@ -19,6 +19,17 @@ pub fn (t &TileLayer) free() {
 	}
 }
 
+pub fn (l &TileLayer) total_non_empty_tiles() int {
+	mut cnt := 0
+
+	for t in l.tiles {
+		if t >= 0 {
+			cnt++
+		}
+	}
+
+	return cnt
+}
 
 pub fn (l &TileLayer) has_tile(x, y int) bool {
 	return l.tiles[x + y * l.width] >= 0

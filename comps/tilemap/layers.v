@@ -1,4 +1,4 @@
-module tilemaps
+module tilemap
 
 //#region ObjectLayer
 

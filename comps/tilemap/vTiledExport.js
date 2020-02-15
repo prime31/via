@@ -6,6 +6,29 @@ var vMapFormat = {
     name: 'V Tiled Format',
     extension: 'json',
 	images: [],
+	tilesetTiles: {},
+
+	getPngColumnCount: function(tileset) {
+		var png = new BinaryFile(tileset.image, BinaryFile.ReadOnly);
+		png.seek(16);
+		var dvW = new DataView(png.read(4));
+		var dvH = new DataView(png.read(4));
+		var width = dvW.getUint32();
+		var height = dvH.getUint32();
+		png.close();
+
+		// determine number of columns in the image
+		var columns = 0;
+		var accum_w = tileset.margin * 2;
+		while (true) {
+			columns++
+			accum_w += tileset.tileWidth + 2 * tileset.tileSpacing
+			if (accum_w >= width) {
+				return columns;
+			}
+		}
+		return columns;
+	},
 
 	getTileId: function(cell, flags) {
 		var id = cell.tileId;
@@ -40,26 +63,38 @@ var vMapFormat = {
 			spacing: tileset.tileSpacing,
 			margin: tileset.margin,
 			image: vMapFormat.cleanImagePath(tileset.image),
+			image_columns: vMapFormat.getPngColumnCount(tileset),
 			tiles: []
 		};
 
 		for (var j = 0; j < tileset.tiles.length; j++) {
 			var tile = tileset.tiles[j];
+			var tileHasData = false;
 			var props = []
 
 			if (Object.keys(tile.properties()).length > 0) {
+				tileHasData = true;
 				for (let key in tile.properties()) {
 					props.push({
 						key: key,
-						value: tile.property(key)
+						value: tile.property(key).toString()
 					})
 				}
 			}
 
-			ts.tiles.push({
-				id: tile.id,
-				props: props
-			});
+			if (tile.frames.length > 0) {
+				tileHasData = true;
+				tiled.log('we have animation frames');
+			}
+
+			if (tileHasData) {
+				tiled.warn(`adding tileset tile: ${tile.id} => ${Object.keys(vMapFormat.tilesetTiles).length}`);
+				vMapFormat.tilesetTiles[tile.id] = Object.keys(vMapFormat.tilesetTiles).length;
+				ts.tiles.push({
+					id: tile.id,
+					props: props
+				});
+			}
 		}
 
 		return ts;
@@ -122,7 +157,7 @@ var vMapFormat = {
 			l.objects.push({
 				id: object.id,
 				name: object.name,
-				shape: object.shape == 3 && object.w == object.h ? 1 : object.shape,
+				shape: object.shape == 3 && object.width == object.height ? 1 : object.shape,
 				x: object.x,
 				y: object.y,
 				w: object.width,
@@ -172,7 +207,7 @@ var vMapFormat = {
         }
 
 		var file = new TextFile(fileName, TextFile.WriteOnly);
-		file.write(JSON.stringify(m, null, 4));
+		file.write(JSON.stringify(m));
         file.commit();
 
 		// copy over our images
