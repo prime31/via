@@ -46,8 +46,8 @@ pub fn create(config &WindowConfig) {
 }
 
 pub fn free() {
-	C.SDL_GL_DeleteContext(win.gl_context)
-	$if !metal? { unsafe { free(win) } }
+	$if !metal? { C.SDL_GL_DeleteContext(win.gl_context) }
+	unsafe { free(win) }
 }
 
 fn create_gl_window(config &WindowConfig, window_flags int) {
