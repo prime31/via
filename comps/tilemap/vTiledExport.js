@@ -60,6 +60,7 @@ var vMapFormat = {
 
 	getTileset: function(tileset) {
 		var ts = {
+			tile_size: tileset.tileWidth,
 			spacing: tileset.tileSpacing,
 			margin: tileset.margin,
 			image: vMapFormat.cleanImagePath(tileset.image),
@@ -88,7 +89,7 @@ var vMapFormat = {
 			}
 
 			if (tileHasData) {
-				tiled.warn(`adding tileset tile: ${tile.id} => ${Object.keys(vMapFormat.tilesetTiles).length}`);
+				tiled.warn(`adding tileset tile: (tileId => index) ${tile.id} => ${Object.keys(vMapFormat.tilesetTiles).length}`);
 				vMapFormat.tilesetTiles[tile.id] = Object.keys(vMapFormat.tilesetTiles).length;
 				ts.tiles.push({
 					id: tile.id,
@@ -180,6 +181,8 @@ var vMapFormat = {
 			image_layers: []
         };
 
+		vMapFormat.images = [];
+		vMapFormat.tilesetTiles = {};
 		tiled.log("------------- V export -------------");
 
 		tiled.log(`exporting ${map.usedTilesets().length} tilesets`);

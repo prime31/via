@@ -2,6 +2,7 @@ module tilemap
 import via.math
 import via.graphics
 
+// note: does not free the Textures
 pub struct MapRenderer {
 	map Map
 mut:
@@ -23,7 +24,6 @@ pub fn maprenderer(map Map) MapRenderer {
 
 pub fn (m &MapRenderer) free() {
 	unsafe {
-		for t in m.textures { t.free() }
 		m.textures.free()
 	}
 }
@@ -54,7 +54,7 @@ pub fn (m &MapRenderer) render_tilelayer(layer &TileLayer) {
 			tile_id := layer.tiles[i++]
 			if tile_id >= 0 {
 				tile := tile(tile_id, m.map.tile_size)
-				vp := m.viewport_for_tile(tile.id)
+				vp := m.map.tilesets[0].viewport_for_tile(tile.id)
 
 				tx := f32(x * m.map.tile_size) + tile.ox * 1.0
 				ty := f32(y * m.map.tile_size) + tile.oy * 1.0
@@ -64,7 +64,7 @@ pub fn (m &MapRenderer) render_tilelayer(layer &TileLayer) {
 	}
 }
 
-// returns an AtlasBatch with the TileLayers tiles added to it
+// returns an AtlasBatch with the TileLayer's tiles added to it
 pub fn (m &MapRenderer) tilelayer_atlasbatch(layer &TileLayer) &graphics.AtlasBatch {
 	tex := m.textures[0]
 	mut batch := graphics.new_atlasbatch(tex, layer.total_non_empty_tiles())
@@ -84,21 +84,6 @@ pub fn (m &MapRenderer) tilelayer_atlasbatch(layer &TileLayer) &graphics.AtlasBa
 		}
 	}
 	return batch
-}
-
-fn (m &MapRenderer) viewport_for_tile(id int) math.Rect {
-	columns := m.map.tilesets[0].image_columns
-	tile_size := m.map.tile_size
-
-	x := id % columns
-	y := id / columns
-
-	return math.Rect{
-		x: x * tile_size
-		y: y * tile_size
-		w: tile_size
-		h: tile_size
-	}
 }
 
 pub fn (m &MapRenderer) render_objectlayer(layer &ObjectLayer) {

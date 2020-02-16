@@ -6,14 +6,6 @@ const (
 	flipped_d = 0x02000000
 )
 
-[flag]
-enum Flipped {
-	no
-	horizontal
-	vertical
-	diagonally
-}
-
 // this is a transient struct only used for rendering and not stored at all. This could potentially
 // just be put in maprenderer.
 struct Tile {

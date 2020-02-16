@@ -1,4 +1,5 @@
 module tilemap
+import via.math
 
 pub struct Property {
 pub:
@@ -15,6 +16,7 @@ pub:
 
 pub struct Tileset {
 mut:
+	tile_size int
 	spacing int
 	margin int
 	image string
@@ -39,18 +41,31 @@ pub fn (t &Tileset) free() {
 	}
 }
 
-pub fn (t &Tileset) has_tileset_tile_for_tile_id(id int) bool {
+// id is the index of the tile in this tileset image
+fn (t &Tileset) viewport_for_tile(id int) math.Rect {
+	x := id % t.image_columns
+	y := id / t.image_columns
+
+	return math.Rect{
+		x: x * (t.tile_size + t.spacing) + t.margin
+		y: y * (t.tile_size + t.spacing) * t.margin
+		w: t.tile_size
+		h: t.tile_size
+	}
+}
+
+pub fn (t &Tileset) has_tileset_tile(tile_id int) bool {
 	for tile in t.tiles {
-		if tile.id == id {
+		if tile.id == tile_id {
 			return true
 		}
 	}
 	return false
 }
 
-pub fn (t &Tileset) tileset_tile_for_tile_id(id int) &TilesetTile {
+pub fn (t &Tileset) tileset_tile(tile_id int) &TilesetTile {
 	for tile in t.tiles {
-		if tile.id == id {
+		if tile.id == tile_id {
 			return &tile
 		}
 	}

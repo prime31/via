@@ -35,7 +35,6 @@ pub fn (l &TileLayer) has_tile(x, y int) bool {
 	return l.tiles[x + y * l.width] >= 0
 }
 
-//GetTile(int x, int y) => Tiles[x + y * Width];
 pub fn (l &TileLayer) get_tile(x, y int) &Tile {
 	id := l.tiles[x + y * l.width]
 	if id < 0 {

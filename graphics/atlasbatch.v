@@ -5,6 +5,7 @@ import via.libs.sokol.gfx
 
 pub const ( used_import = gfx.used_import )
 
+// note: does not free the Textures
 pub struct AtlasBatch {
 mut:
 	bindings sg_bindings
@@ -33,7 +34,16 @@ pub fn atlasbatch(tex Texture, max_sprites int) &AtlasBatch {
 	return sb
 }
 
-// update methods
+pub fn (ab &AtlasBatch) free() {
+	ab.bindings.vertex_buffers[0].free()
+	ab.bindings.index_buffer.free()
+
+	unsafe {
+		ab.verts.free()
+		free(ab)
+	}
+}
+
 pub fn (sb mut AtlasBatch) update_verts() {
 	if sb.v_buffer_safe_to_update {
 		sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(math.Vertex) * sb.verts.len)
@@ -59,6 +69,8 @@ fn (ab &AtlasBatch) ensure_capacity() bool {
 	return true
 }
 
+//#region updating quads
+
 pub fn (ab mut AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := index * 4
 
@@ -73,22 +85,19 @@ pub fn (ab mut AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32,
 	ab.v_buffer_dirty = true
 }
 
+pub fn (ab mut AtlasBatch) set_vp(index int, viewport math.Rect, config DrawConfig) {
+	ab.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
+	ab.set_q(index, ab.quad, config.get_matrix(), config.color)
+}
+
 pub fn (ab mut AtlasBatch) set(index int, config DrawConfig) {
 	ab.quad.set_viewport(0, 0, ab.tex.w, ab.tex.h)
 	ab.set_q(index, ab.quad, config.get_matrix(), config.color)
 }
 
-pub fn (sb mut AtlasBatch) add(config DrawConfig) int {
-	if !sb.ensure_capacity() {
-		return -1
-	}
+//#endregion
 
-	sb.set(sb.sprite_cnt, config)
-
-	sb.v_buffer_dirty = true
-	sb.sprite_cnt++
-	return sb.sprite_cnt - 1
-}
+//#region adding quads
 
 pub fn (sb mut AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
 	if !sb.ensure_capacity() {
@@ -107,6 +116,20 @@ pub fn (ab mut AtlasBatch) add_vp(viewport math.Rect, config DrawConfig) {
 	ab.add_q(ab.quad, config)
 }
 
+pub fn (sb mut AtlasBatch) add(config DrawConfig) int {
+	if !sb.ensure_capacity() {
+		return -1
+	}
+
+	sb.set(sb.sprite_cnt, config)
+
+	sb.v_buffer_dirty = true
+	sb.sprite_cnt++
+	return sb.sprite_cnt - 1
+}
+
+//#endregion
+
 pub fn (ab mut AtlasBatch) draw() {
 	if ab.v_buffer_dirty {
 		ab.update_verts()
@@ -115,14 +138,4 @@ pub fn (ab mut AtlasBatch) draw() {
 	sg_apply_bindings(&ab.bindings)
 	sg_draw(0, ab.sprite_cnt * 6, 1)
 	ab.v_buffer_safe_to_update = true
-}
-
-pub fn (ab &AtlasBatch) free() {
-	ab.bindings.vertex_buffers[0].free()
-	ab.bindings.index_buffer.free()
-
-	unsafe {
-		ab.verts.free()
-		free(ab)
-	}
 }

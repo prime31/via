@@ -38,7 +38,24 @@ pub fn (m &Map) world_height() int {
 	return m.height * m.tile_size
 }
 
-//GetLayer(string name)
+pub fn (m &Map) tilelayer_with_name(name string) &TileLayer {
+	for tl in m.tile_layers {
+		if tl.name == name {
+			return &tl
+		}
+	}
+	return &TileLayer(0)
+}
+
+pub fn (m &Map) objectlayer_with_name(name string) &ObjectLayer {
+	for ol in m.object_layers {
+		if ol.name == name {
+			return &ol
+		}
+	}
+	return &ObjectLayer(0)
+}
+
 //WorldToTilePosition(Vector2 pos, bool clampToTilemapBounds = true)
 //WorldToTilePositionX(float x, bool clampToTilemapBounds = true)
 //WorldToTilePositionY(float y, bool clampToTilemapBounds = true)
