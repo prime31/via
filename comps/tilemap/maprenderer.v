@@ -75,7 +75,7 @@ pub fn (m &MapRenderer) tilelayer_atlasbatch(layer &TileLayer) &graphics.AtlasBa
 			tile_id := layer.tiles[i++]
 			if tile_id >= 0 {
 				tile := tile(tile_id, m.map.tile_size)
-				vp := m.viewport_for_tile(tile.id)
+				vp := m.map.tilesets[0].viewport_for_tile(tile.id)
 
 				tx := f32(x * m.map.tile_size) + tile.ox * 1.0
 				ty := f32(y * m.map.tile_size) + tile.oy * 1.0
