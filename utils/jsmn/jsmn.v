@@ -6,7 +6,6 @@ fn C.atoi(byteptr) int
 // V port of the fantastic jsmn: https://github.com/zserge/jsmn
 // includes some additions such as a non-strict mode that doesnt require commas
 
-// example of a state-machine to handle the parse results: https://alisdair.mcdiarmid.org/jsmn-example/
 enum Kind {
 	undefined
 	object
@@ -20,7 +19,7 @@ enum Kind {
 pub enum Error {
 	no_error = 0
 	no_memory = -1			// Not enough tokens were provided
-	invalid_char = -2	// Invalid character inside JSON string
+	invalid_char = -2		// Invalid character inside JSON string
 	partial_packet = -3		// The string is not a full JSON packet, more bytes expected
 }
 
