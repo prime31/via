@@ -9,12 +9,14 @@ pub mut:
 	sdl_window &C.SDL_Window
 	gl_context voidptr
 	evt_emitter events.EventEmitter
+	focused bool
 }
 
 pub const (
 	win = &Window{
 		sdl_window: 0
 		gl_context: 0
+		evt_emitter: events.eventemitter()
 	}
 )
 
@@ -100,21 +102,21 @@ pub fn swap() {
 //#region Internal event handling
 
 pub fn handle_event(evt &C.SDL_Event) {
+	mut w := win
 	match evt.window.event {
 		.moved {}
 		.shown {}
 		.hidden {}
 		.exposed {}
-		.moved {}
-		.resized { println('resized') }
-		.size_changed { println('size_changed') }
+		.resized {}
+		.size_changed { w.evt_emitter.publish(int(WindowEvents.resize), voidptr(0), voidptr(0)) }
 		.minimized {}
 		.maximized {}
 		.restored {}
 		.enter {}
 		.leave {}
-		.focus_gained {}
-		.focus_lost {}
+		.focus_gained { w.focused = true }
+		.focus_lost { w.focused = false }
 		.close {}
 		.take_focus {}
 		.hit_test {}
@@ -175,6 +177,10 @@ pub fn width() int {
 pub fn height() int {
 	_, h := size()
 	return h
+}
+
+pub fn focused() bool {
+	return win.focused
 }
 
 pub fn set_size(width, height int) {

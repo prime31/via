@@ -12,7 +12,7 @@ pub mut:
 	h int
 }
 
-pub fn (r &Rect) str() string { return '$r.x, $r.y, $r.w, $r.h' }
+pub fn (r Rect) str() string { return '$r.x, $r.y, $r.w, $r.h' }
 
 [inline]
 pub fn (r mut Rect) set(x, y, w, h int) {

@@ -1,4 +1,5 @@
 module graphics
+import via.window
 import via.libs.sokol.gfx
 
 pub struct OffScreenPass {
@@ -9,12 +10,24 @@ pub:
 }
 
 struct DefaultOffScreenPass {
-pub:
+mut:
 	offscreen_pass OffScreenPass
 	policy ResolutionPolicy
 	scaler ResolutionScaler
+	design_width int
+	design_height int
 }
 
+//#region OffscreenPass
+
+pub fn (p &OffScreenPass) free(free_images bool) {
+	p.pass.free()
+
+	if free_images {
+		p.color_tex.free()
+		p.depth_tex.free()
+	}
+}
 
 pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Filter) OffScreenPass {
 	color_tex := rendertexture(width, height, min_filter, mag_filter, false)
@@ -34,30 +47,36 @@ pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Fi
 	}
 }
 
+//#endregion
+
 //#region DefaultOffscreenPass
 
 fn defaultoffscreenpass(width, height int, policy ResolutionPolicy) &DefaultOffScreenPass {
 	// fetch the ResolutionScaler first since it will decide the render texture size
 	scaler := policy.get_scaler(width, height)
-	return &DefaultOffScreenPass{
+	pass := &DefaultOffScreenPass{
 		offscreen_pass: offscreenpass(scaler.w, scaler.h, g.min_filter, g.mag_filter)
 		policy: policy
 		scaler: scaler
+		design_width: width
+		design_height: height
 	}
+
+	// we have to update our scaler when the window resizes
+	// TODO: if the policy is .default we need to recreate the render textures with the new backbuffer size
+	window.subscribe(.resize, defaultoffscreenpass_on_window_resized, pass, false)
+
+	return pass
 }
 
 fn (p &DefaultOffScreenPass) free() {
+	window.unsubscribe(.resize, defaultoffscreenpass_on_window_resized)
 	p.offscreen_pass.free(true)
 	unsafe { free(p) }
 }
 
-//#endregion
-
-pub fn (p &OffScreenPass) free(free_images bool) {
-	p.pass.free()
-
-	if free_images {
-		p.color_tex.free()
-		p.depth_tex.free()
-	}
+fn defaultoffscreenpass_on_window_resized(pass mut DefaultOffScreenPass) {
+	pass.scaler = pass.policy.get_scaler(pass.design_width, pass.design_height)
 }
+
+//#endregion

@@ -49,7 +49,7 @@ fn (t &Tileset) viewport_for_tile(id int) math.Rect {
 
 	return math.Rect{
 		x: x * (t.tile_size + t.spacing) + t.margin
-		y: y * (t.tile_size + t.spacing) * t.margin
+		y: y * (t.tile_size + t.spacing) + t.margin
 		w: t.tile_size
 		h: t.tile_size
 	}

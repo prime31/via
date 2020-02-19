@@ -109,7 +109,6 @@ fn render_draw(uptr voidptr, verts_ptr &f32, tcoords_ptr &f32, colors_ptr &u32, 
 }
 
 fn render_delete(uptr voidptr) {
-	println('render_delete')
 	mut fs := &FontBook(uptr)
 	if fs.img.id != C.SG_INVALID_ID {
         sg_destroy_image(fs.img)
