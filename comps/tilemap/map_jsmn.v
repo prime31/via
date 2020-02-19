@@ -27,6 +27,9 @@ pub fn load(js []byte) Map {
 		m.object_layers << parse_objectlayer(js, jsmn.array_get_at(obj_layers_arr, i))
 	}
 
+	p.free()
+	unsafe { js.free() }
+
 	return m
 }
 

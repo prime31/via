@@ -44,7 +44,14 @@ pub fn (t &Token) as_str(js []byte) string {
 
 [inline]
 pub fn (t &Token) as_int(js []byte) int {
-	return C.atoi(string(&js[t.start], t.end - t.start).str)
+	len := t.end - t.start
+
+	// optimization for single digit ints
+	if len == 1 {
+		return js[t.start] - `0`
+	}
+
+	return C.atoi(string(&js[t.start], len).str)
 	// return strconv.atoi(string(&js[t.start], t.end - t.start))
 }
 
@@ -77,7 +84,7 @@ mut:
 pub fn parser(strict bool) Parser {
 	return Parser{
 		strict: strict
-		tokens: make(0, 25, sizeof(Token))
+		tokens: make(0, 1000, sizeof(Token))
 	}
 }
 

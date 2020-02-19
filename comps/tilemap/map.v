@@ -1,6 +1,7 @@
 module tilemap
 
 pub struct Map {
+pub:
     width int
     height int
 	tile_size int
