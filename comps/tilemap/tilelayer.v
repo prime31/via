@@ -5,6 +5,7 @@ pub struct TileLayer {
 	visible bool
 	width int
 	height int
+pub mut:
 	tiles []int
 }
 

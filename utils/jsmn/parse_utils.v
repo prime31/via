@@ -26,7 +26,7 @@ pub fn object_get_member(js []byte, object &Token, name string) &Token {
 		members--
 		token = skip_token(token + 1)
 	}
-	
+
 	if members == 0 {
 		return &Token(0)
 	}
@@ -47,7 +47,7 @@ pub fn array_get_at(arr &Token, index int) &Token {
 }
 
 // result dumper that prints to the console all the tokens in a YAML-like way
-pub fn dump(js []byte, tokens &jsmn.Token, count int, indent int) int {
+pub fn dump(js []byte, tokens &Token, count int, indent int) int {
 	if count == 0 {
 		return 0
 	}

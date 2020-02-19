@@ -1,4 +1,7 @@
 module jsmn
+import strconv
+
+fn C.atoi(byteptr) int
 
 // V port of the fantastic jsmn: https://github.com/zserge/jsmn
 // includes some additions such as a non-strict mode that doesnt require commas
@@ -15,7 +18,7 @@ enum Kind {
 }
 
 pub enum Error {
-	no_error = 0			
+	no_error = 0
 	no_memory = -1			// Not enough tokens were provided
 	invalid_char = -2	// Invalid character inside JSON string
 	partial_packet = -3		// The string is not a full JSON packet, more bytes expected
@@ -30,10 +33,28 @@ pub mut:
 	parent int = -1	// parent token index
 }
 
+pub fn (t &Token) str() string {
+	return 'kind:$t.kind, start:$t.start, end:$t.end, size:$t.size, parent:$t.parent'
+}
+
+[inline]
 pub fn (t &Token) as_str(js []byte) string {
 	return string(&js[t.start], t.end - t.start)
 }
 
+[inline]
+pub fn (t &Token) as_int(js []byte) int {
+	return C.atoi(string(&js[t.start], t.end - t.start).str)
+	// return strconv.atoi(string(&js[t.start], t.end - t.start))
+}
+
+[inline]
+pub fn (t &Token) as_f32(js []byte) f32 {
+	return f32(C.atof(string(&js[t.start], t.end - t.start).str))
+	// return f32(strconv.atof64(string(&js[t.start], t.end - t.start)))
+}
+
+// checks to see if a .string token is equal to str
 pub fn (t &Token) eq(js []byte, str string) bool {
 	if t.kind != .string || str.len != t.end - t.start {
 		return false
@@ -68,7 +89,7 @@ pub fn (p &Parser) free() {
 pub fn (p mut Parser) parse(js []byte) Error {
 	p.tokens.clear()
 	mut count := 0
-	
+
 	for ; p.pos < js.len && js[p.pos] != `\0`; p.pos++ {
 		mut kind := Kind.undefined
 		c := js[p.pos]
@@ -76,7 +97,7 @@ pub fn (p mut Parser) parse(js []byte) Error {
 			`{`, `[` {
 				count++
 				mut token := Token{}
-				
+
 				if p.toksuper != -1 {
 					mut t := &p.tokens[p.toksuper]
 					if p.strict {
@@ -85,7 +106,7 @@ pub fn (p mut Parser) parse(js []byte) Error {
 							return .invalid_char
 						}
 					}
-					
+
 					t.size++
 					token.parent = p.toksuper
 				}
@@ -98,11 +119,11 @@ pub fn (p mut Parser) parse(js []byte) Error {
 			}
 			`}`, `]` {
 				kind = if c == `}` { Kind.object } else { Kind.array }
-				
+
 				if p.toknext < 1 {
 					return .invalid_char
 				}
-				
+
 				mut token := &p.tokens[p.toknext - 1]
 				for {
 					if token.start != -1 && token.end == -1 {
@@ -114,7 +135,7 @@ pub fn (p mut Parser) parse(js []byte) Error {
 						break
 					}
 
-					
+
 					if token.parent == -1 {
 						if token.kind != kind || p.toksuper == -1 {
 							return .invalid_char
@@ -153,11 +174,11 @@ pub fn (p mut Parser) parse(js []byte) Error {
 			}
 			`-`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `t`, `f`, `n` {
 				// In strict mode primitives are: numbers and booleans
-				// And they must not be keys of the object				
+				// And they must not be keys of the object
 				if p.strict {
 					if p.toksuper != -1 {
 						t := &p.tokens[p.toksuper]
-					
+
 						if t.kind == .object || (t.kind == .string && t.size != 0) {
 							return .invalid_char
 						}
@@ -200,7 +221,7 @@ pub fn (p mut Parser) parse(js []byte) Error {
 // Fills next available token with JSON primitive.
 fn (p mut Parser) parse_primitive(js []byte) Error {
 	start := p.pos
-	
+
 	for ; p.pos < js.len && js[p.pos] != `\0`; p.pos++ {
 		// In strict mode primitive must be followed by "," or "}" or "]". ":" is not be allowed
 		if !p.strict {
@@ -215,7 +236,7 @@ fn (p mut Parser) parse_primitive(js []byte) Error {
 			}
 		}
 	}
-	
+
 	if js[p.pos] < 32 || js[p.pos] >= 127 {
 		p.pos = start
 		return .invalid_char
@@ -244,7 +265,7 @@ fn (p mut Parser) parse_primitive(js []byte) Error {
 	}
 	p.toknext++
 	p.pos--
-	
+
 	return .no_error
 }
 
@@ -273,7 +294,7 @@ fn (p mut Parser) parse_string(js []byte) Error {
 		if c == `/` && p.pos + 1 < js.len {
 			mut i := 0
 			p.pos++
-			
+
 			match js[p.pos] {
 				// allowed escaped symbols
 				`"`, `/`, `\\`, `b`, `f`, `n`,`t` { break }
@@ -299,7 +320,7 @@ fn (p mut Parser) parse_string(js []byte) Error {
 			} // end match
 		} // end if
 	} // end for
-	
+
 	p.pos = start
 	return .partial_packet
 }

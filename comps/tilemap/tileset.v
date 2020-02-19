@@ -10,6 +10,7 @@ pub:
 pub struct TilesetTile {
 pub:
 	id int
+pub mut:
 	props []Property
 	//props map[string]string
 }
