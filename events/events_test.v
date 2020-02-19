@@ -13,17 +13,17 @@ pub:
 }
 
 // wrapper methods for subscribe/unsubscribe locked into an enum type
-pub fn (t mut SomeType) subscribe(evt WindowEvents, callback EventHandlerFn, context voidptr, once bool) {
-	t.emitter.subscribe(evt as int, callback, context, once)
+pub fn (t mut SomeType) subscribe(evt WindowEvents, callback events.EventHandlerFn, context voidptr, once bool) {
+	t.emitter.subscribe(int(evt), callback, context, once)
 }
 
-pub fn (t mut SomeType) unsubscribe(evt WindowEvents, callback EventHandlerFn) {
-	t.emitter.unsubscribe(evt as int, callback)
+pub fn (t mut SomeType) unsubscribe(evt WindowEvents, callback events.EventHandlerFn) {
+	t.emitter.unsubscribe(int(evt), callback)
 }
 
 pub fn (t mut SomeType) publish(evt WindowEvents) {
 	arg := 666
-	t.emitter.publish(evt as int, t, &arg)
+	t.emitter.publish(int(evt), t, &arg)
 }
 
 
