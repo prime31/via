@@ -1,4 +1,5 @@
 module window
+import via.events
 import via.libs.flextgl
 import via.libs.sokol.sdl_metal_util
 
@@ -7,6 +8,7 @@ pub mut:
 	id u32
 	sdl_window &C.SDL_Window
 	gl_context voidptr
+	evt_emitter events.EventEmitter
 }
 
 pub const (
@@ -99,28 +101,48 @@ pub fn swap() {
 
 pub fn handle_event(evt &C.SDL_Event) {
 	match evt.window.event {
-		.moved { println('moved')}
-		.shown { println('shown') }
-		.hidden { println('hidden') }
-		.exposed { println('exposed') }
-		.moved { println('moved') }
+		.moved {}
+		.shown {}
+		.hidden {}
+		.exposed {}
+		.moved {}
 		.resized { println('resized') }
 		.size_changed { println('size_changed') }
-		.minimized { println('minimized') }
-		.maximized { println('maximized') }
-		.restored { println('restored') }
-		.enter { println('enter') }
-		.leave { println('leave') }
-		.focus_gained { println('focus_gained') }
-		.focus_lost { println('focus_lost') }
-		.close { println('close') }
-		.take_focus { println('take_focus') }
-		.hit_test { println('hit_test') }
+		.minimized {}
+		.maximized {}
+		.restored {}
+		.enter {}
+		.leave {}
+		.focus_gained {}
+		.focus_lost {}
+		.close {}
+		.take_focus {}
+		.hit_test {}
 		else {}
 	}
 }
 
 //#endregion
+
+//#region External events
+
+pub enum WindowEvents {
+	resize
+}
+
+pub fn subscribe(evt WindowEvents, callback events.EventHandlerFn, context voidptr, once bool) {
+	mut w := win
+	w.evt_emitter.subscribe(int(evt), callback, context, once)
+}
+
+pub fn unsubscribe(evt WindowEvents, callback events.EventHandlerFn) {
+	mut w := win
+	w.evt_emitter.unsubscribe(int(evt), callback)
+}
+
+//#endregion
+
+//#region Window information
 
 // returns the drawable size / the window size. Used to scale mouse coords when the OS gives them to us in points.
 pub fn scale() f32 {
@@ -162,3 +184,5 @@ pub fn set_size(width, height int) {
 pub fn set_fullscreen(mode WindowMode) {
 	C.SDL_SetWindowFullscreen(win.sdl_window, mode)
 }
+
+//#endregion
