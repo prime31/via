@@ -65,6 +65,7 @@ pub fn (t &Token) eq(js []byte, str string) bool {
 	if t.kind != .string || str.len != t.end - t.start {
 		return false
 	}
+
 	return C.strncmp(js.data + t.start, str.str, t.end - t.start) == 0
 }
 
@@ -227,12 +228,18 @@ pub fn (p mut Parser) parse(js []byte) Error {
 // Fills next available token with JSON primitive.
 fn (p mut Parser) parse_primitive(js []byte) Error {
 	start := p.pos
+	mut non_strict_key := false
 
 	for ; p.pos < js.len && js[p.pos] != `\0`; p.pos++ {
-		// In strict mode primitive must be followed by "," or "}" or "]". ":" is not be allowed
+		// In strict mode primitive must be followed by "," or "}" or "]". ":" is not allowed
 		if !p.strict {
 			match js[p.pos] {
-				`:`, `\t`, `\n`, ` `, `,`, `]`, `}` { goto found }
+				`\t`, `\n`, ` `, `,`, `]`, `}` { goto found }
+				`:` {
+					// if the next char is a ":" this is a key so we will set it as a string kind
+					non_strict_key = true
+					goto found
+				}
 				else {}
 			}
 		} else {
@@ -255,12 +262,17 @@ fn (p mut Parser) parse_primitive(js []byte) Error {
 	}
 
 	found:
-	kind := match js[start] {
+	mut kind := match js[start] {
 		`-`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` {
 			Kind.number
 		}
 		`t`, `f` { Kind.bool }
 		else { .null }
+	}
+
+	// override the kind
+	if !p.strict && non_strict_key {
+		kind = .string
 	}
 
 	p.tokens << Token{
