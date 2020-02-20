@@ -19,6 +19,15 @@ pub fn (o &ObjectLayer) free() {
 	}
 }
 
+pub fn (o &ObjectLayer) get_object(name string) &Object {
+	for i in 0..o.objects.len {
+		if o.objects[i].name == name {
+			return &o.objects[i]
+		}
+	}
+	return &Object(0)
+}
+
 //#endregion
 
 //#region ImageLayer

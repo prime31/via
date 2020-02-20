@@ -19,6 +19,10 @@ pub mut:
 	h f32
 }
 
+pub fn (o &Object) str() string {
+	return 'shape:$o.shape, name:$o.name, x:$o.x, y:$o.y, w:$o.w, h:$o.h'
+}
+
 pub fn (o &Object) free() {
 	unsafe { o.name.free() }
 }

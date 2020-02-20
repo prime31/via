@@ -44,6 +44,55 @@ pub fn (r &Rect) contains_pt(x, y int) bool {
 		f32(r.x + r.w - x) > delta && f32(r.y + r.h - y) > delta
 }
 
+pub fn (r &Rect) expand(dx, dy int) Rect {
+	return Rect{
+		x: if dx > 0 { r.x } else { r.x + dx }
+		y: if dy > 0 { r.y } else { r.y + dy }
+		w: r.w + abs(dx)
+		h: r.h + abs(dy)
+	}
+}
+
+pub fn (r &Rect) half_rect(edge Edge) Rect {
+	return match edge {
+		.top { Rect{r.x, r.y, r.w, r.h / 2} }
+		.bottom { Rect{r.x, r.y + r.h / 2, r.w, r.h / 2} }
+		.left { Rect{r.x, r.y, r.w / 2, r.h} }
+		.right { Rect{r.x + r.w / 2, r.y, r.w / 2, r.h} }
+		else { Rect{} }
+	}
+}
+
+pub fn (r mut Rect) expand_edge(edge Edge, amount int) {
+	// ensure we have a positive value
+	amt := abs(amount)
+
+	match edge {
+		.top {
+			r.y -= amt
+			r.h += amt
+		}
+		.bottom {
+			r.h += amt
+		}
+		.left {
+			r.x -= amt
+			r.w += amt
+		}
+		.right {
+			r.w += amt
+		}
+		else {}
+	}
+}
+
+pub fn (r mut Rect) contract(horiz, vert int) {
+	r.x += horiz
+	r.y += vert
+	r.w -= horiz * 2
+	r.h -= vert * 2
+}
+
 pub fn (r1 &Rect) union_rect(r2 &Rect) Rect {
 	mut res := Rect{}
 	res.x = int(min(r1.x, r2.x))

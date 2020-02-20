@@ -46,3 +46,13 @@ pub fn (l &TileLayer) get_tile(x, y int) &Tile {
 	t := tile(id, -1)
 	return &t
 }
+
+
+pub fn (l &TileLayer) get_tileid(x, y int) int {
+	id := l.tiles[x + y * l.width]
+	if id < 0 {
+		return id
+	}
+
+	return id & ~(flipped_h | flipped_v | flipped_d)
+}

@@ -40,6 +40,15 @@ pub fn (r &RectF) contains_pt(x, y f32) bool {
 		r.x + r.w - x > delta && r.y + r.h - y > delta
 }
 
+pub fn (r &RectF) expand(delta Vec2) RectF {
+	return RectF{
+		x: if delta.x > 0 { r.x } else { r.x + delta.x }
+		y: if delta.y > 0 { r.y } else { r.y + delta.y }
+		w: r.w + fabs(delta.x)
+		h: r.h + fabs(delta.y)
+	}
+}
+
 pub fn (r1 &RectF) union_rect(r2 &RectF) RectF {
 	mut res := RectF{}
 	res.x = min(r1.x, r2.x)

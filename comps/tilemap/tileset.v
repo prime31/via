@@ -1,20 +1,6 @@
 module tilemap
 import via.math
 
-pub struct Property {
-pub:
-	key string
-	value string
-}
-
-pub struct TilesetTile {
-pub:
-	id int
-pub mut:
-	props []Property
-	//props map[string]string
-}
-
 pub struct Tileset {
 mut:
 	tile_size int
@@ -32,11 +18,7 @@ pub fn (t Tileset) str() string {
 pub fn (t &Tileset) free() {
 	unsafe {
 		for tile in t.tiles {
-			for p in tile.props {
-				p.key.free()
-				p.value.free()
-			}
-			tile.props.free()
+			tile.free()
 		}
 		t.tiles.free()
 	}
@@ -55,19 +37,19 @@ fn (t &Tileset) viewport_for_tile(id int) math.Rect {
 	}
 }
 
-pub fn (t &Tileset) has_tileset_tile(tile_id int) bool {
+pub fn (t &Tileset) has_tileset_tile(id int) bool {
 	for tile in t.tiles {
-		if tile.id == tile_id {
+		if tile.id == id {
 			return true
 		}
 	}
 	return false
 }
 
-pub fn (t &Tileset) tileset_tile(tile_id int) &TilesetTile {
-	for tile in t.tiles {
-		if tile.id == tile_id {
-			return &tile
+pub fn (t &Tileset) tileset_tile(id int) &TilesetTile {
+	for i in 0..t.tiles.len {
+		if t.tiles[i].id == id {
+			return &t.tiles[i]
 		}
 	}
 	return &TilesetTile(0)

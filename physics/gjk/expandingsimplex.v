@@ -39,7 +39,7 @@ fn simplexedge(pt1, pt2 math.Vec2, winding int) ExpandingSimplexEdge {
 
 	// project the first point onto the normal (it doesnt matter which. you project since the normal is
 	// perpendicular to the edge)
-	e.distance = math.abs(pt1.dot(e.normal))
+	e.distance = math.fabs(pt1.dot(e.normal))
 
 	return e
 }

@@ -20,6 +20,7 @@ fn C.erfcf(x f32) f32
 fn C.expf(x f32) f32
 fn C.exp2f(x f32) f32
 fn C.fabsf(f32) f32
+fn C.abs(int) int
 fn C.floorf(x f32) f32
 fn C.fmodf(x f32, y f32) f32
 fn C.fminf(f32, f32) f32
@@ -79,6 +80,9 @@ pub fn remap(a, b, c, d, x f32) f32 { return lerp(c, d, unlerp(a, b, x)) }
 pub fn clamp(x, a, b f32) f32 { return C.fmaxf(a, C.fminf(b, x)) }
 
 [inline]
+pub fn iclamp(x, a, b int) int { return imax(a, imin(b, x)) }
+
+[inline]
 pub fn clamp01(val f32) f32 { return clamp(val, 0.0, 1.0) }
 
 // Returns the result of clamping the value x into the interval [0, 1]
@@ -86,7 +90,10 @@ pub fn clamp01(val f32) f32 { return clamp(val, 0.0, 1.0) }
 pub fn saturate(x f32) f32 { return clamp(x, 0.0, 1.0) }
 
 [inline]
-pub fn abs(a f32) f32 { return C.fabsf(a) }
+pub fn fabs(a f32) f32 { return C.fabsf(a) }
+
+[inline]
+pub fn abs(a int) int { return C.abs(a) }
 
 [inline]
 pub fn tan(x f32) f32 { return C.tanf(x) }

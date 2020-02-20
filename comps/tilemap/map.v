@@ -1,4 +1,5 @@
 module tilemap
+import via.math
 
 pub struct Map {
 pub:
@@ -40,26 +41,37 @@ pub fn (m &Map) world_height() int {
 }
 
 pub fn (m &Map) tilelayer_with_name(name string) &TileLayer {
-	for tl in m.tile_layers {
-		if tl.name == name {
-			return &tl
+	for i in 0..m.tile_layers.len {
+		if m.tile_layers[i].name == name {
+			return &m.tile_layers[i]
 		}
 	}
 	return &TileLayer(0)
 }
 
 pub fn (m &Map) objectlayer_with_name(name string) &ObjectLayer {
-	for ol in m.object_layers {
-		if ol.name == name {
-			return &ol
+	for i in 0..m.object_layers.len {
+		if m.object_layers[i].name == name {
+			return &m.object_layers[i]
 		}
 	}
 	return &ObjectLayer(0)
 }
 
-//WorldToTilePosition(Vector2 pos, bool clampToTilemapBounds = true)
-//WorldToTilePositionX(float x, bool clampToTilemapBounds = true)
-//WorldToTilePositionY(float y, bool clampToTilemapBounds = true)
-//TileToWorldPosition(Vector2 pos)
-//TileToWorldPositionX(int x)
-//TileToWorldPositionY(int y)
+pub fn (m &Map) world_to_tilex(x f32) int {
+	tile_x := math.ifloor(x / m.tile_size)
+	return math.iclamp(tile_x, 0, m.width - 1)
+}
+
+pub fn (m &Map) world_to_tiley(y f32) int {
+	tile_y := math.ifloor(y / m.tile_size)
+	return math.iclamp(tile_y, 0, m.height - 1)
+}
+
+pub fn (m &Map) tile_to_worldx(x int) int {
+	return m.tile_size * x
+}
+
+pub fn (m &Map) tile_to_worldy(y int) int {
+	return m.tile_size * y
+}
