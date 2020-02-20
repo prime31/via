@@ -35,7 +35,7 @@ pub fn fullscreenquad() &FullscreenQuad {
 
 // updates the verts to match the current window drawable size, should be called whenever the window is resized.
 pub fn (q mut FullscreenQuad) update_verts() {
-	if q.last_vert_update_frame < time.frame_count() {
+	if q.last_vert_update_frame < time.frames() {
 		scaler := get_resolution_scaler()
 		if scaler.w != q.width || scaler.h != q.height {
 			q.verts[0].x = 0		// tl
@@ -48,7 +48,7 @@ pub fn (q mut FullscreenQuad) update_verts() {
 			q.verts[3].y = scaler.h
 
 			sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * q.verts.len)
-			q.last_vert_update_frame = time.frame_count()
+			q.last_vert_update_frame = time.frames()
 			q.width = scaler.w
 			q.height = scaler.h
 		}

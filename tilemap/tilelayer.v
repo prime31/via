@@ -43,12 +43,13 @@ pub fn (l &TileLayer) has_tile(x, y int) bool {
 	return l.tiles[x + y * l.width] >= 0
 }
 
-pub fn (l &TileLayer) get_tileid(x, y int) int {
-	id := l.tiles[x + y * l.width]
-	if id < 0 {
-		return id
-	}
+pub fn (l &TileLayer) get_tileid(x, y int) TileId {
+	return l.tiles[x + y * l.width]
+	// id := l.tiles[x + y * l.width]
+	// if id < 0 {
+	// 	return id
+	// }
 
-	// TODO: should be return id.id() but V bug
-	return int(id) & ~(flipped_h | flipped_v | flipped_d)
+	// // TODO: should be return id.id() but V bug
+	// return int(id) & ~(flipped_h | flipped_v | flipped_d)
 }

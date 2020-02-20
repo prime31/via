@@ -14,7 +14,7 @@ pub fn move(map &Map, rect math.Rect, movement mut math.Vec2) {
 	if movement.x != 0 {
 		movement.x = movex(map, layer, rect, int(movement.x))
 	}
-	if movement.y != 0 {
+	if movement.y != 0 || movement.x != 0 {
 		movement.y = movey(map, layer, rect, int(movement.y))
 	}
 }
@@ -36,10 +36,10 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 		for y := miny; y <= maxy; y++ {
 			tid := layer.get_tileid(x, y)
 			if tid >= 0 {
-				if map.tilesets[0].has_tileset_tile(tid) {
-					tileset_tile := map.tilesets[0].tileset_tile(tid)
-					// ignore oneway platforms
-					if tileset_tile.oneway {
+				if map.has_tileset_tile(tid.id()) {
+					tileset_tile := map.tileset_tile(tid.id())
+					// ignore oneway platforms and slopse
+					if tileset_tile.oneway || tileset_tile.slope {
 						continue
 					}
 				}
@@ -47,7 +47,7 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 				// worldx is the LEFT of the tile
 				worldx := map.tile_to_worldx(x)
 
-				// moving up
+				// moving left
 				if movex < 0 {
 					return worldx + map.tile_size - rect.x
 				} else {
@@ -76,8 +76,8 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 		for y := miny; y <= maxy; y++ {
 			tid := layer.get_tileid(x, y)
 			if tid >= 0 {
-				if map.tilesets[0].has_tileset_tile(tid) {
-					tileset_tile := map.tilesets[0].tileset_tile(tid)
+				if map.has_tileset_tile(tid.id()) {
+					tileset_tile := map.tileset_tile(tid.id())
 					if tileset_tile.oneway {
 						// allow movement up always
 						if movey < 0 {

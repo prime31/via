@@ -75,3 +75,11 @@ pub fn (m &Map) tile_to_worldx(x int) int {
 pub fn (m &Map) tile_to_worldy(y int) int {
 	return m.tile_size * y
 }
+
+pub fn (m &Map) has_tileset_tile(id int) bool {
+	return m.tilesets[0].has_tileset_tile(id)
+}
+
+pub fn (m &Map) tileset_tile(id int) &TilesetTile {
+	return m.tilesets[0].tileset_tile(id)
+}

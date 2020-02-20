@@ -117,8 +117,8 @@ fn render_delete(uptr voidptr) {
 }
 
 pub fn (font mut FontBook) update_texture() {
-	if font.tex_dirty && time.frame_count() != font.last_update {
-		font.last_update = time.frame_count()
+	if font.tex_dirty && time.frames() != font.last_update {
+		font.last_update = time.frames()
 
 		if convert_font_tex_to_rgba {
 			tex_area := font.width * font.height

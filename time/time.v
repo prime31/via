@@ -47,7 +47,7 @@ pub fn sleep(seconds f32) { SDL_Delay(u32(seconds * 1000)) }
 pub fn dt() f32 { return time.dt }
 
 [inline]
-pub fn frame_count() u32 { return time.frame_count }
+pub fn frames() u32 { return time.frame_count }
 
 // number of milliseconds since the SDL library initialization
 [inline]

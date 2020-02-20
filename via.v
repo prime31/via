@@ -1,5 +1,6 @@
 module via
 import via.time
+import via.debug
 import via.input
 import via.audio
 import via.window
@@ -52,6 +53,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 
 	window.create(config.window_config())
 	graphics.setup(config.graphics_config())
+	debug.setup()
 
 	input.set_window_scale(window.scale())
 

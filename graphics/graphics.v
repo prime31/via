@@ -7,6 +7,8 @@ import via.filesystem
 import via.libs.sokol.gfx
 import via.libs.sokol.sdl_metal_util
 
+type DebugRenderFn fn()
+
 struct Graphics {
 mut:
 	quad_batch &QuadBatch
@@ -18,6 +20,7 @@ mut:
 	def_pass &DefaultOffScreenPass
 	pass_proj_mat math.Mat32
 	blitted_to_screen bool
+	debug_render_fn DebugRenderFn
 }
 
 pub const (
@@ -59,6 +62,11 @@ pub fn setup(config GraphicsConfig) {
 	gg.tri_batch = trianglebatch(config.max_tris)
 	gg.def_pip = pipeline_new_default()
 	gg.def_pass = defaultoffscreenpass(config.design_width, config.design_height, config.resolution_policy)
+}
+
+pub fn set_debug_render_fn(cb DebugRenderFn) {
+	mut gg := g
+	gg.debug_render_fn = cb
 }
 
 pub fn get_default_pipeline() &Pipeline {
@@ -189,6 +197,9 @@ pub fn begin_pass(config PassConfig) {
 
 pub fn end_pass() {
 	flush()
+	if g.debug_render_fn != 0 {
+		g.debug_render_fn()
+	}
 	sg_end_pass()
 }
 
