@@ -15,10 +15,10 @@ pub fn (t Tileset) str() string {
 	return 's:$t.spacing, m:$t.margin, image:$t.image, tiles:$t.tiles.len'
 }
 
-pub fn (t &Tileset) free() {
+pub fn (t mut Tileset) free() {
 	unsafe {
-		for tile in t.tiles {
-			tile.free()
+		for i in 0..t.tiles.len {
+			t.tiles[i].free()
 		}
 		t.tiles.free()
 	}

@@ -12,7 +12,7 @@ pub struct TileLayer {
 	width int
 	height int
 pub mut:
-	tiles []int
+	tiles []TileId
 }
 
 pub fn (t TileLayer) str() string {
@@ -49,5 +49,6 @@ pub fn (l &TileLayer) get_tileid(x, y int) int {
 		return id
 	}
 
-	return id & ~(flipped_h | flipped_v | flipped_d)
+	// TODO: should be return id.id() but V bug
+	return int(id) & ~(flipped_h | flipped_v | flipped_d)
 }

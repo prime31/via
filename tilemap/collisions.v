@@ -39,7 +39,7 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 				if map.tilesets[0].has_tileset_tile(tid) {
 					tileset_tile := map.tilesets[0].tileset_tile(tid)
 					// ignore oneway platforms
-					if tileset_tile.is_oneway() {
+					if tileset_tile.oneway {
 						continue
 					}
 				}
@@ -78,7 +78,7 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 			if tid >= 0 {
 				if map.tilesets[0].has_tileset_tile(tid) {
 					tileset_tile := map.tilesets[0].tileset_tile(tid)
-					if tileset_tile.is_oneway() {
+					if tileset_tile.oneway {
 						// allow movement up always
 						if movey < 0 {
 							continue

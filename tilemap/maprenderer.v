@@ -22,31 +22,31 @@ mut:
 	oy f32
 }
 
-fn tilerenderinfo(id, tile_size int) TileRenderInfo {
+fn tilerenderinfo(id TileId, tile_size int) TileRenderInfo {
 	mut t := TileRenderInfo{
-		id: id & ~(flipped_h | flipped_v | flipped_d)
+		id: id.id()
 	}
 
-	mut flip_h := false
-	mut flip_v := false
+	mut flip_h := id.flipped_h()
+	mut flip_v := id.flipped_v()
 
 	// deal with flipping/rotating if necessary
-	if id > flipped_d {
+	if id.transformed() {
 		// set the origin based on the tile_size if we are rotated
 		t.ox = tile_size / 2
 		t.oy = tile_size / 2
 
-		if (id & flipped_h) != 0 {
+		if flip_h {
 			t.sx = -1.0
 			flip_h = true
 		}
 
-		if (id & flipped_v) != 0 {
+		if flip_v {
 			t.sy = -1.0
 			flip_v = true
 		}
 
-		if (id & flipped_d) != 0 {
+		if id.flipped_d() {
 			if flip_h && flip_v {
 				t.rot = 90.0
 			} else if flip_h {
@@ -107,7 +107,7 @@ pub fn (m &MapRenderer) render_tilelayer(layer &TileLayer) {
 	for y in 0..layer.height {
 		for x in 0..layer.width {
 			tile_id := layer.tiles[i++]
-			if tile_id >= 0 {
+			if !tile_id.empty() {
 				tile := tilerenderinfo(tile_id, m.map.tile_size)
 				vp := m.map.tilesets[0].viewport_for_tile(tile.id)
 

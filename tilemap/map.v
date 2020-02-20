@@ -18,12 +18,12 @@ pub fn (m Map) str() string {
 	return '[Map] w:$m.width, h:$m.height, ts:$m.tile_size\ntilesets:$m.tilesets\ntile_layers:$m.tile_layers\nobject_layers:$m.object_layers\ngroup_layers:$m.group_layers'
 }
 
-pub fn (m &Map) free() {
+pub fn (m mut Map) free() {
 	unsafe {
-		for ts in m.tilesets { ts.free() }
-		for tl in m.tile_layers { tl.free() }
-		for ol in m.object_layers { ol.free() }
-		for gl in m.group_layers { gl.free() }
+		for i in 0..m.tilesets.len { m.tilesets[i].free() }
+		for i in 0..m.tile_layers.len { m.tile_layers[i].free() }
+		for i in 0..m.object_layers.len { m.object_layers[i].free() }
+		for i in 0..m.group_layers.len { m.group_layers[i].free() }
 
 		m.tilesets.free()
 		m.tile_layers.free()

@@ -1,6 +1,12 @@
 module tilemap
 import via.utils.jsmn
 
+const (
+	slope_tr_key = 'nez:slopeTopRight'
+	slope_tl_key = 'nez:slopeTopLeft'
+	oneway_key = 'nez:isOneWayPlatform'
+)
+
 pub fn load(js []byte) Map {
 	mut p := jsmn.parser(true)
 	if p.parse(js) < 0 {
@@ -56,10 +62,21 @@ fn parse_tileset(js []byte, tokens &jsmn.Token) Tileset {
 		prop_arr_tok := &tile_tok[4]
 		for j in 0..prop_arr_tok.size {
 			prop_tok := jsmn.array_get_at(prop_arr_tok, j)
-			tile.props << Property{
-				key: prop_tok[2].as_str(js).clone()
-				value: prop_tok[4].as_str(js).clone()
+
+			// fetch common types and dont bother sticking them in the props
+			if prop_tok[2].eq(js, slope_tr_key) {
+				tile.slope = true
+				tile.slope_tr = prop_tok[2].as_int(js)
+				continue
+			} else if prop_tok[2].eq(js, slope_tl_key) {
+				tile.slope_tl = prop_tok[2].as_int(js)
+				continue
+			} else if prop_tok[2].eq(js, oneway_key) {
+				tile.oneway = true
+				continue
 			}
+
+			tile.props[prop_tok[2].as_str(js).clone()] = prop_tok[4].as_str(js).clone()
 		}
 
 		ts.tiles << tile
