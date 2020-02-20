@@ -1,5 +1,11 @@
 module tilemap
 
+const (
+	flipped_h = 0x08000000
+	flipped_v = 0x04000000
+	flipped_d = 0x02000000
+)
+
 pub struct TileLayer {
 	name string
 	visible bool
@@ -20,6 +26,7 @@ pub fn (t &TileLayer) free() {
 	}
 }
 
+// used by the MapRenderer to optimize the AtlasBatch size
 pub fn (l &TileLayer) total_non_empty_tiles() int {
 	mut cnt := 0
 
@@ -35,18 +42,6 @@ pub fn (l &TileLayer) total_non_empty_tiles() int {
 pub fn (l &TileLayer) has_tile(x, y int) bool {
 	return l.tiles[x + y * l.width] >= 0
 }
-
-pub fn (l &TileLayer) get_tile(x, y int) &Tile {
-	id := l.tiles[x + y * l.width]
-	if id < 0 {
-		t := &Tile(0)
-		return t
-	}
-
-	t := tile(id, -1)
-	return &t
-}
-
 
 pub fn (l &TileLayer) get_tileid(x, y int) int {
 	id := l.tiles[x + y * l.width]

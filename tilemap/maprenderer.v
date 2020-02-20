@@ -9,6 +9,61 @@ mut:
 	textures []graphics.Texture
 }
 
+//#region TileRenderInfo
+
+// this is a transient struct only used for rendering and not stored at all
+struct TileRenderInfo {
+	id int
+mut:
+	rot f32
+	sx f32 = 1.0
+	sy f32 = 1.0
+	ox f32
+	oy f32
+}
+
+fn tilerenderinfo(id, tile_size int) TileRenderInfo {
+	mut t := TileRenderInfo{
+		id: id & ~(flipped_h | flipped_v | flipped_d)
+	}
+
+	mut flip_h := false
+	mut flip_v := false
+
+	// deal with flipping/rotating if necessary
+	if id > flipped_d {
+		// set the origin based on the tile_size if we are rotated
+		t.ox = tile_size / 2
+		t.oy = tile_size / 2
+
+		if (id & flipped_h) != 0 {
+			t.sx = -1.0
+			flip_h = true
+		}
+
+		if (id & flipped_v) != 0 {
+			t.sy = -1.0
+			flip_v = true
+		}
+
+		if (id & flipped_d) != 0 {
+			if flip_h && flip_v {
+				t.rot = 90.0
+			} else if flip_h {
+				t.rot = -90.0
+			} else if flip_v {
+				t.rot = 90.0
+			} else {
+				t.rot = -90.0
+			}
+		}
+	}
+
+	return t
+}
+
+//#endregion
+
 pub fn maprenderer(map Map) MapRenderer {
 	mut renderer :=  MapRenderer{
 		map: map
@@ -45,7 +100,7 @@ pub fn (m &MapRenderer) render() {
 // TODO: this duplicates tilelayer_atlasbatch but generics dont let us abstract it yet
 pub fn (m &MapRenderer) render_tilelayer(layer &TileLayer) {
 	mut batch := graphics.spritebatch()
-	// TODO: multiple Tileset support instead of just using the first tilesets image
+	// TODO: multiple Tileset support instead of just using the first tileset's image
 	tex := m.textures[0]
 
 	mut i := 0
@@ -53,7 +108,7 @@ pub fn (m &MapRenderer) render_tilelayer(layer &TileLayer) {
 		for x in 0..layer.width {
 			tile_id := layer.tiles[i++]
 			if tile_id >= 0 {
-				tile := tile(tile_id, m.map.tile_size)
+				tile := tilerenderinfo(tile_id, m.map.tile_size)
 				vp := m.map.tilesets[0].viewport_for_tile(tile.id)
 
 				tx := f32(x * m.map.tile_size) + tile.ox * 1.0
@@ -74,7 +129,7 @@ pub fn (m &MapRenderer) tilelayer_atlasbatch(layer &TileLayer) &graphics.AtlasBa
 		for x in 0..layer.width {
 			tile_id := layer.tiles[i++]
 			if tile_id >= 0 {
-				tile := tile(tile_id, m.map.tile_size)
+				tile := tilerenderinfo(tile_id, m.map.tile_size)
 				vp := m.map.tilesets[0].viewport_for_tile(tile.id)
 
 				tx := f32(x * m.map.tile_size) + tile.ox * 1.0
