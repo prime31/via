@@ -14,6 +14,7 @@ pub const ( used_import = 0 )
 // OPENGL
 #flag -DSOKOL_GLCORE33
 #flag darwin -framework OpenGL -framework Cocoa -framework QuartzCore
+#include <OpenGL/gl3.h> // TODO: why is this needed all of a sudden?
 // this is just to quite the warnings about gl.h and gl3.h being included by Apple
 // #flag darwin -DGL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 

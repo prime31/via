@@ -5,6 +5,7 @@ pub enum ViaEvents {
 	nothing_yet
 }
 
+/*
 struct ViaEventEmitter {
 	emitter EventEmitter
 }
@@ -30,3 +31,4 @@ pub fn publish(evt ViaEvents) {
 	mut v := via
 	v.emitter.publish(int(evt), v, &arg)
 }
+*/

@@ -222,7 +222,7 @@ pub fn repeat(t f32, len f32) f32 { return t - floor(t / len) * len }
 [inline]
 pub fn ping_pong(t, len f32) f32 {
 	tt := repeat(t, len * 2)
-	return len - abs(tt - len)
+	return len - fabs(tt - len)
 }
 
 // moves start towards end by shift clamping the result. start can be less than or greater than end.
