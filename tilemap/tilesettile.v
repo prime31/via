@@ -1,11 +1,5 @@
 module tilemap
 
-pub struct Property {
-pub:
-	key string
-	value string
-}
-
 pub struct TilesetTile {
 pub:
 	id int

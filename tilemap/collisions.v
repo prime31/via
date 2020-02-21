@@ -38,7 +38,7 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 			if tid >= 0 {
 				if map.has_tileset_tile(tid.id()) {
 					tileset_tile := map.tileset_tile(tid.id())
-					// ignore oneway platforms and slopse
+					// ignore oneway platforms and slopes
 					if tileset_tile.oneway || tileset_tile.slope {
 						continue
 					}
@@ -87,6 +87,8 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 						if map.tile_to_worldy(y) < rect.bottom() {
 							continue
 						}
+					} else if tileset_tile.slope {
+						println('sloping: ')
 					}
 				}
 
