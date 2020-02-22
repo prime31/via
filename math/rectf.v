@@ -25,6 +25,15 @@ pub fn (r &RectF) right() f32 { return r.x + r.w }
 pub fn (r &RectF) bottom() f32 { return r.y + r.h }
 
 [inline]
+pub fn (r &RectF) center() Vec2 { return Vec2{r.x + r.w / 2, r.y + r.h / 2} }
+
+[inline]
+pub fn (r &RectF) centerx() f32 { return r.x + r.w / 2 }
+
+[inline]
+pub fn (r &RectF) centery() f32 { return r.y + r.h / 2 }
+
+[inline]
 pub fn (r1 &RectF) overlaps(r2 &RectF) bool {
 	return r2.x < r1.x + r1.right() && r1.x < r2.right() && r2.y < r1.bottom() && r1.y < r2.bottom()
 }

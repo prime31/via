@@ -63,13 +63,13 @@ fn parse_tileset(js []byte, tokens &jsmn.Token) Tileset {
 		for j in 0..prop_arr_tok.size {
 			prop_tok := jsmn.array_get_at(prop_arr_tok, j)
 
-			// fetch common types and dont bother sticking them in the props
+			// fetch common types and dont bother sticking them in the props map
 			if prop_tok[2].eq(js, slope_tr_key) {
 				tile.slope = true
-				tile.slope_tr = prop_tok[2].as_int(js)
+				tile.slope_tr = prop_tok[4].as_int(js)
 				continue
 			} else if prop_tok[2].eq(js, slope_tl_key) {
-				tile.slope_tl = prop_tok[2].as_int(js)
+				tile.slope_tl = prop_tok[4].as_int(js)
 				continue
 			} else if prop_tok[2].eq(js, oneway_key) {
 				tile.oneway = true

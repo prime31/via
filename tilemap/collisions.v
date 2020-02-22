@@ -1,5 +1,6 @@
 module tilemap
 import via.math
+import via.debug
 
 const (
 	// the inset on the horizontal plane that the BoxCollider will be shrunk by when moving vertically
@@ -80,15 +81,33 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 					tileset_tile := map.tileset_tile(tid.id())
 					if tileset_tile.oneway {
 						// allow movement up always
-						if movey < 0 {
+						if edge == .top {
 							continue
 						}
 						// allow movement down if our bottom is not above the tile
 						if map.tile_to_worldy(y) < rect.bottom() {
 							continue
 						}
-					} else if tileset_tile.slope {
-						println('sloping: ')
+					} else if tileset_tile.slope && edge == .bottom {
+						perp_pos := bounds.centerx()
+						tile_worldx := map.tile_to_worldx(x)
+
+						// only process the slope if our center is within the tiles bounds
+						if math.between(perp_pos, tile_worldx, tile_worldx + map.tile_size) {
+							tile_worldy := map.tile_to_worldy(y)
+							slope_posy := tileset_tile.name_me(tid, map.tile_size, int(perp_pos), tile_worldx, tile_worldy)
+
+							println('-- sloping: tile_worldy: $tile_worldy, slope_posy: $slope_posy')
+							debug.draw_line(tile_worldx, tile_worldy, tile_worldx + 16, tile_worldy, 1, math.color_black())
+
+							// debug.draw_point(perp_pos, tile_worldy, 4, math.color_blue())
+							debug.draw_point(perp_pos, slope_posy, 2, math.color_white())
+							debug.draw_point(perp_pos, rect.bottom(), 2, math.color_orange())
+							debug.draw_point(perp_pos, bounds.bottom(), 2, math.color_purple())
+							if bounds.bottom() <= slope_posy {
+								return slope_posy - rect.bottom()
+							}
+						}
 					}
 				}
 
@@ -96,7 +115,7 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 				worldy := map.tile_to_worldy(y)
 
 				// moving up
-				if movey < 0 {
+				if edge == .top {
 					return worldy + map.tile_size - rect.y
 				} else {
 					return worldy - rect.bottom()

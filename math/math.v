@@ -7,6 +7,8 @@ pub const (
 	min_i32 = -2147483648
 )
 
+//#region C declarations
+
 fn C.acosf(x f32) f32
 fn C.asinf(x f32) f32
 fn C.atanf(x f32) f32
@@ -40,6 +42,8 @@ fn C.tanf(x f32) f32
 fn C.tanhf(x f32) f32
 fn C.truncf(x f32) f32
 
+//#endregion
+
 pub const (
 	e = f32(C.M_E)
 	pi = f32(C.M_PI)
@@ -47,6 +51,8 @@ pub const (
 	pi4 = f32(C.M_PI_4)
 	sqrt2 = f32(C.M_SQRT2)
 )
+
+//#region Basic Math ops
 
 [inline]
 pub fn radians(x f32) f32 { return x * 0.0174532925 }
@@ -150,6 +156,8 @@ pub fn sign(x f32) f32 {
 	return 0
 }
 
+//#endregion
+
 // Returns a smooth Hermite interpolation between 0 and 1. when x is in [a, b]
 [inline]
 pub fn smoothstep(a, b, x f32) f32 {
@@ -223,6 +231,12 @@ pub fn repeat(t f32, len f32) f32 { return t - floor(t / len) * len }
 pub fn ping_pong(t, len f32) f32 {
 	tt := repeat(t, len * 2)
 	return len - fabs(tt - len)
+}
+
+// returns true if val is between start and end
+[inline]
+pub fn between(val, start, end f32) bool {
+	return start <= val && val <= end
 }
 
 // moves start towards end by shift clamping the result. start can be less than or greater than end.
