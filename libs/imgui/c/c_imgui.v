@@ -20,11 +20,14 @@ pub const ( used_import = 1 )
 #flag darwin @VMOD/via/libs/imgui/thirdparty/macos/imgui_impl_opengl3.o
 
 // both static and shared will work. if you use dynamic uncomment both lines below and comment this one out
-#flag darwin @VMOD/via/libs/imgui/thirdparty/macos/cimgui.a
+// ----- static config -----
+// #flag darwin @VMOD/via/libs/imgui/thirdparty/macos/cimgui.a
 
 // rpath is required for shared. for proper installs, -rpath should be relative to @executable_path/
-// #flag darwin -rpath @VMOD/via/libs/imgui/thirdparty/macos
-// #flag darwin @VMOD/via/libs/imgui/thirdparty/macos/cimgui.dylib
+// ----- shared config -----
+#flag darwin -rpath @VMOD/via/libs/imgui/thirdparty/macos
+#flag darwin @VMOD/via/libs/imgui/thirdparty/macos/cimgui.dylib
+
 
 #flag darwin -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
 #flag darwin -lm -lc++

@@ -38,6 +38,8 @@ copy_static:
 	rsync -rupE flecs_git/include $(MODULE_FOLDER)
 
 copy_mac_shared:
+	# fix the @rpath
+	install_name_tool -id @rpath/libflecs_shared.dylib flecs_git/build/libflecs_shared.dylib
 	cp flecs_git/build/libflecs_shared.dylib $(MODULE_FOLDER)/$(LIB_FOLDER)
 
 copy_linux_shared:
