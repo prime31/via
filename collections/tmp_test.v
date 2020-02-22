@@ -7,7 +7,7 @@ struct Tester {
 mut:
 	keys []int
 	vals []voidptr
-	old_map IntHashMap
+	old_map &IntHashMap
 	new_map &IntVoidptrMap
 }
 
@@ -38,13 +38,14 @@ fn test_main() {
 	}
 
 	mut start := time.now()
-	for i in 0..1000 {
+	for i in 0..500 {
 		tester.keys << i * 23980
 		tester.vals << voidptr(&i)
 	}
 
+	debug.warn('-------------------------------')
 	arr_fill_t := time.now() - start
-	debug.warn('-- ${f32(arr_fill_t) / 1000} --')
+	debug.warn('-- fill arrays ${f32(arr_fill_t) / 1000} --')
 
 	start = time.now()
 	tst_old(tester)
@@ -58,7 +59,6 @@ fn test_main() {
 	debug.warn('-- old: ${f32(old_t) / 1000} --')
 	debug.warn('-- new: ${f32(new_t) / 1000} --')
 
-
 	start = time.now()
 	tst_old_get(tester)
 	old_t_get := time.now() - start
@@ -71,7 +71,7 @@ fn test_main() {
 	debug.warn('-- old: ${f32(old_t_get) / 1000} --')
 	debug.warn('-- new: ${f32(new_t_get) / 1000} --')
 
-
+	println('------- old before put: $tester.old_map.size()')
 	start = time.now()
 	tst_old_rem(tester)
 	old_t_rem := time.now() - start
@@ -102,14 +102,18 @@ fn tst_new(t &Tester) {
 fn tst_old_rem(t &Tester) {
 	mut hmap := t.old_map
 	for i in 0..t.keys.len {
-		hmap.remove(t.keys[i])
+		if hmap.has(t.keys[i]) {
+			hmap.remove(t.keys[i])
+		}
 	}
 }
 
 fn tst_new_rem(t &Tester) {
 	mut hmap := t.new_map
 	for i in 0..t.keys.len {
-		hmap.remove(t.keys[i])
+		if hmap.has(t.keys[i]) {
+			hmap.remove(t.keys[i])
+		}
 	}
 }
 
@@ -141,7 +145,7 @@ fn test_intmap() {
 		}
 	}
 
-	println('------------------------')
+	//println('------------------------')
 
 	for i in 0..20 {
 		for j in 0..10 {

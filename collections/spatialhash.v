@@ -27,8 +27,8 @@ pub fn (i &Collider) get_bounds() math.Rect {
 
 
 pub struct SpatialHash {
-	cells IntHashMap
-	items IntHashMap
+	cells &IntVoidptrMap
+	items &IntVoidptrMap
 	cell_size int = 50
 	inv_cell_size f32 = 1.0 / 50.0
 mut:
@@ -57,8 +57,8 @@ fn (c &Cell) free() {
 
 pub fn spatialhash(cell_size int) &SpatialHash {
 	return &SpatialHash{
-		cells: inthashmap()
-		items: inthashmap()
+		cells: intvoidptrmap()
+		items: intvoidptrmap()
 		cell_size: cell_size
 		inv_cell_size: 1.0 / f32(cell_size)
 	}
@@ -73,7 +73,7 @@ pub fn (sh mut SpatialHash) free() {
 		}
 	}
 
-	keys := sh.items.keys()
+	keys := sh.items.all_keys()
 	for key in keys {
 		item := *HashItem(sh.items.remove(key))
 		unsafe { free(item) }
@@ -196,7 +196,7 @@ pub fn (sh mut SpatialHash) update(id int, collider Collider) {
 			if cell == C.NULL { // this should never happen
 				key := int(get_hashed_key(x, y))
 				println('no cell at $x,$y  key: $key')
-				is := key in sh.cells.keys()
+				is := key in sh.cells.all_keys()
 				println('key exists in hashmap: $is')
 				continue
 			}
@@ -342,7 +342,7 @@ fn (sh &SpatialHash) get_segment_intersection_indices(bounds &math.Rect, x1, y1,
 	return SegmentIntersectionResult{true, ti1, ti2, nx1, ny1, nx2, ny2}
 }
 
-fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, goal_y f32) CollisionResult {
+fn (sh mut SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, goal_y f32) CollisionResult {
 	dx := goal_x - bounds.x
 	dy := goal_y - bounds.y
 
