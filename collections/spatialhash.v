@@ -357,15 +357,15 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 	if diff.contains(0, 0) || diff.contains_pt(0, 0) { // already overlapping before movement
 		px, py := diff.get_nearest_corner(0, 0)
 		// area of intersection
-		wi := math.min(bounds.w, math.abs(px))
-		hi := math.min(bounds.h, math.abs(py))
+		wi := math.min(bounds.w, math.fabs(px))
+		hi := math.min(bounds.h, math.fabs(py))
 		ti = -wi * hi // ti is the negative area of intersection
 		overlaps = true
 	} else {
 		col := sh.get_segment_intersection_indices(diff, 0, 0, dx, dy, f32(math.min_i32), f32(math.max_i32))
 
 		// item tunnels into another
-		if col.ti1 < 1 && math.abs(col.ti1 - col.ti2) >= delta {
+		if col.ti1 < 1 && math.fabs(col.ti1 - col.ti2) >= delta {
 			if 0.0 < col.ti1 + delta || ((col.ti1 == 0.0) && (col.ti2 > 0.0)) {
 				ti = col.ti1
 				nx = col.nx1
@@ -387,7 +387,7 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 		if dx == 0 && dy == 0 {
 			// intersecting and not moving - use minimum displacement vector
 			mut px, mut py := diff.get_nearest_corner(0, 0)
-			if math.abs(px) < math.abs(py) {
+			if math.fabs(px) < math.fabs(py) {
 				py = 0
 			} else {
 				px = 0

@@ -1,6 +1,7 @@
 module collections
 import via.math
 
+// converted from: https://github.com/mikvor/hashmapTest/blob/master/src/main/java/map/intint/IntIntMap1.java
 
 [inline]
 fn hm_get_pot_array_size(expected int, factor f32) int {
@@ -26,17 +27,13 @@ mut:
     _used []bool
 }
 
-const (
-    HMDefSize = 16
-    HMDefFillFactor = 0.75
-)
-
-[inline]
 pub fn inthashmap() IntHashMap {
-    return inthashmap_options(HMDefSize, HMDefFillFactor)
+    return inthashmap_options(16, 0.75)
 }
 
 pub fn inthashmap_options(size int, fill_factor f32) IntHashMap {
+    assert fill_factor > 0 && fill_factor < 1
+
     mut hashmap := IntHashMap{}
     capacity := hm_get_pot_array_size(size, fill_factor)
     hashmap.mask = u32(capacity - 1)
@@ -171,7 +168,7 @@ fn (hashmap &IntHashMap) read_index(key int) int {
         if hashmap._keys[idx] == key && hashmap._used[idx] {
             return idx
         }
-       // TODO: is bumping the key the right solution?
+        // TODO: is bumping the key the right solution?
         keyx++
     }
 
@@ -253,16 +250,10 @@ fn (hashmap mut IntHashMap) shift_keys(_pos int) int {
             }
 
             slot := hashmap.start_index(k)
-
-            if last <= pos {
-                if last >= slot || slot > pos {
-                    break
-                }
-            } else {
-                if last >= slot && slot > pos {
-                    break
-                }
-            }
+			break_chk := if last <= pos { last >= slot || slot > pos } else { last >= slot && slot > pos }
+			if break_chk {
+				break
+			}
 
             pos = hashmap.next_index(pos)
         }
