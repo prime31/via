@@ -31,10 +31,10 @@ pub fn intintmap() &IntIntMap {
 
 pub fn intintmap_opts(size int, fill_factor f32) &IntIntMap {
 	assert fill_factor > 0 && fill_factor < 1
-	
+
 	// calculates the least power of two smaller than or equal to 2^30 and larger than or equal to
 	cap := math.imax(2, int(math.ceilpow2_i64(i64(math.ceil(f32(size) / fill_factor)))))
-	
+
 	return &IntIntMap{
 		data: make(cap * 2, cap * 2, sizeof(int))
 		fill_factor: fill_factor
@@ -51,21 +51,51 @@ pub fn (m &IntIntMap) free() {
 	}
 }
 
+[inline]
+pub fn (m &IntIntMap) has(key int) bool {
+	// we basically duplicate get() here
+	if key == FREE_KEY_NO_VALUE {
+		return m.has_free_key
+	}
+
+	mut ptr := (iim_phi_mix(key) & m.mask) << 1
+	mut k := m.data[ptr]
+	if k == FREE_KEY_NO_VALUE {
+		return false
+	}
+
+	if k == key { // we check FREE prior to this call
+		return true
+	}
+
+	for {
+		ptr = (ptr + 2) & m.mask2 // next index
+		k = m.data[ptr]
+		if k == FREE_KEY_NO_VALUE {
+			return false
+		} else if k == key {
+			return true
+		}
+	}
+
+	return false
+}
+
 pub fn (m &IntIntMap) get(key int) int {
 	if key == FREE_KEY_NO_VALUE {
 		return if m.has_free_key { m.free_value } else { FREE_KEY_NO_VALUE }
 	}
-	
+
 	mut ptr := (iim_phi_mix(key) & m.mask) << 1
 	mut k := m.data[ptr]
 	if k == FREE_KEY_NO_VALUE {
 		return FREE_KEY_NO_VALUE // end of chain already
 	}
-	
+
 	if k == key { // we check FREE prior to this call
 		return m.data[ptr + 1]
 	}
-	
+
 	for {
 		ptr = (ptr + 2) & m.mask2 // next index
 		k = m.data[ptr]
@@ -75,7 +105,7 @@ pub fn (m &IntIntMap) get(key int) int {
 			return m.data[ptr + 1]
 		}
 	}
-	
+
 	panic('unreachable')
 }
 
@@ -89,7 +119,7 @@ pub fn (m mut IntIntMap) put(key, value int) int {
 		m.free_value = value
 		return ret
 	}
-	
+
 	mut ptr := (iim_phi_mix(key) & m.mask) << 1
 	mut k := m.data[ptr]
 	if k == FREE_KEY_NO_VALUE { // end of chain already
@@ -106,7 +136,7 @@ pub fn (m mut IntIntMap) put(key, value int) int {
 		m.data[ptr + 1] = value
 		return ret
 	}
-	
+
 	for {
 		ptr = (ptr + 2) & m.mask2 // next index
 		k = m.data[ptr]
@@ -125,7 +155,7 @@ pub fn (m mut IntIntMap) put(key, value int) int {
 			return ret
 		}
 	}
-	
+
 	panic('unreachable')
 }
 
@@ -138,7 +168,7 @@ pub fn (m mut IntIntMap) remove(key int) int {
 		m.size--
 		return m.free_value
 	}
-	
+
 	mut ptr := (iim_phi_mix(key) & m.mask) << 1
 	mut k := m.data[ptr]
 	if k == key { // we check FREE prior to this call
@@ -149,7 +179,7 @@ pub fn (m mut IntIntMap) remove(key int) int {
 	} else if k == FREE_KEY_NO_VALUE { // end of chain already
 		return FREE_KEY_NO_VALUE
 	}
-	
+
 	for {
 		ptr = (ptr + 2) & m.mask2 // next index
 		k = m.data[ptr]
@@ -162,7 +192,7 @@ pub fn (m mut IntIntMap) remove(key int) int {
 			return FREE_KEY_NO_VALUE
 		}
 	}
-	
+
 	panic('unreachable')
 }
 
@@ -173,7 +203,7 @@ fn (m mut IntIntMap) shift_keys(ptr int) int {
 	mut slot := 0
 	mut k := 0
 	mut data := m.data
-	
+
 	for {
 		last = pos
 		pos = (last + 2) & m.mask2
@@ -183,7 +213,7 @@ fn (m mut IntIntMap) shift_keys(ptr int) int {
 				data[last] = FREE_KEY_NO_VALUE
 				return last
 			}
-			
+
 			// calculate the starting slot for the current key
 			slot = (iim_phi_mix(k) & m.mask) << 1
 			break_chk := if last <= pos { last >= slot || slot > pos } else { last >= slot && slot > pos }
@@ -193,7 +223,7 @@ fn (m mut IntIntMap) shift_keys(ptr int) int {
 			pos = (pos + 2) & m.mask2
 		}
 	}
-	
+
 	panic('unreachable')
 }
 
@@ -202,19 +232,19 @@ fn (m mut IntIntMap) rehash() {
 	m.threshold = int(f32(new_cap) / 2.0 * m.fill_factor)
 	m.mask = new_cap / 2 - 1
 	m.mask2 = new_cap - 1
-	
+
 	old_cap := m.data.len
 	old_data := m.data
-	
+
 	m.data = make(new_cap, new_cap, sizeof(int))
 	m.size = if m.has_free_key { 1 } else { 0 }
-	
+
 	for i := 0; i < old_cap; i += 2 {
 		old_key := old_data[i]
 		if old_key != FREE_KEY_NO_VALUE {
 			m.put(old_key, old_data[i + 1])
 		}
 	}
-	
+
 	unsafe { old_data.free() }
 }
