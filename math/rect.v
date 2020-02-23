@@ -26,16 +26,32 @@ pub fn (r mut Rect) set(x, y, w, h int) {
 pub fn (r &Rect) right() int { return r.x + r.w }
 
 [inline]
+pub fn (r &Rect) left() int { return r.x }
+
+[inline]
+pub fn (r &Rect) top() int { return r.y }
+
+[inline]
 pub fn (r &Rect) bottom() int { return r.y + r.h }
 
 [inline]
 pub fn (r &Rect) center() Vec2 { return Vec2{r.x + r.w / 2, r.y + r.h / 2} }
 
 [inline]
-pub fn (r &Rect) centerx() f32 { return r.x + r.w / 2 }
+pub fn (r &Rect) centerx() int { return r.x + r.w / 2 }
 
 [inline]
-pub fn (r &Rect) centery() f32 { return r.y + r.h / 2 }
+pub fn (r &Rect) centery() int { return r.y + r.h / 2 }
+
+pub fn (r &Rect) side(edge Edge) int {
+	return match edge {
+		.left { r.x }
+		.right { r.right() }
+		.top { r.y }
+		.bottom { r.bottom() }
+		else { -1 }
+	}
+}
 
 [inline]
 pub fn (r1 &Rect) overlaps(r2 &Rect) bool {

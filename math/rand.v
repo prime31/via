@@ -36,11 +36,17 @@ pub fn int_next(max int) int {
 	return C.rand() % max
 }
 
+[inline]
+pub fn take<T>(a bool, b, c T) T {
+	if a { return b }
+	return c
+}
+
 // Returns b if c is true, a otherwise
 [inline]
-pub fn choose(a, b f32, c bool) f32 {
-	if c { return b }
-	return a
+pub fn choose(a bool, b, c f32) f32 {
+	if a { return b }
+	return c
 }
 
 [inline]

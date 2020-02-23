@@ -24,3 +24,7 @@ pub fn (e Edge) horizontal() bool {
 pub fn (e Edge) vertical() bool {
 	return e == .top || e == .bottom
 }
+
+pub fn (e Edge) max() bool {
+	return e == .right || e == .bottom
+}

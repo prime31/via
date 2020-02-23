@@ -175,7 +175,7 @@ pub fn modf(x f32) (f32, f32) {
 
 // Computes a step function. Returns 1 when x >= y, 0 otherwise
 [inline]
-pub fn step(y, x f32) f32 { return choose(0.0, 1.0, x >= y) }
+pub fn step(y, x f32) f32 { return choose(x >= y, 0.0, 1.0) }
 
 [inline]
 pub fn sincos(x f32) (f32, f32) {

@@ -68,6 +68,10 @@ pub fn (m &Map) world_to_tiley(y f32) int {
 	return math.iclamp(tile_y, 0, m.height - 1)
 }
 
+pub fn (m &Map) tile_to_world(x, y int) math.Vec2 {
+	return math.Vec2{m.tile_size * x, m.tile_size * y}
+}
+
 pub fn (m &Map) tile_to_worldx(x int) int {
 	return m.tile_size * x
 }

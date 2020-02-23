@@ -73,6 +73,8 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 	maxx := map.world_to_tilex(bounds.right())
 	maxy := map.world_to_tiley(bounds.bottom())
 
+	debuggy(map, bounds, edge)
+
 	for x := minx; x <= maxx; x++ {
 		for y := miny; y <= maxy; y++ {
 			tid := layer.get_tileid(x, y)
@@ -124,4 +126,67 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 		}
 	}
 	return movey
+}
+
+fn debuggy(map Map, bounds math.Rect, edge math.Edge) {
+	minx := map.world_to_tilex(bounds.x)
+	miny := map.world_to_tiley(bounds.y)
+	maxx := map.world_to_tilex(bounds.right())
+	maxy := map.world_to_tiley(bounds.bottom())
+
+	mut incr := 1
+	if edge == .bottom {
+
+	}
+
+	mut tile_cnt := 0
+	for y := miny; y <= maxy; y += incr {
+		for x := minx; x <= maxx; x += incr {
+			xw := map.tile_to_worldx(x)
+			yw := map.tile_to_worldy(y)
+			color := match tile_cnt {
+				0 { math.color_yellow() }
+				1 { math.color_red() }
+				2 { math.color_blue() }
+				3 { math.color_black() }
+				else { math.color_yellow() }
+			}
+			debug.draw_hollow_rect(xw, yw, 16, 16, 1, color)
+			tile_cnt++
+		}
+	}
+
+	is_h := edge.horizontal()
+	prim_axis := math.take(is_h, math.Axis.x, math.Axis.y)
+	op_axis := math.take(prim_axis == .x, math.Axis.y, math.Axis.x)
+
+	op_dir := edge.opposing()
+	frst_prim := world_to_tile(map, bounds.side(op_dir), prim_axis)
+	lst_prim := world_to_tile(map, bounds.side(edge), prim_axis)
+	prim_incr := math.take(edge.max(), 1, -1)
+
+	min := world_to_tile(map, math.take(is_h, bounds.top(), bounds.left()), op_axis)
+	mid := world_to_tile(map, math.take(is_h, bounds.centery(), bounds.centerx()), op_axis)
+	max := world_to_tile(map, math.take(is_h, bounds.bottom(), bounds.right()), op_axis)
+
+	is_pos := mid - min < max - mid
+	secondary_incr := math.take(is_pos, 1, -1)
+	frst_secondary := math.take(is_pos, min, max)
+	lst_secondary := math.take(!is_pos, min, max)
+
+	//println('-- primary: $frst_prim -> $lst_prim	secondary: $frst_secondary -> $lst_secondary')
+	//println('-- x: $minx -> $maxx	y: $miny -> $maxy')
+
+	println('--- is_h($is_h) $frst_prim -> $lst_prim ($prim_incr)  $frst_secondary -> $lst_secondary ($secondary_incr) ---------------------')
+	for primary := frst_prim; primary != lst_prim + prim_incr; primary += prim_incr {
+		for secondary := frst_secondary; secondary != lst_secondary + secondary_incr; secondary += secondary_incr {
+			col := math.take(is_h, primary, secondary)
+			row := math.take(!is_h, primary, secondary)
+			println('-- $col,$row --')
+		}
+	}
+}
+
+fn world_to_tile(map Map, pos int, axis math.Axis) int {
+	return math.take(axis == .x, map.world_to_tilex(pos), map.world_to_tiley(pos))
 }
