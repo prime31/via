@@ -6,22 +6,22 @@ const (
 	// the inset on the horizontal plane that the BoxCollider will be shrunk by when moving vertically
 	horiz_inset = 2
 	// the inset on the vertical plane that the BoxCollider will be shrunk by when moving horizontally
-	vert_inset = 6
+	vert_inset = 2
 )
 
 pub fn move(map &Map, rect math.Rect, movement mut math.Vec2) {
 	layer := map.tile_layers[0]
+	mut rectm := rect
 
 	if movement.x != 0 {
-		movement.x = movex(map, layer, rect, int(movement.x))
+		movement.x = movex(map, layer, rectm, int(movement.x))
+		rectm.x += movement.x
 	}
-	if movement.y != 0 || movement.x != 0 {
-		movement.y = movey(map, layer, rect, int(movement.y))
-	}
+	movement.y = movey(map, layer, rectm, int(movement.y))
 }
 
 pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
-	edge := if movex > 0 { math.Edge.right } else { math.Edge.left }
+	edge := math.take(movex > 0, math.Edge.right, math.Edge.left)
 	mut bounds := rect.half_rect(edge)
 	// we contract horizontally for vertical movement and vertically for horizontal movement
 	bounds.contract(0, vert_inset)
@@ -70,7 +70,7 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 }
 
 pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
-	edge := if movey >= 0 { math.Edge.bottom } else { math.Edge.top }
+	edge := math.take(movey >= 0, math.Edge.bottom, math.Edge.top)
 	mut bounds := rect.half_rect(edge)
 	// we contract horizontally for vertical movement and vertically for horizontal movement
 	bounds.contract(horiz_inset, 0)

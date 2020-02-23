@@ -15,6 +15,7 @@ union DebugDrawItem {
 	line DebugLine
 	rect DebugRect
 	circle DebugCircle
+	text DebugText
 }
 
 enum DebugDrawKind {
@@ -22,6 +23,7 @@ enum DebugDrawKind {
 	line
 	hollow_rect
 	hollow_circle
+	text
 }
 
 struct DebugPoint {
@@ -60,6 +62,14 @@ struct DebugCircle {
 	color math.Color
 }
 
+struct DebugText {
+	kind DebugDrawKind
+	text string
+	x f32
+	y f32
+	color math.Color
+}
+
 //#endregion
 
 const (
@@ -80,6 +90,7 @@ fn add_item(item DebugDrawItem) {
 fn render() {
 	if d.items.len == 0 { return }
 	mut tribatch := graphics.tribatch()
+	mut quadbatch := graphics.spritebatch()
 
 	for item in d.items {
 		match item.kind {
@@ -94,6 +105,10 @@ fn render() {
 			}
 			.hollow_circle {
 				tribatch.draw_hollow_circle(item.circle.r, 10, {x:item.circle.x y:item.circle.y})
+			}
+			.text {
+				quadbatch.draw_text(item.text.text, {x:item.text.x y:item.text.y color:item.text.color fontbook:0})
+				unsafe { item.text.text.free() }
 			}
 			else {}
 		}
@@ -118,6 +133,10 @@ pub fn draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
 
 pub fn draw_hollow_circle(x, y, radius f32, color math.Color) {
 	add_item(DebugDrawItem(DebugCircle{DebugDrawKind.hollow_circle, x, y, radius, color}))
+}
+
+pub fn draw_text(text string, x, y int, color math.Color) {
+	add_item(DebugDrawItem(DebugText{DebugDrawKind.text, text, x, y, color}))
 }
 
 //#endregion
