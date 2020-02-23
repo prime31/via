@@ -148,18 +148,18 @@ pub fn (m &MapRenderer) render_objectlayer(layer &ObjectLayer) {
 	for obj in layer.objects {
 		match obj.shape {
 			box {
-				tribatch.draw_hollow_rect(obj.x, obj.y, obj.w, obj.h, 1, math.color_red())
+				tribatch.draw_hollow_rect(obj.x, obj.y, obj.w, obj.h, 1, math.red())
 			}
 			circle {
 				rad := obj.w / 2
-				tribatch.draw_hollow_circle(rad, 10, {x:obj.x + rad y:obj.y + rad color:math.color_red()})
+				tribatch.draw_hollow_circle(rad, 10, {x:obj.x + rad y:obj.y + rad color:math.red()})
 			}
 			ellipse {
 				rad := obj.w / 2
-				tribatch.draw_hollow_circle(rad, 10, {x:obj.x + rad y:obj.y + rad color:math.color_orange()})
+				tribatch.draw_hollow_circle(rad, 10, {x:obj.x + rad y:obj.y + rad color:math.orange()})
 			}
 			point {
-				tribatch.draw_point(obj.x, obj.y, 6, math.color_red())
+				tribatch.draw_point(obj.x, obj.y, 6, math.red())
 			}
 			polygon {
 				println('polygon not implemented')

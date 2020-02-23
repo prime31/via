@@ -536,7 +536,7 @@ pub fn (sh mut SpatialHash) debug_draw() {
 				px := f32(x) * f32(sh.cell_size)
 				py := f32(y) * f32(sh.cell_size)
 
-				graphics.tribatch().draw_hollow_rect(px, py, sh.cell_size, sh.cell_size, 1, math.color_red())
+				graphics.tribatch().draw_hollow_rect(px, py, sh.cell_size, sh.cell_size, 1, math.red())
 				graphics.spritebatch().draw_text(len.str(), {x:px + half_size y:py + half_size align:.center_middle sx:3 sy:3})
 			}
 		}

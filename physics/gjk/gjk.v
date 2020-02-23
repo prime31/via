@@ -51,7 +51,7 @@ pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 mat
 	dir = dir.scale(-1)
 
 	// start the loop
-	for i in 0..max_gjk_iters {
+	for _ in 0..max_gjk_iters {
 		// always add another point to the simplex at the beginning of the loop
 		sup_pt := get_support_point(dir, shape1, shape2, trans1, trans2)
 		g.simplex << sup_pt

@@ -249,7 +249,7 @@ pub fn commit() {
 
 	// if we havent yet blitted to the screen do so now
 	if !gg.blitted_to_screen {
-		blit_to_screen(math.color_black())
+		blit_to_screen(math.black())
 	}
 
 	gg.quad_batch.end()

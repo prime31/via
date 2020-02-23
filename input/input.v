@@ -121,8 +121,8 @@ fn (i mut Input) handle_keyboard_event(evt &C.SDL_KeyboardEvent) {
 		i.dirty_keys << evt.keysym.scancode
 	}
 
-	key := tos2(C.SDL_GetScancodeName(evt.keysym.scancode))
-	println('kbd evt [${time.frames()}]. TING: ${i.keys[evt.keysym.scancode]} key: $key, state: $evt.state, scancode: $evt.keysym.scancode, mod: $evt.keysym.mod')
+	//key := tos2(C.SDL_GetScancodeName(evt.keysym.scancode))
+	//println('kbd evt [${time.frames()}]. TING: ${i.keys[evt.keysym.scancode]} key: $key, state: $evt.state, scancode: $evt.keysym.scancode, mod: $evt.keysym.mod')
 }
 
 fn (i mut Input) handle_mouse_event(evt &C.SDL_MouseButtonEvent) {
