@@ -28,6 +28,12 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 	// finally expand the side in the direction of movement
 	bounds.expand_edge(edge, movex)
 
+	// debug_overlaps(map, bounds, edge)
+
+	// keep track of any rows with slopes. We use this info to ignore collisions that occur with tiles behind slopes (inaccessible)
+	mut slope_rows := [-1, -1, -1]!!
+	mut last_slope_row := 0
+
 	mut iter := mapcollisioniter(map, bounds, edge)
 	for iter.next() {
 		x, y := iter.current()
@@ -36,9 +42,16 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 			if map.has_tileset_tile(tid.id()) {
 				tileset_tile := map.tileset_tile(tid.id())
 				// ignore oneway platforms and slopes
-				if tileset_tile.oneway || tileset_tile.slope {
+				if tileset_tile.oneway {
+					continue
+				} else if tileset_tile.slope {
+					slope_rows[last_slope_row++] = y
 					continue
 				}
+			}
+
+			if in_c_arr(y, &slope_rows[0], last_slope_row) {
+				continue
 			}
 
 			// worldx is the LEFT of the tile
@@ -64,7 +77,7 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 	// finally expand the side in the direction of movement
 	bounds.expand_edge(edge, movey)
 
-	debug_overlaps(map, bounds, edge)
+	// debug_overlaps(map, bounds, edge)
 
 	mut iter := mapcollisioniter(map, bounds, edge)
 	for iter.next() {
@@ -82,26 +95,22 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 					if map.tile_to_worldy(y) < rect.bottom() {
 						continue
 					}
-				} else if tileset_tile.slope && edge == .bottom {
+				} else if tileset_tile.slope {
 					perp_pos := bounds.centerx()
 					tile_worldx := map.tile_to_worldx(x)
 
 					// only process the slope if our center is within the tiles bounds
 					if math.between(perp_pos, tile_worldx, tile_worldx + map.tile_size) {
+						leading_edge_pos := bounds.side(edge)
 						tile_worldy := map.tile_to_worldy(y)
-						slope_posy := tileset_tile.name_me(tid, map.tile_size, int(perp_pos), tile_worldx, tile_worldy)
+						slope_posy := tileset_tile.name_me(tid, map.tile_size, perp_pos, tile_worldx, tile_worldy)
 
-						println('-- sloping: tile_worldy: $tile_worldy, slope_posy: $slope_posy')
-						debug.draw_line(tile_worldx, tile_worldy, tile_worldx + 16, tile_worldy, 1, math.color_black())
-
-						// debug.draw_point(perp_pos, tile_worldy, 4, math.color_blue())
-						debug.draw_point(perp_pos, slope_posy, 2, math.color_white())
-						debug.draw_point(perp_pos, rect.bottom(), 2, math.color_orange())
-						debug.draw_point(perp_pos, bounds.bottom(), 2, math.color_purple())
-						if bounds.bottom() <= slope_posy {
+						if leading_edge_pos >= slope_posy {
 							return slope_posy - rect.bottom()
 						}
+						return movey
 					}
+					continue
 				}
 			}
 
@@ -120,6 +129,15 @@ pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
 	return movey
 }
 
+fn in_c_arr(val int, arr &int, len int) bool {
+	for i in 0..len {
+		if arr[i] == val {
+			return true
+		}
+	}
+	return false
+}
+
 fn debug_overlaps(map Map, bounds math.Rect, edge math.Edge) {
 	mut tile_cnt := 0
 	mut iter := mapcollisioniter(map, bounds, edge)
@@ -128,29 +146,13 @@ fn debug_overlaps(map Map, bounds math.Rect, edge math.Edge) {
 		xw := map.tile_to_worldx(x)
 		yw := map.tile_to_worldy(y)
 		color := match tile_cnt {
-			0 { math.color_yellow() }
-			1 { math.color_red() }
-			2 { math.color_blue() }
-			3 { math.color_black() }
-			else { math.color_yellow() }
+			0 { math.yellow() }
+			1 { math.red() }
+			2 { math.blue() }
+			3 { math.black() }
+			else { math.orange() }
 		}
 		debug.draw_hollow_rect(xw, yw, 16, 16, 1, color)
 		tile_cnt++
 	}
-
-	// for y := miny; y <= maxy; y += incr {
-	// 	for x := minx; x <= maxx; x += incr {
-	// 		xw := map.tile_to_worldx(x)
-	// 		yw := map.tile_to_worldy(y)
-	// 		color := match tile_cnt {
-	// 			0 { math.color_yellow() }
-	// 			1 { math.color_red() }
-	// 			2 { math.color_blue() }
-	// 			3 { math.color_black() }
-	// 			else { math.color_yellow() }
-	// 		}
-	// 		debug.draw_hollow_rect(xw, yw, 16, 16, 1, color)
-	// 		tile_cnt++
-	// 	}
-	// }
 }
