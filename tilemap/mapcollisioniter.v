@@ -41,6 +41,8 @@ pub fn mapcollisioniter(map Map, bounds math.Rect, edge math.Edge) MapCollisionI
 		first_secondary: frst_secondary
 		last_secondary: lst_secondary
 		secondary_incr: secondary_incr
+		primary: frst_prim
+		secondary: frst_secondary - secondary_incr
 	}
 }
 
@@ -65,4 +67,8 @@ pub fn (i mut MapCollisionIter) next() bool {
 
 pub fn (i &MapCollisionIter) current() (int, int) {
 	return math.take(i.is_h, i.primary, i.secondary), math.take(!i.is_h, i.primary, i.secondary)
+}
+
+fn world_to_tile(map Map, pos int, axis math.Axis) int {
+	return math.take(axis == .x, map.world_to_tilex(pos), map.world_to_tiley(pos))
 }
