@@ -9,8 +9,8 @@ pub mut:
 	append_identity bool = false 		// search files in src dir before save dir
 
 	resolution_policy graphics.ResolutionPolicy	// defines how the main render texture should be blitted to the backbuffer
-	design_width int					// the width of the main offscreen render texture when the policy is not .default
-	design_height int					// the height of the main offscreen render texture when the policy is not .default
+	design_width int = 1024				// the width of the main offscreen render texture when the policy is not .default
+	design_height int = 768				// the height of the main offscreen render texture when the policy is not .default
 
 	max_quads int = 5000				// max number of quads allowed to be rendered per frame (sprites and text)
 	max_tris int = 500					// max number of triangles allowed to be rendered per frame (shapes and lines)

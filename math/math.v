@@ -263,3 +263,23 @@ pub fn angle_between_vectors(from, to Vec2) f32 {
 pub fn angle_between_points(x1, y1, x2, y2 f32) f32 {
 	return atan2(y2 - y1, x2 - x1)
 }
+
+//#region Vec2
+
+pub fn absv(a Vec2) Vec2 {
+	return Vec2{fabs(a.x), fabs(a.y)}
+}
+
+pub fn maxv(a, b Vec2) Vec2 {
+	return Vec2{max(a.x, b.x), max(a.y, b.y)}
+}
+
+pub fn minv(a, b Vec2) Vec2 {
+	return Vec2{min(a.x, b.x), min(a.y, b.y)}
+}
+
+pub fn clampv(a, low, high Vec2) Vec2 {
+	return maxv(low, minv(a, high))
+}
+
+//#endregion

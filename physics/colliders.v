@@ -60,6 +60,7 @@ pub fn (c &Collider) collides_with(other &Collider) bool {
 
 pub struct AabbCollider {
 	collider Collider
+mut:
 	x f32
 	y f32
 	w f32
@@ -89,12 +90,21 @@ pub fn (c &AabbCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTransfor
 	return math.Vec2{}
 }
 
+pub fn (c &AabbCollider) min() math.Vec2 {
+	return math.Vec2{c.x, c.y}
+}
+
+pub fn (c &AabbCollider) max() math.Vec2 {
+	return math.Vec2{c.x + c.w, c.y + c.h}
+}
+
 //#endregion
 
 //#region Circle
 
 pub struct CircleCollider {
 	collider Collider
+mut:
 	x f32
 	y f32
 	r f32
