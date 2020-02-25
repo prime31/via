@@ -1,5 +1,6 @@
 module physics
 import via.math
+import via.debug
 
 pub enum ColliderKind {
 	aabb
@@ -88,8 +89,26 @@ pub fn (c &AabbCollider) get_bounds() math.RectF {
 }
 
 pub fn (c &AabbCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTransform) math.Vec2 {
+	// transform the direction into local space
+	mut direction := dir
+	trans.inverse_transform_rot(mut direction)
 
-	return math.Vec2{}
+	verts := [math.Vec2{c.x, c.y}, math.Vec2{c.x + c.w, c.y}, math.Vec2{c.x + c.w, c.y + c.h}, math.Vec2{c.x, c.y + c.h}]!
+	mut furthest_dist := verts[0].dot(direction)
+	mut furthest_vert := verts[0]
+
+	for i in 1..verts.len {
+		dist := verts[i].dot(direction)
+		if dist > furthest_dist {
+			furthest_dist = dist
+			furthest_vert = verts[i]
+		}
+	}
+
+	// println('-------- Box dist: $furthest_dist, vrt: $furthest_vert')
+	debug.draw_point(furthest_vert.x, furthest_vert.y, 4, math.white())
+
+	return furthest_vert
 }
 
 pub fn (c &AabbCollider) min() math.Vec2 {
@@ -131,8 +150,11 @@ pub fn (c &CircleCollider) get_bounds() math.RectF {
 }
 
 pub fn (c &CircleCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTransform) math.Vec2 {
-	dir_norm := dir.normalize()
-	center := trans.get_transformed(math.Vec2{c.x, c.y})
+	dir_norm := dir.normalize_safe()
+	center := math.Vec2{c.x, c.y}
+
+	ret := center + dir_norm.scale(c.r)
+	debug.draw_point(ret.x, ret.y, 4, math.red())
 
 	// add the radius along the vector to the center to get the farthest point
 	return center + dir_norm.scale(c.r)

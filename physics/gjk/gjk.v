@@ -42,8 +42,9 @@ pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 mat
 	// add the first point
 	g.simplex << get_support_point(dir, shape1, shape2, trans1, trans2)
 
-	// is the support point past the origin along d?
+	// is the support point past the origin along dir?
 	if g.simplex[0].dot(dir) <= 0 {
+		println('---- gjk: EARLY DEATH. point past origin')
 		return false
 	}
 
@@ -56,10 +57,11 @@ pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 mat
 		sup_pt := get_support_point(dir, shape1, shape2, trans1, trans2)
 		g.simplex << sup_pt
 
-		// make sure the last point we added was past teh origin
+		// make sure the last point we added was past the origin
 		if sup_pt.dot(dir) <= detect_epsilon {
+			println('---- gjk: point not past origin')
 			// pt is not past the origin so therefore the shapes do not intersect. here we treat the origin
-			// on the line as no intersection and immediately return with indicating no penetration
+			// on the line as no intersection and immediately return indicating no penetration
 			return false
 		} else {
 			// if it is past the origin, then test whether the simplex contains the origin
@@ -72,6 +74,7 @@ pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 mat
 		}
 	}
 
+	println('---- gjk: failed end')
 	return false
 }
 
@@ -91,14 +94,14 @@ fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
 	// get the last point added (a)
 	a := g.simplex.last()
 
-	// this is the same as a.to(ORIGIN)
+	// this is the same as vert to origin
 	ao := a.scale(-1)
 
 	// check to see what type of simplex we have
 	if g.simplex.len == 3 {
 		// we have a triangle
 		b := g.simplex[1]
-		c := g.simplex[2]
+		c := g.simplex[0]
 
 		// get the edges
 		ab := b - a

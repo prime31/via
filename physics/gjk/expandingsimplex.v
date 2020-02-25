@@ -50,7 +50,7 @@ fn (es mut ExpandingSimplex) start(simplex []math.Vec2) {
 
 	// build the initial edge queue
 	for i in 0..simplex.len {
-		j := if i + 1 == simplex.len { 0 } else { i + 1 }
+		j := math.take(i + 1 == simplex.len, 0, i + 1)
 
 		// add the current edge to the queue
 		es.edge_queue << simplexedge(simplex[i], simplex[j], es.winding)
@@ -59,7 +59,7 @@ fn (es mut ExpandingSimplex) start(simplex []math.Vec2) {
 
 fn (es &ExpandingSimplex) get_winding(simplex []math.Vec2) int {
 	for i in 0..simplex.len {
-		j := if i + 1 == simplex.len { 0 } else { i + 1 }
+		j := math.take(i + 1 == simplex.len, 0, i + 1)
 
 		cross_ab := simplex[i].cross(simplex[j])
 		if cross_ab > 0 {

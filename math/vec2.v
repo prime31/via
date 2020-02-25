@@ -41,6 +41,12 @@ pub fn (self Vec2) magnitude() f32 { return C.sqrtf(self.square_magnitude()) }
 pub fn (self Vec2) normalize() Vec2 { return self.scale(1.0 / self.magnitude()) }
 
 [inline]
+pub fn (self Vec2) normalize_safe() Vec2 {
+	len := self.square_magnitude()
+	return take(len > 0.000001, self.scale(1.0 / len), self)
+}
+
+[inline]
 pub fn (self Vec2) dot(other Vec2) f32 { return self.x * other.x + self.y * other.y }
 
 [inline]
