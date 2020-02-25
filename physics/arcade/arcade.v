@@ -11,7 +11,44 @@ mut:
 	normal math.Vec2
 }
 
+pub fn (m mut Manifold) invert() Manifold {
+	m.normal = m.normal.scale(-1)
+	return m
+}
 
+
+pub fn collide(a, b &phy.Collider, move math.Vec2) Manifold {
+	if !a.collides_with(b) {
+		return Manifold{}
+	}
+
+	match a.kind {
+		.aabb {
+			match b.kind {
+				.aabb {
+					return aabb_to_aabb(&phy.AabbCollider(a), &phy.AabbCollider(b), move)
+				}
+				.circle {
+					mut mani := circle_to_aabb(&phy.CircleCollider(b), &phy.AabbCollider(a), move.scale(-1))
+					return mani.invert()
+				}
+				else { return Manifold{} }
+			}
+		}
+		.circle {
+			match b.kind {
+				.aabb {
+					return circle_to_aabb(&phy.CircleCollider(a), &phy.AabbCollider(b), move)
+				}
+				.circle {
+					return circle_to_circle(&phy.CircleCollider(a), &phy.CircleCollider(b), move)
+				}
+				else { return Manifold{} }
+			}
+		}
+		else { return Manifold{} }
+	}
+}
 
 
 pub fn aabb_to_aabb(a, b phy.AabbCollider, move math.Vec2) Manifold {

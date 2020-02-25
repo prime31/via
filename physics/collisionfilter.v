@@ -6,6 +6,13 @@ pub mut:
 	mask u32 = u32(0xffffffff)		// A bit mask describing which layers this object can collide with
 }
 
+pub fn collisionfilter() CollisionFilter {
+	return CollisionFilter{
+		category: u32(0xffffffff)
+		mask: u32(0xffffffff)
+	}
+}
+
 pub fn (cf &CollisionFilter) is_valid() bool {
 	return cf.category > 0 && cf.mask > 0
 }

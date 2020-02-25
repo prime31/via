@@ -1,7 +1,7 @@
 module physics
 import via.math
 
-pub enum ColliderType {
+pub enum ColliderKind {
 	aabb
 	circle
 }
@@ -10,15 +10,16 @@ pub enum ColliderType {
 
 // common base data for all Collider sub-types
 pub struct Collider {
-	kind ColliderType
+pub:
+	kind ColliderKind
 	trigger bool
 	filter CollisionFilter
 }
 
-fn collider(kind ColliderType) Collider {
+fn collider(kind ColliderKind) Collider {
 	return Collider{
 		kind: kind
-		filter: CollisionFilter{}
+		filter: collisionfilter()
 	}
 }
 
@@ -31,7 +32,7 @@ pub fn (c &Collider) get_bounds() math.RectF {
 			circle := &CircleCollider(c)
 			return circle.get_bounds()
 		} else {
-			panic('unknown ColliderType')
+			panic('unknown ColliderKind')
 		}
 	}
 }
@@ -45,7 +46,7 @@ pub fn (c &Collider) get_farthest_pt(dir math.Vec2, trans math.RigidTransform) m
 			circle := &CircleCollider(c)
 			return circle.get_farthest_pt(dir, trans)
 		} else {
-			panic('unknown ColliderType')
+			panic('unknown ColliderKind')
 		}
 	}
 }
@@ -59,6 +60,7 @@ pub fn (c &Collider) collides_with(other &Collider) bool {
 //#region AABB
 
 pub struct AabbCollider {
+pub:
 	collider Collider
 mut:
 	x f32
@@ -103,6 +105,7 @@ pub fn (c &AabbCollider) max() math.Vec2 {
 //#region Circle
 
 pub struct CircleCollider {
+pub:
 	collider Collider
 mut:
 	x f32
