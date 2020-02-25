@@ -52,9 +52,14 @@ pub fn (m &IntIntMap) free() {
 }
 
 [inline]
-pub fn (m &IntIntMap) has(key int) bool {
+pub fn (m &IntIntMap) try_get(key int, value &int) bool {
+	mut mvalue := value
+
 	// we basically duplicate get() here
 	if key == FREE_KEY_NO_VALUE {
+		if m.has_free_key {
+			*mvalue = m.free_value
+		}
 		return m.has_free_key
 	}
 
@@ -65,6 +70,7 @@ pub fn (m &IntIntMap) has(key int) bool {
 	}
 
 	if k == key { // we check FREE prior to this call
+		*mvalue = m.data[ptr + 1]
 		return true
 	}
 
@@ -74,6 +80,7 @@ pub fn (m &IntIntMap) has(key int) bool {
 		if k == FREE_KEY_NO_VALUE {
 			return false
 		} else if k == key {
+			*mvalue = m.data[ptr + 1]
 			return true
 		}
 	}
@@ -83,7 +90,7 @@ pub fn (m &IntIntMap) has(key int) bool {
 
 pub fn (m &IntIntMap) get(key int) int {
 	if key == FREE_KEY_NO_VALUE {
-		return if m.has_free_key { m.free_value } else { FREE_KEY_NO_VALUE }
+		return math.take(m.has_free_key, m.free_value, FREE_KEY_NO_VALUE)
 	}
 
 	mut ptr := (iim_phi_mix(key) & m.mask) << 1
