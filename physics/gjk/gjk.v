@@ -25,12 +25,17 @@ pub mut:
 	depth f32			// penetration amount on this axis
 }
 
-pub fn (g mut Gjk) intersects(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) &Penetration {
+pub fn (p Penetration) str() string {
+	return 'depth: $p.depth, norm: $p.normal'
+}
+
+
+pub fn (g mut Gjk) intersects(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) (bool, Penetration) {
 	if g.overlaps(shape1, shape2, trans1, trans2) {
 		p := g.get_penetration(shape1, shape2, trans1, trans2)
-		return &p
+		return true, p
 	}
-	return &Penetration(0)
+	return false, Penetration{}
 }
 
 pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) bool {
@@ -44,7 +49,6 @@ pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 mat
 
 	// is the support point past the origin along dir?
 	if g.simplex[0].dot(dir) <= 0 {
-		println('---- gjk: EARLY DEATH. point past origin')
 		return false
 	}
 
@@ -58,23 +62,14 @@ pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 mat
 		g.simplex << sup_pt
 
 		// make sure the last point we added was past the origin
-		if sup_pt.dot(dir) <= detect_epsilon {
-			println('---- gjk: point not past origin')
-			// pt is not past the origin so therefore the shapes do not intersect. here we treat the origin
-			// on the line as no intersection and immediately return indicating no penetration
-			return false
-		} else {
-			// if it is past the origin, then test whether the simplex contains the origin
+		if sup_pt.dot(dir) >= 0 {
 			if g.check_simplex(mut dir) {
 				// if the simplex contains the origin then we know that there is an intersection.
 				return true
 			}
-			// if the simplex does not contain the origin then we need to loop using the new
-			// search direction and simplex
 		}
 	}
 
-	println('---- gjk: failed end')
 	return false
 }
 
@@ -88,74 +83,29 @@ fn get_support_point(dir math.Vec2, shape1, shape2 &physics.Collider, trans1, tr
 }
 
 fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
-	// this method should never be supplied anything other than 2 or 3 points for the simplex
-	assert g.simplex.len >= 2
-
-	// get the last point added (a)
-	a := g.simplex.last()
-
-	// this is the same as vert to origin
-	ao := a.scale(-1)
-
-	// check to see what type of simplex we have
 	if g.simplex.len == 3 {
-		// we have a triangle
-		b := g.simplex[1]
-		c := g.simplex[0]
+		c0 := g.simplex[2].scale(-1)
+		bc := g.simplex[1] - g.simplex[2]
+		ca := g.simplex[0] - g.simplex[2]
 
-		// get the edges
-		ab := b - a
-		ac := c - a
+		bc_norm := triple_prod(ca, bc, bc)
+		ca_norm := triple_prod(bc, ca, ca)
 
-		// get the edge normal
-
-		// inline triple_project so we can use the intermediate calcs for the second triple_product calc
-		dot := ab.x * ac.y - ac.x * ab.y
-		ac_perp := math.Vec2{-ac.y * dot, ac.x * dot}
-
-		// see where the origin is
-		ac_loc := ac_perp.dot(ao)
-		if ac_loc >= 0 {
-			// the origin lies on the right side of A->C
-			// because of the condition for the gjk loop to continue the origin
-			// must lie between A and C so remove B and set the
-			// new search direction to A->C perpendicular vector
+		if bc_norm.dot(c0) > 0 {
+			g.simplex.delete(0)
+			*dir = bc_norm
+		} else if ca_norm.dot(c0) > 0 {
 			g.simplex.delete(1)
-
-			// this used to be direction.set(triple_product(ac, ao, ac));
-			// but was changed since the origin may lie on the segment created
-			// by a -> c in which case would produce a zero vector normal
-			// calculating ac's normal using b is more robust
-			*dir = ac_perp
+			*dir = ca_norm
 		} else {
-			// inline triple_project so we can use the intermediate calcs again
-			ab_perp := math.Vec2{ab.y * dot, -ab.x * dot}
-			ab_loc := ab_perp.dot(ao)
-
-			// the origin lies on the left side of A->C
-			if ab_loc < 0 {
-				// the origin lies on the right side of A->B and therefore is in the
-				// triangle, we have an intersection
-				return true
-			} else{
-				// the origin lies between A and B so remove C and set the search direction to A->B perpendicular vector
-				g.simplex.delete(0)
-
-				// this used to be direction.set(triple_product(ab, ao, ab)) but was changed since the origin may
-				// lie on the segment created by a -> b in which case would produce a zero vector normal
-				// calculating ab's normal using c is more robust
-				*dir = ab_perp
-			}
+			return true
 		}
-	} else {
+	} else if g.simplex.len == 2 {
 		// get the b point
-		b := g.simplex[0]
-		ab := b - a
+		ab := g.simplex[1] - g.simplex[0]
+		a0 := g.simplex[0].scale(-1)
 
-		// otherwise we have 2 points (line segment) because of the condition for the gjk loop to continue the origin
-		// must lie in between A and B, so keep both points in the simplex and
-		// set the direction to the perp of the line segment towards the origin
-		*dir = triple_prod(ab, ao, ab)
+		*dir = triple_prod(ab, a0, ab)
 
 		// check for degenerate cases where the origin lies on the segment created by a -> b which will yield a
 		// zero edge normal
@@ -164,6 +114,8 @@ fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
 			// in this case just choose either normal (left or right)
 			*dir = math.Vec2{ab.y, -ab.x}
 		}
+	} else if g.simplex.len == 1 {
+		*dir = dir.scale(-1)
 	}
 
 	return false
@@ -182,8 +134,7 @@ fn (g mut Gjk) get_penetration(shape1, shape2 &physics.Collider, trans1, trans2 
 
         // see if the new point is significantly past the edge
         projection := point.dot(edge.normal)
-        if projection - edge.distance < distance_epsilon
-        {
+        if projection - edge.distance < distance_epsilon {
             // then the new point we just made is not far enough in the direction of n so we can stop now and
             // return n as the direction and the projection as the depth since this is the closest found
             // edge and it cannot increase any more

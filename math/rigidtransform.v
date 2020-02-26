@@ -1,6 +1,7 @@
 module math
 
 pub struct RigidTransform {
+pub mut:
 	pos Vec2
 	cost f32 = 1.0
 	sint f32
@@ -10,6 +11,21 @@ pub fn rigidtransform(pos Vec2) RigidTransform {
 	return RigidTransform {
 		pos: pos
 	}
+}
+
+pub fn (t mut RigidTransform) rotate(radians f32) {
+	sin, cos := sincos(radians)
+
+	// perform an optimized version of matrix multiplication
+	cost := cos * t.cost - sin * t.sint
+	sint := sin * t.cost + cos * t.sint
+	x := cos * t.pos.x - sin * t.pos.y
+	y := sin * t.pos.x + cos * t.pos.y
+
+	t.cost = cost
+	t.sint = sint
+	t.pos.x = x
+	t.pos.y = y
 }
 
 pub fn (t &RigidTransform) inverse_transform_rot(vec mut Vec2) {

@@ -81,6 +81,7 @@ pub fn (tb mut TriangleBatch) draw_rectangle(width, height f32, config DrawConfi
 }
 
 pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2, config DrawConfig) {
+	assert verts.len > 1
 	for i in 1..verts.len - 1 {
 		tb.draw_triangle(verts[0].x, verts[0].y, verts[i].x, verts[i].y, verts[i + 1].x, verts[i + 1].y, config)
 	}
