@@ -9,7 +9,7 @@ import via.physics
 const (
 	max_gjk_iters = 30
 	max_epa_iters = 30
-	detect_epsilon = 0.0
+	detect_epsilon = 0.001
 	distance_epsilon = 0.001
 )
 
@@ -19,26 +19,25 @@ mut:
 	simplex []math.Vec2
 }
 
-pub struct Penetration {
-pub mut:
-	normal math.Vec2	// normalized axis of projection
-	depth f32			// penetration amount on this axis
-}
-
-pub fn (p Penetration) str() string {
-	return 'depth: $p.depth, norm: $p.normal'
-}
+const (
+	gjk = &Gjk{}
+)
 
 
-pub fn (g mut Gjk) intersects(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) (bool, Penetration) {
-	if g.overlaps(shape1, shape2, trans1, trans2) {
-		p := g.get_penetration(shape1, shape2, trans1, trans2)
-		return true, p
+// returns a Manifold describing the overlap of the two shapes. move is the movement of shape1
+pub fn intersects(shape1, shape2 &physics.Collider, move math.Vec2) physics.Manifold {
+	mut g := gjk
+	trans1 := math.rigidtransform(move)
+	trans2 := math.rigidtransform(math.Vec2{})
+
+	if overlaps(shape1, shape2, trans1, trans2) {
+		return g.get_manifold(shape1, shape2, trans1, trans2)
 	}
-	return false, Penetration{}
+	return physics.Manifold{}
 }
 
-pub fn (g mut Gjk) overlaps(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) bool {
+pub fn overlaps(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) bool {
+	mut g := gjk
 	g.simplex.clear()
 
 	// choose an initial search direction
@@ -121,8 +120,9 @@ fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
 	return false
 }
 
-fn (g mut Gjk) get_penetration(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) Penetration {
-	mut penetration := Penetration{}
+fn (g mut Gjk) get_manifold(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) physics.Manifold {
+	mut manifold := physics.Manifold{}
+	manifold.collided = true
 	g.expanding_simplex.start(g.simplex)
 
 	for i in 0..max_epa_iters {
@@ -138,9 +138,9 @@ fn (g mut Gjk) get_penetration(shape1, shape2 &physics.Collider, trans1, trans2 
             // then the new point we just made is not far enough in the direction of n so we can stop now and
             // return n as the direction and the projection as the depth since this is the closest found
             // edge and it cannot increase any more
-            penetration.normal = edge.normal
-            penetration.depth = projection
-            return penetration
+            manifold.normal = edge.normal
+            manifold.depth = projection
+            return manifold
         }
 
         // lastly add the point to the simplex. this breaks the edge we just found to be closest into two edges
@@ -150,10 +150,10 @@ fn (g mut Gjk) get_penetration(shape1, shape2 &physics.Collider, trans1, trans2 
         if i == max_epa_iters - 1 {
             // if we made it here then we know that we hit the maximum number of iterations. this is really a catch
 			// all termination case. set the normal and depth equal to the last edge we created
-            penetration.normal = edge.normal
-            penetration.depth = point.dot(edge.normal)
+            manifold.normal = edge.normal
+            manifold.depth = point.dot(edge.normal)
         }
 	}
 
-	return penetration
+	return manifold
 }

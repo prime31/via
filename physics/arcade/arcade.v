@@ -2,24 +2,10 @@ module arcade
 import via.math
 import via.physics as phy
 
-pub struct Manifold {
-mut:
-	count int
-	depth f32
-	contact_pt math.Vec2
-	// always points from shape A to shape B (first and second shapes passed into any of the functions)
-	normal math.Vec2
-}
 
-pub fn (m mut Manifold) invert() Manifold {
-	m.normal = m.normal.scale(-1)
-	return m
-}
-
-
-pub fn collide(a, b &phy.Collider, move math.Vec2) Manifold {
+pub fn collide(a, b &phy.Collider, move math.Vec2) phy.Manifold {
 	if !a.collides_with(b) {
-		return Manifold{}
+		return phy.Manifold{}
 	}
 
 	match a.kind {
@@ -32,7 +18,7 @@ pub fn collide(a, b &phy.Collider, move math.Vec2) Manifold {
 					mut mani := circle_to_aabb(&phy.CircleCollider(b), &phy.AabbCollider(a), move.scale(-1))
 					return mani.invert()
 				}
-				else { return Manifold{} }
+				else { return phy.Manifold{} }
 			}
 		}
 		.circle {
@@ -43,16 +29,15 @@ pub fn collide(a, b &phy.Collider, move math.Vec2) Manifold {
 				.circle {
 					return circle_to_circle(&phy.CircleCollider(a), &phy.CircleCollider(b), move)
 				}
-				else { return Manifold{} }
+				else { return phy.Manifold{} }
 			}
 		}
-		else { return Manifold{} }
+		else { return phy.Manifold{} }
 	}
 }
 
-
-pub fn aabb_to_aabb(a, b phy.AabbCollider, move math.Vec2) Manifold {
-	mut mani := Manifold{}
+pub fn aabb_to_aabb(a, b phy.AabbCollider, move math.Vec2) phy.Manifold {
+	mut mani := phy.Manifold{}
 
 	amin := a.min() + move
 	amax := a.max() + move
@@ -77,7 +62,7 @@ pub fn aabb_to_aabb(a, b phy.AabbCollider, move math.Vec2) Manifold {
 		return mani
 	}
 
-	mani.count = 1
+	mani.collided = true
 	// x axis overlap is smaller
 	if dx < dy {
 		mani.depth = dx
@@ -102,8 +87,8 @@ pub fn aabb_to_aabb(a, b phy.AabbCollider, move math.Vec2) Manifold {
 	return mani
 }
 
-pub fn circle_to_aabb(a phy.CircleCollider, b phy.AabbCollider, move math.Vec2) Manifold {
-	mut mani := Manifold{}
+pub fn circle_to_aabb(a phy.CircleCollider, b phy.AabbCollider, move math.Vec2) phy.Manifold {
+	mut mani := phy.Manifold{}
 
 	p := math.Vec2{a.x, a.y} + move
 	l := math.clampv(p, b.min(), b.max())
@@ -116,7 +101,7 @@ pub fn circle_to_aabb(a phy.CircleCollider, b phy.AabbCollider, move math.Vec2) 
 		if d2 != 0 {
 			d := math.sqrt(d2)
 			n := ab.normalize()
-			mani.count = 1
+			mani.collided = true
 			mani.depth = a.r - d
 			mani.contact_pt = p + n.scale(d)
 			mani.normal = n
@@ -140,7 +125,7 @@ pub fn circle_to_aabb(a phy.CircleCollider, b phy.AabbCollider, move math.Vec2) 
 				mani.normal = n.scale(math.take(d.y < 0, 1, -1))
 			}
 
-			mani.count = 1
+			mani.collided = true
 			mani.depth = a.r + depth
 			mani.contact_pt = p - mani.normal.scale(depth)
 		}
@@ -149,8 +134,8 @@ pub fn circle_to_aabb(a phy.CircleCollider, b phy.AabbCollider, move math.Vec2) 
 	return mani
 }
 
-pub fn circle_to_circle(a, b phy.CircleCollider, move math.Vec2) Manifold {
-	mut mani := Manifold{}
+pub fn circle_to_circle(a, b phy.CircleCollider, move math.Vec2) phy.Manifold {
+	mut mani := phy.Manifold{}
 
 	bpos := math.Vec2{b.x, b.y}
 	apos := math.Vec2{a.x, a.y} + move
@@ -160,7 +145,7 @@ pub fn circle_to_circle(a, b phy.CircleCollider, move math.Vec2) Manifold {
 	if d2 < r * r {
 		l := math.sqrt(d2)
 		mani.normal = math.take(l != 0, d.scale(1.0 / l), math.Vec2{0, 1})
-		mani.count = 1
+		mani.collided = true
 		mani.depth = r - l
 		mani.contact_pt = bpos - mani.normal.scale(b.r)
 	}
