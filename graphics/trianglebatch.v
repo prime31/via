@@ -80,11 +80,29 @@ pub fn (tb mut TriangleBatch) draw_rectangle(width, height f32, config DrawConfi
 	tb.draw_polygon([math.Vec2{-half_w, -half_h}, math.Vec2{half_w, -half_h}, math.Vec2{half_w, half_h}, math.Vec2{-half_w, half_h}]!, config)
 }
 
+pub fn (tb mut TriangleBatch) draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
+	half_thick := thickness * 0.5
+
+	tb.draw_line(x - half_thick, y, x + width + half_thick, y, thickness, color)
+	tb.draw_line(x + width, y, x + width, y + height, thickness, color)
+	tb.draw_line(x - half_thick, y + height, x + width + half_thick, y + height, thickness, color)
+	tb.draw_line(x, y + height, x, y, thickness, color)
+}
+
 pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2, config DrawConfig) {
 	assert verts.len > 1
 	for i in 1..verts.len - 1 {
 		tb.draw_triangle(verts[0].x, verts[0].y, verts[i].x, verts[i].y, verts[i + 1].x, verts[i + 1].y, config)
 	}
+}
+
+pub fn (tb mut TriangleBatch) draw_hollow_polygon(x, y f32, verts []math.Vec2, color math.Color) {
+	assert verts.len > 1
+
+	for i in 0..verts.len - 1 {
+		tb.draw_line(x + verts[i].x, y + verts[i].y, x + verts[i + 1].x, y + verts[i + 1].y, 1, color)
+	}
+	tb.draw_line(x + verts[verts.len - 1].x, y + verts[verts.len - 1].y, x + verts[0].x, y + verts[0].y, 1, color)
 }
 
 pub fn (tb mut TriangleBatch) draw_circle(radius f32, segments int, config DrawConfig) {
@@ -141,15 +159,6 @@ pub fn (tb mut TriangleBatch) draw_line(x1, y1, x2, y2, thickness f32, color mat
 
 	verts := [math.Vec2{0, -half_thick}, math.Vec2{dist, -half_thick}, math.Vec2{dist, half_thick}, math.Vec2{0, half_thick}]!
 	tb.draw_polygon(verts, {x:x1 y:y1 rot:math.degrees(angle) color:color})
-}
-
-pub fn (tb mut TriangleBatch) draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
-	half_thick := thickness * 0.5
-
-	tb.draw_line(x - half_thick, y, x + width + half_thick, y, thickness, color)
-	tb.draw_line(x + width, y, x + width, y + height, thickness, color)
-	tb.draw_line(x - half_thick, y + height, x + width + half_thick, y + height, thickness, color)
-	tb.draw_line(x, y + height, x, y, thickness, color)
 }
 
 pub fn (tbb &TriangleBatch) flush() {

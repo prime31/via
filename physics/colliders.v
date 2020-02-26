@@ -1,6 +1,5 @@
 module physics
 import via.math
-import via.debug
 
 pub enum ColliderKind {
 	aabb
@@ -102,19 +101,16 @@ pub fn (c &AabbCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTransfor
 
 	verts := [math.Vec2{c.x, c.y}, math.Vec2{c.x + c.w, c.y}, math.Vec2{c.x + c.w, c.y + c.h}, math.Vec2{c.x, c.y + c.h}]!
 	mut furthest_dist := (verts[0] + trans.pos).dot(direction)
-	mut furthest_vert := verts[0]
+	mut furthest_vert := verts[0] + trans.pos
 
 	for i in 1..verts.len {
 		tmp_v := verts[i] + trans.pos
 		dist := tmp_v.dot(direction)
 		if dist > furthest_dist {
 			furthest_dist = dist
-			furthest_vert = verts[i]
+			furthest_vert = tmp_v
 		}
 	}
-
-	// println('-------- Box dist: $furthest_dist, vrt: $furthest_vert')
-	debug.draw_point(furthest_vert.x, furthest_vert.y, 4, math.white())
 
 	return furthest_vert
 }
@@ -161,10 +157,6 @@ pub fn (c &CircleCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTransf
 	dir_norm := dir.normalize()
 	center := math.Vec2{c.x, c.y} + trans.pos
 
-	ret := center + dir_norm.scale(c.r)
-	debug.draw_point(ret.x, ret.y, 4, math.blue())
-	// println('------ dir: $dir, dir_norm: $dir_norm,  rad scaled: ${dir_norm.scale(c.r)}')
-
 	// add the radius along the vector to the center to get the farthest point
 	return center + dir_norm.scale(c.r)
 }
@@ -196,7 +188,7 @@ pub fn polygoncollider(x, y f32, verts []math.Vec2) PolygonCollider {
 }
 
 pub fn (c &PolygonCollider) get_bounds() math.RectF {
-	return math.RectF{0, 0, 0, 0}
+	panic('not implemented fool')
 }
 
 pub fn (c &PolygonCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTransform) math.Vec2 {
@@ -218,9 +210,6 @@ pub fn (c &PolygonCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTrans
 			furthest_vert = tmp_v
 		}
 	}
-
-	// println('-------- Box dist: $furthest_dist, vrt: $furthest_vert')
-	debug.draw_point(furthest_vert.x, furthest_vert.y, 4, math.red())
 
 	return furthest_vert
 }
