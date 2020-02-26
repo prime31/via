@@ -1,7 +1,7 @@
 module arcade
 import via.math
 import via.physics as phy
-
+import via.physics.gjk
 
 pub fn collide(a, b &phy.Collider, move math.Vec2) phy.Manifold {
 	if !a.collides_with(b) {
@@ -18,6 +18,9 @@ pub fn collide(a, b &phy.Collider, move math.Vec2) phy.Manifold {
 					mut mani := circle_to_aabb(&phy.CircleCollider(b), &phy.AabbCollider(a), move.scale(-1))
 					return mani.invert()
 				}
+				.polygon {
+					return gjk.intersects(a, b, move)
+				}
 				else { return phy.Manifold{} }
 			}
 		}
@@ -29,8 +32,15 @@ pub fn collide(a, b &phy.Collider, move math.Vec2) phy.Manifold {
 				.circle {
 					return circle_to_circle(&phy.CircleCollider(a), &phy.CircleCollider(b), move)
 				}
+				.polygon {
+					return gjk.intersects(a, b, move)
+				}
 				else { return phy.Manifold{} }
 			}
+		}
+		.polygon {
+			// if we have a polygon involved we have to use gjk
+			return gjk.intersects(a, b, move)
 		}
 		else { return phy.Manifold{} }
 	}
