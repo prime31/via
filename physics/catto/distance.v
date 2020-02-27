@@ -30,6 +30,7 @@ pub fn (s &Simplex) get_search_dir() math.Vec2 {
 		2 {
 			edge_ab := s.vert_b.point - s.vert_a.point
 			sgn := edge_ab.cross(s.vert_a.point.scale(-1))
+			println('edge_ab: $edge_ab, sgn: $sgn, s.vert_a.point: $s.vert_a.point, s.vert_b.point: $s.vert_b.point')
 			if sgn > 0 {
 				// origin is left of edge_ab
 				return math.Vec2{-edge_ab.y, edge_ab.x}
@@ -57,14 +58,17 @@ pub fn (s &Simplex) get_closest_pt() math.Vec2 {
 }
 
 pub fn (s &Simplex) get_witness_pts() (math.Vec2, math.Vec2) {
+	println('---- get_witness_pts. count: $s.count, a.u: $s.vert_a.u, b.u: $s.vert_b.u')
 	match s.count {
 		1 {
-			return s.vert_a.point1, s.vert_a.point1
+			return s.vert_a.point1, s.vert_a.point2
 		}
 		2 {
 			ss := 1.0 / s.divisor
 			pt1 := s.vert_a.point1.scale(ss * s.vert_a.u) + s.vert_b.point1.scale(ss * s.vert_b.u)
 			pt2 := s.vert_a.point2.scale(ss * s.vert_a.u) + s.vert_b.point2.scale(ss * s.vert_b.u)
+			// *point1 = (s * m_vertexA.u) * m_vertexA.point1 + (s * m_vertexB.u) * m_vertexB.point1;
+			// *point2 = (s * m_vertexA.u) * m_vertexA.point2 + (s * m_vertexB.u) * m_vertexB.point2;
 			return pt1, pt2
 		}
 		3 {
@@ -200,20 +204,19 @@ pub fn (s mut Simplex) solve3(q math.Vec2) {
 pub fn distance(input Input) Output {
 	mut output := Output{}
 
-	poly1 := input.polygon1
-	poly2 := input.polygon2
-
-	trans1 := input.trans1
-	trans2 := input.trans2
-
 	// init the Simplex
 	mut simplex := Simplex{}
-	local_pt1 := poly1.points[0]
-	local_pt2 := poly2.points[0]
-	simplex.vert_a.point1 = trans1.mul(local_pt1)
-	simplex.vert_a.point2 = trans2.mul(local_pt2)
+	local_pt1 := input.polygon1.points[0]
+	local_pt2 := input.polygon2.points[0]
+	simplex.vert_a.point1 = input.trans1.mul(local_pt1)
+	simplex.vert_a.point2 = input.trans2.mul(local_pt2)
+	simplex.vert_a.point = simplex.vert_a.point2 - simplex.vert_a.point1
 	simplex.vert_a.u = 1
 	simplex.count = 1
+
+	println('--------------- START -----------------')
+	println('---------------------------------------')
+	println('s.vert_a.point: $simplex.vert_a.point, s.vert_b.point1: $simplex.vert_b.point1')
 
 	// Get simplex vertices as an array.
 	vertices := &simplex.vert_a
@@ -231,11 +234,12 @@ pub fn distance(input Input) Output {
 		for i in 0..save_ct {
 			save1[i] = vertices[i].index1
 			save2[i] = vertices[i].index2
+			println('-- saving[$i] ${vertices[i].index1} - ${vertices[i].index2}')
 		}
 
 		// determine the closest point on the simplex and remove unused verts
 		match simplex.count {
-			1 { break }
+			1 {}
 			2 { simplex.solve2(math.Vec2{}) }
 			3 { simplex.solve3(math.Vec2{}) }
 			else { assert false }
@@ -249,15 +253,19 @@ pub fn distance(input Input) Output {
 
 		// get search direction and ensure it is non-zero
 		d := simplex.get_search_dir()
-		if d.dot(d) == 0 { break }
+		if d.dot(d) == 0 {
+			println('--- d.dot(d). $d')
+			break
+		}
 
 		// compute a tentative new simplex vert using support points
 		mut vertex := vertices + simplex.count
-		vertex.index1 = poly1.get_support(trans1.r.mul_t(d.scale(-1)))
-		vertex.point1 = trans1.mul(poly1.points[vertex.index1])
-		vertex.index2 = poly2.get_support(trans2.r.mul_t(d))
-		vertex.point2 = trans2.mul(poly2.points[vertex.index2])
+		vertex.index1 = input.polygon1.get_support(input.trans1.r.mul_t(d.scale(-1)))
+		vertex.point1 = input.trans1.mul(input.polygon1.points[vertex.index1])
+		vertex.index2 = input.polygon2.get_support(input.trans2.r.mul_t(d))
+		vertex.point2 = input.trans2.mul(input.polygon2.points[vertex.index2])
 		vertex.point = vertex.point2 - vertex.point1
+		println('simplex count: $simplex.count')
 
 		iter++
 
@@ -265,13 +273,17 @@ pub fn distance(input Input) Output {
 		mut dupe := false
 		for i in 0..save_ct {
 			if (vertex.index1 == save1[i] && vertex.index2 == save2[i]) {
+				println('duplicate: $vertex.index1 - $vertex.index2')
 				dupe = true
 				break
 			}
 		}
 
 		// If we found a duplicate support point we must exit to avoid cycling.
-		if dupe { break }
+		if dupe {
+			println('--- duplicate. bailing. $d')
+			break
+		}
 
 		// new vertex is ok and needed
 		simplex.count++
@@ -282,6 +294,8 @@ pub fn distance(input Input) Output {
 	output.point2 = p2
 	output.distance = output.point1.distance_to(output.point2)
 	output.iterations = iter
+
+	println('output.distance: $output.distance, iter: $iter, p1: $p1, p2: $p2')
 
 	return output
 }

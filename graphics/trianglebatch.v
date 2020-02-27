@@ -155,7 +155,7 @@ pub fn (tb mut TriangleBatch) draw_line(x1, y1, x2, y2, thickness f32, color mat
 	v2 := y1 - y2
 	dist := math.sqrt(v1 * v1 + v2 * v2)
 	angle := math.angle_between_points(x1, y1, x2, y2)
-	half_thick := thickness * 0.5
+	half_thick := thickness * 0.51
 
 	verts := [math.Vec2{0, -half_thick}, math.Vec2{dist, -half_thick}, math.Vec2{dist, half_thick}, math.Vec2{0, half_thick}]!
 	tb.draw_polygon(verts, {x:x1 y:y1 rot:math.degrees(angle) color:color})
