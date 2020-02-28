@@ -73,7 +73,7 @@ pub fn (c mut Color) set_a(a byte) {
 	c.value = (c.value & 0x00ffffff) | a << 24
 }
 
-pub fn (c Color) scale(scale f32) Color {
+pub fn (c Color) mul(scale f32) Color {
 	r := int(f32(c.r()) * scale)
 	g := int(f32(c.g()) * scale)
 	b := int(f32(c.b()) * scale)

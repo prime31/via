@@ -104,7 +104,7 @@ fn render() {
 				tribatch.draw_hollow_rect(item.rect.x, item.rect.y, item.rect.w, item.rect.h, item.rect.thickness, item.rect.color)
 			}
 			.hollow_circle {
-				tribatch.draw_hollow_circle(item.circle.r, 10, {x:item.circle.x y:item.circle.y})
+				tribatch.draw_hollow_circle(item.circle.r, 12, {x:item.circle.x y:item.circle.y})
 			}
 			.text {
 				quadbatch.draw_text(item.text.text, {x:item.text.x y:item.text.y color:item.text.color fontbook:0})
@@ -127,12 +127,20 @@ pub fn draw_line(x1, y1, x2, y2, thickness f32, color math.Color) {
 	add_item(DebugDrawItem(DebugLine{DebugDrawKind.line, x1, y1, x2, y2, thickness, color}))
 }
 
+pub fn draw_linev(pt1, pt2 math.Vec2, thickness f32, color math.Color) {
+	add_item(DebugDrawItem(DebugLine{DebugDrawKind.line, pt1.x, pt1.y, pt2.x, pt2.y, thickness, color}))
+}
+
 pub fn draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
 	add_item(DebugDrawItem(DebugRect{DebugDrawKind.hollow_rect, x, y, width, height, thickness, color}))
 }
 
 pub fn draw_hollow_circle(x, y, radius f32, color math.Color) {
 	add_item(DebugDrawItem(DebugCircle{DebugDrawKind.hollow_circle, x, y, radius, color}))
+}
+
+pub fn draw_hollow_circlev(pos math.Vec2, radius f32, color math.Color) {
+	add_item(DebugDrawItem(DebugCircle{DebugDrawKind.hollow_circle, pos.x, pos.y, radius, color}))
 }
 
 pub fn draw_text(text string, x, y int, color math.Color) {

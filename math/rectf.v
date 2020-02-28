@@ -8,7 +8,7 @@ pub mut:
 	h f32
 }
 
-pub fn (r &RectF) str() string { return '$r.x, $r.y, $r.w, $r.h' }
+pub fn (r RectF) str() string { return '$r.x, $r.y, $r.w, $r.h' }
 
 [inline]
 pub fn (r mut RectF) set(x, y, w, h f32) {

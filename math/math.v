@@ -141,6 +141,9 @@ pub fn round(x f32) f32 { return C.roundf(x) }
 pub fn trunc(x f32) f32 { return C.truncf(x) }
 
 [inline]
+pub fn itrunc(x f32) int { return int(C.truncf(x)) }
+
+[inline]
 pub fn frac(x f32) f32 { return x - floor(x) }
 
 [inline]

@@ -1,5 +1,6 @@
 module input
 import via.time
+import via.math
 import via.graphics
 import via.libs.sdl2
 
@@ -142,29 +143,30 @@ fn (i mut Input) handle_mouse_event(evt &C.SDL_MouseButtonEvent) {
 //#region input data
 
 // only true if down this frame and not down the previous frame
-pub fn is_key_pressed(scancode sdl2.Scancode) bool {
+pub fn key_pressed(scancode sdl2.Scancode) bool {
 	return input.keys[scancode] == 3
 }
 
 // true the entire time the key is down
-pub fn is_key_down(scancode sdl2.Scancode) bool {
+pub fn key_down(scancode sdl2.Scancode) bool {
 	return input.keys[scancode] > 1
 }
 
 // true only the frame the key is released
-pub fn is_key_released(scancode sdl2.Scancode) bool {
+pub fn key_up(scancode sdl2.Scancode) bool {
 	return input.keys[scancode] == 1
 }
 
-pub fn is_mouse_pressed(button MouseButton) bool {
+pub fn mouse_pressed(button MouseButton) bool {
 	return input.mouse_buttons[button] == 3
 }
 
-pub fn is_mouse_down(button MouseButton) bool {
+// true the entire time the button is down
+pub fn mouse_down(button MouseButton) bool {
 	return input.mouse_buttons[button] > 1
 }
 
-pub fn is_mouse_released(button MouseButton) bool {
+pub fn mouse_up(button MouseButton) bool {
 	return input.mouse_buttons[button] == 1
 }
 
@@ -186,6 +188,11 @@ pub fn mouse_pos_scaled() (int, int) {
 	xf := f32(x) - input.res_scaler.x
 	yf := f32(y) - input.res_scaler.y
 	return int(xf / input.res_scaler.scale), int(yf / input.res_scaler.scale)
+}
+
+pub fn mouse_pos_scaledv() math.Vec2 {
+	x, y := mouse_pos_scaled()
+	return math.Vec2{x, y}
 }
 
 pub fn mouse_rel_motion() (int, int) {

@@ -108,7 +108,7 @@ fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
 
 		// check for degenerate cases where the origin lies on the segment created by a -> b which will yield a
 		// zero edge normal
-		if dir.square_magnitude() <= distance_epsilon
+		if dir.sq_magnitude() <= distance_epsilon
 		{
 			// in this case just choose either normal (left or right)
 			*dir = math.Vec2{ab.y, -ab.x}
