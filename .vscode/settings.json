@@ -3,5 +3,8 @@
         ".git*": true,
         "*/generator/bin": true,
         "*/generator/obj": true
+    },
+    "[v]": {
+        "editor.formatOnSave": false
     }
 }
