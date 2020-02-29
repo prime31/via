@@ -163,7 +163,9 @@ pub fn new_effectstack() &EffectStack {
 
 //#region render passes
 
-// combine both params into a single one
+// offscreen passes should be rendered first. If no pass is in the PassConfig rendering will be done to the
+// default offscreen pass. After all passes are run you can optionally call postprocess and then blit_to_screen.
+// If another pass is run after blit_to_screen rendering will be to the backbuffer.
 pub fn begin_pass(config PassConfig) {
 	mut gg := g
 	config.apply(mut gg.pass_action)
@@ -209,6 +211,7 @@ pub fn postprocess(pp &EffectStack) {
 	pp.process(g.def_pass.offscreen_pass)
 }
 
+// renders the default OffscreenPass to the backbuffer using the ResolutionScaler
 pub fn blit_to_screen(letterbox_color math.Color) {
 	mut gg := g
 	gg.blitted_to_screen = true
