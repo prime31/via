@@ -49,12 +49,12 @@ pub fn (m &IntVoidptrMap) free() {
 }
 
 [inline]
-pub fn (m mut IntVoidptrMap) has(key int) bool {
+pub fn (m &IntVoidptrMap) has(key int) bool {
     return m.read_index(key) != -1
 }
 
 [inline]
-pub fn (m mut IntVoidptrMap) get(key int) voidptr {
+pub fn (m &IntVoidptrMap) get(key int) voidptr {
 	if key == free_key {
 		return if m.has_free_key { m.free_value } else { null_value }
 	}
@@ -137,7 +137,7 @@ pub fn (m &IntVoidptrMap) all_keys() []int {
 
 // Find key position in the map
 [inline]
-fn (m mut IntVoidptrMap) read_index(key int) int {
+fn (m &IntVoidptrMap) read_index(key int) int {
 	mut idx := iim_phi_mix(key) & m.mask
 	if m.keys[idx] == key {
 		return idx
@@ -163,7 +163,7 @@ fn (m mut IntVoidptrMap) read_index(key int) int {
 }
 
 // Find an index of a cell which should be updated by 'put' operation
-fn (m mut IntVoidptrMap) put_index(key int) int {
+fn (m &IntVoidptrMap) put_index(key int) int {
 	read_idx := m.read_index(key)
 	if read_idx >= 0 {
 		return read_idx

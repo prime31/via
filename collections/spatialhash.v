@@ -342,7 +342,7 @@ fn (sh &SpatialHash) get_segment_intersection_indices(bounds &math.Rect, x1, y1,
 	return SegmentIntersectionResult{true, ti1, ti2, nx1, ny1, nx2, ny2}
 }
 
-fn (sh mut SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, goal_y f32) CollisionResult {
+fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, goal_y f32) CollisionResult {
 	dx := goal_x - bounds.x
 	dy := goal_y - bounds.y
 

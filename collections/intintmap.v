@@ -203,7 +203,7 @@ pub fn (m mut IntIntMap) remove(key int) int {
 	panic('unreachable')
 }
 
-fn (m mut IntIntMap) shift_keys(ptr int) int {
+fn (m &IntIntMap) shift_keys(ptr int) int {
 	// shift entries with the same hash
 	mut pos := ptr
 	mut last := 0
