@@ -34,7 +34,7 @@ pub fn (w &World) get_system_context(system u64) voidptr {
 	return C.ecs_get_system_context(w.world, system)
 }
 
-// runs into generic bug if called with the same T twice.
+// runs into generic bug if called with the same T twice. use flecs.new_comp<T> for now
 pub fn (w &World) new_component<T>(id string) Entity {
 	return Entity {
 		id: C.ecs_new_component(w.world, id.str, sizeof(T)),

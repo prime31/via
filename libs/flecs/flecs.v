@@ -24,6 +24,6 @@ pub fn get_context<T>(world &World) &T {
 	return &T(C.ecs_get_context(world.world))
 }
 
-pub fn get_system_context<T>(world &World, system u64) &T {
-	return &T(C.ecs_get_system_context(world.world, system))
+pub fn get_system_context<T>(world &C.ecs_world_t, system u64) &T {
+	return &T(C.ecs_get_system_context(world, system))
 }
