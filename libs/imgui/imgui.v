@@ -29,7 +29,7 @@ pub fn debug_check_version_and_data_layout(version_str string, sz_io u32, sz_sty
 }
 
 [inline]
-pub fn get_i_o() &C.ImGuiIO {
+pub fn get_io() &C.ImGuiIO {
 	return C.igGetIO()
 }
 

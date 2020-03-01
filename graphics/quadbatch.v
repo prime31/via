@@ -5,7 +5,7 @@ import via.utils
 import via.fonts
 import via.libs.sokol.gfx
 
-#flag -I @VMOD/via/graphics/thirdparty
+#flag -I @VROOT/graphics/thirdparty
 #include "proggytiny.h"
 
 const ( used = gfx.used_import )

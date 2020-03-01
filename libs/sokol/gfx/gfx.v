@@ -191,30 +191,3 @@ pub fn query_limits() C.sg_limits {
 pub fn query_pixelformat(fmt PixelFormat) C.sg_pixelformat_info {
 	return C.sg_query_pixelformat(fmt)
 }
-
-// get resource creation desc struct with their default values replaced
-[inline]
-pub fn query_buffer_defaults(desc &C.sg_buffer) C.sg_buffer_desc {
-	return C.sg_query_buffer_defaults(desc)
-}
-
-[inline]
-pub fn query_image_defaults(desc &C.sg_image) C.sg_image_desc {
-	return C.sg_query_image_defaults(desc)
-}
-
-[inline]
-pub fn query_shader_defaults(desc &C.sg_shader) C.sg_shader_desc {
-	return C.sg_query_shader_defaults(desc)
-}
-
-[inline]
-pub fn query_pipeline_defaults(desc &C.sg_pipeline) C.sg_pipeline_desc {
-	return C.sg_query_pipeline_defaults(desc)
-}
-
-[inline]
-pub fn query_pass_defaults(desc &C.sg_pass) C.sg_pass_desc {
-	return C.sg_query_pass_defaults(desc)
-}
-

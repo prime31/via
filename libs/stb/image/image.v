@@ -1,7 +1,7 @@
 module image
 
-#flag -I @VMOD/via/libs/stb/image/thirdparty
-#flag @VMOD/via/libs/stb/image/thirdparty/stb_image.o
+#flag -I @VROOT/libs/stb/image/thirdparty
+#flag @VROOT/libs/stb/image/thirdparty/stb_image.o
 
 #include "stb_image.h"
 

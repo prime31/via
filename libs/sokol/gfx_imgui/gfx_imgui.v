@@ -1,4 +1,9 @@
 module gfx_imgui
+import via.libs.sokol
+
+const (
+	used_import0 = sokol.used_import
+)
 
 #flag -DSOKOL_TRACE_HOOKS
 
