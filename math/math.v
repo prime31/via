@@ -1,11 +1,8 @@
 module math
 
 #include <math.h>
-
-pub const (
-	max_i32 = 2147483647
-	min_i32 = -2147483648
-)
+#include <float.h>
+#include <limits.h>
 
 //#region C declarations
 
@@ -45,11 +42,19 @@ fn C.truncf(x f32) f32
 //#endregion
 
 pub const (
+	max_i32 = 2147483647
+	min_i32 = -2147483648
+	int_min = C.INT_MIN
+	int_max = C.INT_MAX
+	f32_min = f32(C.FLT_MIN)
+	f32_max = f32(C.FLT_MAX)
 	e = f32(C.M_E)
 	pi = f32(C.M_PI)
 	pi2 = f32(C.M_PI_2)
 	pi4 = f32(C.M_PI_4)
 	sqrt2 = f32(C.M_SQRT2)
+	phi = 1.61803398874989484820458683
+	tau = 6.28318530717958647692528676
 )
 
 //#region Basic Math ops
