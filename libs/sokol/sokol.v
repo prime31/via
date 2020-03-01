@@ -1,6 +1,10 @@
 module sokol
+import via.libs.flextgl
 
-pub const ( used_import = 0 )
+pub const (
+	used_import = 0
+	used_import0 = flextgl.used_import // forces import of FlextGL before Sokol
+)
 
 #flag -I @VROOT/libs/sokol/thirdparty
 #flag -I @VROOT/libs/sokol/thirdparty/util
