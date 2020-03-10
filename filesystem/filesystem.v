@@ -1,6 +1,6 @@
 module filesystem
 import os
-import filepath
+import os
 import via.libs.physfs
 
 pub fn init_filesystem(identity string, append_identity bool) {
@@ -10,11 +10,11 @@ pub fn init_filesystem(identity string, append_identity bool) {
 	}
 
 	physfs.permit_symbolic_links(1)
-	physfs.mount(filepath.dir(os.realpath(os.executable())), '', true)
+	physfs.mount(os.dir(os.realpath(os.executable())), '', true)
 
 	mut ident := identity
 	if ident.len == 0 {
-		ident = filepath.filename(os.executable())
+		ident = os.filename(os.executable())
 	}
 
 	// setup save directory and add it to search path

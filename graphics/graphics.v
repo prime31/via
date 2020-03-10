@@ -1,5 +1,5 @@
 module graphics
-import filepath
+import os
 import via.math
 import via.fonts
 import via.window
@@ -103,7 +103,7 @@ pub fn new_texture(src string) Texture {
 }
 
 pub fn new_texture_atlas(src string) TextureAtlas {
-	tex_src := src.replace(filepath.ext(src), '.png')
+	tex_src := src.replace(os.ext(src), '.png')
 	tex := new_texture(tex_src)
 
 	buf := filesystem.read_bytes(src)
