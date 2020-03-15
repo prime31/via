@@ -2,6 +2,7 @@ module filesystem
 import os
 import os
 import via.libs.physfs
+import via.libs.sdl2
 
 pub fn init_filesystem(identity string, append_identity bool) {
 	// we might have already initted in mount or exists
