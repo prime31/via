@@ -8,7 +8,7 @@ pub fn new_arr<T>(len int, cap int) []T {
 		len: len
 		cap: cap_
 		element_size: elm_size
-		data: calloc(cap_ * elm_size)
+		data: vcalloc(cap_ * elm_size)
 	}
 	return arr
 }
@@ -21,7 +21,7 @@ pub fn new_arr_with_default<T>(len int, cap int, default_val T) []T {
 		len: len
 		cap: cap_
 		element_size: elm_size
-		data: calloc(cap_ * elm_size)
+		data: vcalloc(cap_ * elm_size)
 	}
 
 	mut typed_arr := *T(arr.data)

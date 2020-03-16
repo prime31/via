@@ -72,19 +72,17 @@ struct DebugText {
 
 //#endregion
 
-const (
-	d = &Debug{}
-)
+__global d Debug
 
 pub fn setup() {
+	d = Debug{}
 	graphics.set_debug_render_fn(render)
 }
 
 //#region Drawing
 
 fn add_item(item DebugDrawItem) {
-	mut dd := d
-	dd.items << item
+	d.items << item
 }
 
 fn render() {
@@ -108,7 +106,8 @@ fn render() {
 			}
 			.text {
 				quadbatch.draw_text(item.text.text, {x:item.text.x y:item.text.y color:item.text.color fontbook:0})
-				unsafe { item.text.text.free() }
+				// TODO: why does this panic?
+				//unsafe { item.text.text.free() }
 			}
 			else {}
 		}

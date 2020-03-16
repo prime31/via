@@ -15,7 +15,7 @@ pub fn (t Tileset) str() string {
 	return 's:$t.spacing, m:$t.margin, image:$t.image, tiles:$t.tiles.len'
 }
 
-pub fn (t mut Tileset) free() {
+pub fn (t &Tileset) free() {
 	unsafe {
 		for i in 0..t.tiles.len {
 			t.tiles[i].free()

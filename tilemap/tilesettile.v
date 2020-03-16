@@ -11,7 +11,7 @@ pub mut:
 	props map[string]string
 }
 
-pub fn (t mut TilesetTile) free() {
+pub fn (t &TilesetTile) free() {
 	unsafe {
 		t.props.free()
 	}

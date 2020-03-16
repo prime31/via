@@ -18,7 +18,7 @@ pub fn (m Map) str() string {
 	return '[Map] w:$m.width, h:$m.height, ts:$m.tile_size\ntilesets:$m.tilesets\ntile_layers:$m.tile_layers\nobject_layers:$m.object_layers\ngroup_layers:$m.group_layers'
 }
 
-pub fn (m mut Map) free() {
+pub fn (m &Map) free() {
 	unsafe {
 		for i in 0..m.tilesets.len { m.tilesets[i].free() }
 		for i in 0..m.tile_layers.len { m.tile_layers[i].free() }

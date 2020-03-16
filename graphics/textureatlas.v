@@ -86,7 +86,7 @@ pub fn (a &TextureAtlas) get_quad(name string) math.Quad {
 	return a.quad_map[name]
 }
 
-pub fn (a mut TextureAtlas) free() {
+pub fn (a &TextureAtlas) free() {
 	unsafe { a.quad_map.free() }
 	a.tex.free()
 }
