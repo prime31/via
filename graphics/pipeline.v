@@ -33,7 +33,7 @@ pub fn (p &Pipeline) free() {
 	p.shader.free()
 }
 
-pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, pipeline_desc mut sg_pipeline_desc) Pipeline {
+pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, mut pipeline_desc sg_pipeline_desc) Pipeline {
 	pipeline_desc.shader = shader_make(shader_src, mut shader_desc)
 
 	mut uniforms := []UniformBlock{}

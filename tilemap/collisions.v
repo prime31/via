@@ -9,7 +9,7 @@ const (
 	vert_inset = 2
 )
 
-pub fn move(map &Map, rect math.Rect, movement mut math.Vec2) {
+pub fn move(map &Map, rect math.Rect, mut movement math.Vec2) {
 	layer := map.tile_layers[0]
 	mut rectm := rect
 
