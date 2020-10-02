@@ -94,7 +94,7 @@ pub fn (r1 &RectF) minkowski_diff(r2 &RectF) RectF {
 }
 
 fn nearestf(x, a, b f32) f32 {
-	if abs(a - x) < abs(b - x) {
+	if f32_abs(a - x) < f32_abs(b - x) {
 		return a
 	}
 	return b

@@ -42,7 +42,7 @@ fn (v &Via) free() {
 
 	C.sg_shutdown()
 
-	unsafe { free(v) }
+	unsafe { C.free(v) }
 }
 
 pub fn run<T>(config &ViaConfig, mut ctx T) {
