@@ -14,7 +14,7 @@ pub fn init_filesystem(identity string, append_identity bool) {
 
 	mut ident := identity
 	if ident.len == 0 {
-		ident = os.filename(os.executable())
+		ident = os.file_name(os.executable())
 	}
 
 	// setup save directory and add it to search path

@@ -104,9 +104,11 @@ pub fn (mut p Pipeline) set_uniform(uniform_index int, data voidptr) {
 
 	mut uni := p.uniforms[uniform_index]
 	// only set and dirty the uniform if it changed
-	if C.memcmp(data, uni.data, uni.num_bytes) != 0 {
-		p.uniforms[uniform_index].dirty = true
-		C.memcpy(uni.data, data, uni.num_bytes)
+	unsafe {
+		if C.memcmp(data, uni.data, uni.num_bytes) != 0 {
+			p.uniforms[uniform_index].dirty = true
+			C.memcpy(uni.data, data, uni.num_bytes)
+		}
 	}
 }
 

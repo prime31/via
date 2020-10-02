@@ -39,8 +39,8 @@ pub fn (mut q Quad) set_viewport(x, y, width, height f32) {
 	w_tol := (1.0 / f32(q.img_width)) / 128.0
 	h_tol := (1.0 / f32(q.img_height)) / 128.0
 
-	inv_w := 1.0 / q.img_width
-	inv_h := 1.0 / q.img_height
+	inv_w := 1.0 / f32(q.img_width)
+	inv_h := 1.0 / f32(q.img_height)
 
 	q.texcoords[0] = Vec2{x * inv_w + w_tol, y * inv_h + h_tol}
 	q.texcoords[1] = Vec2{(x + width) * inv_w - w_tol, y * inv_h + h_tol}

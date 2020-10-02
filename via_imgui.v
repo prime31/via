@@ -8,7 +8,7 @@ const (
 
 fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool) {
 	if gfx_dbg { gfx_imgui.initialize(sg_imgui) }
-	igCreateContext(C.NULL)
+	C.igCreateContext(C.NULL)
 
 	mut io := C.igGetIO()
 	io.ConfigFlags |= C.ImGuiConfigFlags_NavEnableKeyboard

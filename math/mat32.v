@@ -120,8 +120,8 @@ pub fn mat32_ortho_off_center(width, height int) Mat32 {
 	half_h := int(f32(height) / 2)
 
     mut result := mat32_identity()
-    result.data[0] = 2.0 / (half_w + half_w)
-    result.data[3] = 2.0 / (-half_h - half_h)
+    result.data[0] = 2.0 / f32(half_w + half_w)
+    result.data[3] = 2.0 / f32(-half_h - half_h)
     result.data[4] = (-half_w + half_w) / (-half_w - half_w)
     result.data[5] = (half_h - half_h) / (half_h + half_h)
     return result

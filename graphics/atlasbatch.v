@@ -40,7 +40,7 @@ pub fn (ab &AtlasBatch) free() {
 
 	unsafe {
 		ab.verts.free()
-		free(ab)
+		C.free(ab)
 	}
 }
 

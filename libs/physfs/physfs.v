@@ -63,7 +63,7 @@ pub fn get_write_dir() string {
 	if str == C.NULL {
 		return ''
 	}
-	return string(str)
+	return str.str()
 }
 
 [inline]
@@ -80,7 +80,7 @@ pub fn get_search_path() []string {
 
 	mut i := 0
 	for voidptr(string_ptr_array[i]) != voidptr(0) {
-		arr << string(string_ptr_array[i])
+		arr << string_ptr_array[i].str()
 		i++
 	}
 

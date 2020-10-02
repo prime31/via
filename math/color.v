@@ -14,11 +14,11 @@ pub fn color_from_bytes(r byte, g byte, b byte, a byte) Color {
 }
 
 pub fn rgb(r f32, g f32, b f32) Color {
-    return color_from_bytes(byte(r * 255), byte(g * 255), byte(b * 255), byte(255))
+    return color_from_bytes(byte(int(r * 255)), byte(int(g * 255)), byte(int(b * 255)), byte(255))
 }
 
 pub fn rgba(r f32, g f32, b f32, a f32) Color {
-    return color_from_bytes(byte(r * 255), byte(g * 255), byte(b * 255), byte(a * 255))
+    return color_from_bytes(byte(int(r * 255)), byte(int(g * 255)), byte(int(b * 255)), byte(int(a * 255)))
 }
 
 pub fn color_from_ints(r int, g int, b int, a int) Color {

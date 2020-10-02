@@ -42,7 +42,7 @@ pub fn (policy ResolutionPolicy) get_scaler(design_w, design_h int) ResolutionSc
 
 	if policy != .default {
 		scale_f = if rt_aspect_ratio > aspect_ratio { res_x } else { res_y }
-		scale = math.ifloor(scale_f)
+		scale = math.ifloor(f32(scale_f))
 		if scale < 1 {
 			scale = 1
 		}

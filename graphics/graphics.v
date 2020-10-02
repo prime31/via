@@ -40,7 +40,7 @@ pub fn free() {
 	g.tri_batch.free()
 	g.def_pip.free()
 	g.def_pass.free()
-	unsafe { free(g) }
+	unsafe { C.free(g) }
 }
 
 pub fn setup(config GraphicsConfig) {

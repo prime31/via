@@ -13,7 +13,7 @@ pub fn (e Edge) opposing() Edge {
 		.left { Edge.right }
 		.top { Edge.bottom }
 		.bottom { Edge.top }
-		else { e }
+		//else { e }
 	}
 }
 

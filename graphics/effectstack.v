@@ -43,6 +43,7 @@ fn (pp &EffectStack) process(pass OffScreenPass) {
 pub fn (mut pp EffectStack) blit(tex Texture, pip Pipeline) {
 	mut config := PassConfig{color_action:.dontcare, pipeline:pip, trans_mat:0, pass:0}
 	begin_pass(mut config)
-	spritebatch().draw(tex, {x:0 y:0})
+	mut sb := spritebatch()
+	sb.draw(tex, {x:0 y:0})
 	end_pass()
 }

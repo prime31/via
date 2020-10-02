@@ -43,7 +43,7 @@ pub fn (t &RigidTransform) get_transformed(vec Vec2) Vec2 {
 	return vec2
 }
 
-pub fn (t &RigidTransform) transformed(vec Vec2) {
+pub fn (t &RigidTransform) transformed(mut vec Vec2) {
 	x := vec.x
 	y := vec.y
 

@@ -37,9 +37,9 @@ pub fn shader_make(src ShaderSourceConfig, mut shader_desc C.sg_shader_desc) C.s
 		frag_src = default_frag + frag_main
 	}
 
-	mut shader := shader_desc.set_vert_src(vert_src)
-	shader.set_frag_src(frag_src)
-	shader.make_shader()
+	shader_desc = shader_desc.set_vert_src(vert_src)
+	shader_desc = shader_desc.set_frag_src(frag_src)
+	shader := shader_desc.make_shader()
 
 	vert_src.free()
 	frag_src.free()
