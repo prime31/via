@@ -1,6 +1,5 @@
 module graphics
 import via.math
-import via.fonts
 import via.utils
 import via.fonts
 import via.libs.sokol.gfx
@@ -13,7 +12,7 @@ const ( used = gfx.used_import )
 pub struct QuadBatch {
 mut:
 	fontbook &fonts.FontBook
-	bindings sg_bindings
+	bindings C.sg_bindings
 	verts []math.Vertex
 	max_sprites int
 	quad_cnt int = 0
@@ -147,9 +146,9 @@ pub fn (mut qb QuadBatch) flush() {
 	if total_quads == 0 { return }
 
 	total_verts := total_quads * 4
-	qb.bindings.vertex_buffer_offsets[0] = sg_append_buffer(qb.bindings.vertex_buffers[0], &qb.verts[qb.last_appended_quad_cnt * 4], sizeof(math.Vertex) * total_verts)
+	qb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(qb.bindings.vertex_buffers[0], &qb.verts[qb.last_appended_quad_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
 	qb.last_appended_quad_cnt = qb.quad_cnt
 
-	sg_apply_bindings(&qb.bindings)
-	sg_draw(0, total_quads * 6, 1)
+	C.sg_apply_bindings(&qb.bindings)
+	C.sg_draw(0, total_quads * 6, 1)
 }

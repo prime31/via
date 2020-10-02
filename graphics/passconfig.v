@@ -14,7 +14,7 @@ pub:
 	pass &OffScreenPass
 }
 
-fn (mut cfg PassConfig) apply(pa C.sg_pass_action) {
+fn (mut cfg PassConfig) apply(mut pa C.sg_pass_action) {
 	pa.colors[0].action = cfg.color_action
 	pa.colors[0].val[0] = cfg.color.r_f()
 	pa.colors[0].val[1] = cfg.color.g_f()

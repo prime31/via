@@ -8,7 +8,7 @@ pub const ( used_import = gfx.used_import )
 // note: does not free the Textures
 pub struct AtlasBatch {
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	v_buffer_safe_to_update bool = true
 	v_buffer_dirty bool
 	verts []math.Vertex
@@ -46,7 +46,7 @@ pub fn (ab &AtlasBatch) free() {
 
 pub fn (mut sb AtlasBatch) update_verts() {
 	if sb.v_buffer_safe_to_update {
-		sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(math.Vertex) * sb.verts.len)
+		C.sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(math.Vertex) * sb.verts.len)
 		sb.v_buffer_safe_to_update = false
 		sb.v_buffer_dirty = false
 	}
@@ -135,7 +135,7 @@ pub fn (mut ab AtlasBatch) draw() {
 		ab.update_verts()
 	}
 
-	sg_apply_bindings(&ab.bindings)
-	sg_draw(0, ab.sprite_cnt * 6, 1)
+	C.sg_apply_bindings(&ab.bindings)
+	C.sg_draw(0, ab.sprite_cnt * 6, 1)
 	ab.v_buffer_safe_to_update = true
 }

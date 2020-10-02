@@ -6,7 +6,7 @@ pub struct Mesh {
 	vert_usage gfx.Usage
 	indices_usage gfx.Usage
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	v_buffer_safe_to_update bool = true
 	i_buffer_safe_to_update bool = true
 pub mut:
@@ -62,7 +62,7 @@ pub fn mesh_new_immutable(verts []math.Vertex, indices []u16) &Mesh {
 pub fn (mut m Mesh) update_verts() {
 	assert(m.vert_usage != .immutable)
 	if m.v_buffer_safe_to_update {
-		sg_update_buffer(m.bindings.vertex_buffers[0], m.verts.data, sizeof(math.Vertex) * m.verts.len)
+		C.sg_update_buffer(m.bindings.vertex_buffers[0], m.verts.data, sizeof(math.Vertex) * u32(m.verts.len))
 		m.v_buffer_safe_to_update = false
 	}
 }
@@ -70,7 +70,7 @@ pub fn (mut m Mesh) update_verts() {
 pub fn (mut m Mesh) update_indices() {
 	assert(m.indices_usage != .immutable)
 	if m.i_buffer_safe_to_update {
-		sg_update_buffer(m.bindings.index_buffer, m.indices.data, sizeof(u16) * m.indices.len)
+		C.sg_update_buffer(m.bindings.index_buffer, m.indices.data, sizeof(u16) * u32(m.indices.len))
 		m.i_buffer_safe_to_update = false
 	}
 }
@@ -81,16 +81,16 @@ pub fn (mut m Mesh) bind_texture(index int, tex Texture) {
 
 // drawing
 pub fn (m &Mesh) apply_bindings() {
-	sg_apply_bindings(&m.bindings)
+	C.sg_apply_bindings(&m.bindings)
 }
 
 // TODO: uniforms should probably by handled by Pipeline
 pub fn (m &Mesh) apply_uniforms(shader_stage gfx.ShaderStage, index int, data voidptr, num_bytes int) {
-	sg_apply_uniforms(shader_stage, index, data, num_bytes)
+	C.sg_apply_uniforms(shader_stage, index, data, num_bytes)
 }
 
 pub fn (mut m Mesh) draw() {
-	sg_draw(0, m.indices.len, 1)
+	C.sg_draw(0, m.indices.len, 1)
 	m.v_buffer_safe_to_update = true
 	m.i_buffer_safe_to_update = true
 }
@@ -102,6 +102,6 @@ pub fn (m &Mesh) free() {
 	unsafe {
 		m.verts.free()
 		m.indices.free()
-		free(m)
+		C.free(m)
 	}
 }

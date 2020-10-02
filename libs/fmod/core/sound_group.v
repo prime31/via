@@ -2,5 +2,5 @@ module core
 
 pub struct SoundGroup {
 pub:
-	group &FMOD_SOUNDGROUP
+	group &C.FMOD_SOUNDGROUP
 }

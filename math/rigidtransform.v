@@ -28,7 +28,7 @@ pub fn (mut t RigidTransform) rotate(radians f32) {
 	t.pos.y = y
 }
 
-pub fn (t &RigidTransform) inverse_transform_rot(vec Vec2) {
+pub fn (t &RigidTransform) inverse_transform_rot(mut vec Vec2) {
 		x := vec.x
 		y := vec.y
 

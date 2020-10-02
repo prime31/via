@@ -15,7 +15,7 @@ pub enum Channels {
 }
 
 pub struct Image {
-mut:
+pub mut:
 	width int
 	height int
 	channels Channels

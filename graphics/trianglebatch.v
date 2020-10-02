@@ -7,7 +7,7 @@ pub const ( trib_import = gfx.used_import )
 
 pub struct TriangleBatch {
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	verts []math.Vertex
 	max_tris int
 	tri_cnt int = 0
@@ -110,7 +110,7 @@ pub fn (mut tb TriangleBatch) draw_circle(radius f32, segments int, config DrawC
 
 	center := math.Vec2{}
 	increment := math.pi * 2.0 / segments
-	mut theta := 0.0
+	mut theta := f32(0.0)
 
 	mut sin_cos := math.Vec2{math.cos(theta), math.sin(theta)}
 	v0 := center + sin_cos.scale(radius)
@@ -132,7 +132,7 @@ pub fn (mut tb TriangleBatch) draw_circle(radius f32, segments int, config DrawC
 pub fn (mut tb TriangleBatch) draw_hollow_circle(radius f32, segments int, config DrawConfig) {
 	center := math.Vec2{config.x, config.y}
 	increment := math.pi * 2.0 / segments
-	mut theta := 0.0
+	mut theta := f32(0.0)
 
 	mut sin_cos := math.Vec2{math.cos(theta), math.sin(theta)}
 	theta += increment
@@ -167,11 +167,11 @@ pub fn (tbb &TriangleBatch) flush() {
 	if total_tris == 0 { return }
 
 	total_verts := total_tris * 3
-	tb.bindings.vertex_buffer_offsets[0] = sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_tri_cnt * 3], sizeof(math.Vertex) * total_verts)
+	tb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_tri_cnt * 3], sizeof(math.Vertex) * u32(total_verts))
 	tb.last_appended_tri_cnt = tb.tri_cnt
 
-	sg_apply_bindings(&tb.bindings)
-	sg_draw(0, total_tris * 3, 1)
+	C.sg_apply_bindings(&tb.bindings)
+	C.sg_draw(0, total_tris * 3, 1)
 }
 
 pub fn (tb &TriangleBatch) free() {
@@ -181,6 +181,6 @@ pub fn (tb &TriangleBatch) free() {
 
 	unsafe {
 		tb.verts.free()
-		free(tb)
+		C.free(tb)
 	}
 }

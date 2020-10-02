@@ -19,7 +19,7 @@ pub fn create() {
 
 pub fn free() {
 	audio.sys.free()
-	unsafe { free(audio) }
+	unsafe { C.free(audio) }
 }
 
 pub fn new_sound(fname string) fmod.Sound {

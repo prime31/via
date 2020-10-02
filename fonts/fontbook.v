@@ -55,7 +55,7 @@ fn render_create(uptr voidptr, width int, height int) int {
 
     // create or re-create font atlas texture
     if fs.img.id != C.SG_INVALID_ID {
-        sg_destroy_image(fs.img)
+        C.sg_destroy_image(fs.img)
         fs.img.id = u32(C.SG_INVALID_ID)
     }
 
@@ -76,7 +76,7 @@ fn render_create(uptr voidptr, width int, height int) int {
 		d3d11_texture: 0
 	}
 
-    fs.img = sg_make_image(&img_desc)
+    fs.img = C.sg_make_image(&img_desc)
 
 	return 1
 }
@@ -111,7 +111,7 @@ fn render_draw(uptr voidptr, verts_ptr &f32, tcoords_ptr &f32, colors_ptr &u32, 
 fn render_delete(uptr voidptr) {
 	mut fs := &FontBook(uptr)
 	if fs.img.id != C.SG_INVALID_ID {
-        sg_destroy_image(fs.img)
+        C.sg_destroy_image(fs.img)
 	}
 	unsafe { free(fs) }
 }
@@ -133,18 +133,18 @@ pub fn (mut font FontBook) update_texture() {
 					data[i * 4 + 3] = b
 				}
 
-				mut content := sg_image_content{}
+				mut content := C.sg_image_content{}
 				content.subimage[0][0].ptr = data
 				content.subimage[0][0].size = tex_area * 4 * sizeof(byte)
-				sg_update_image(font.img, &content)
+				C.sg_update_image(font.img, &content)
 
 				free(data)
 			}
 		} else {
-			mut content := sg_image_content{}
+			mut content := C.sg_image_content{}
 			content.subimage[0][0].ptr = font.stash.texData
 			content.subimage[0][0].size = font.width * font.height
-			sg_update_image(font.img, &content)
+			C.sg_update_image(font.img, &content)
 		}
 
 		font.tex_dirty = false

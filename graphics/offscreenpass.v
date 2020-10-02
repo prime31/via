@@ -6,7 +6,7 @@ pub struct OffScreenPass {
 pub:
 	color_tex Texture
 	depth_tex Texture
-	pass sg_pass
+	pass C.sg_pass
 }
 
 struct DefaultOffScreenPass {
@@ -43,7 +43,7 @@ pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Fi
 	return OffScreenPass{
 		color_tex: color_tex
 		depth_tex: depth_tex
-		pass: sg_make_pass(&pass_desc)
+		pass: C.sg_make_pass(&pass_desc)
 	}
 }
 

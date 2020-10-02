@@ -9,7 +9,7 @@ module math
  * 1: cos		3: scaleY	5: transY
  */
 pub struct Mat32 {
-pub:
+pub mut:
     data [6]f32
 }
 

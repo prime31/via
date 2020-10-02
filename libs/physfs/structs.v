@@ -4,10 +4,10 @@ pub struct C.PHYSFS_File {
 	opaque voidptr
 }
 pub fn (f &C.PHYSFS_File) str() string { return '$&f' }
-pub fn (f &C.PHYSFS_File) get_length() i64 { return PHYSFS_fileLength(f) }
-pub fn (f &C.PHYSFS_File) seek(pos u64) int { return PHYSFS_seek(f, pos) }
-pub fn (f &C.PHYSFS_File) read_bytes(buffer voidptr, len u64) i64 { return PHYSFS_readBytes(f, buffer, len) }
-pub fn (f &C.PHYSFS_File) close() int { return PHYSFS_close(f) }
+pub fn (f &C.PHYSFS_File) get_length() i64 { return C.PHYSFS_fileLength(f) }
+pub fn (f &C.PHYSFS_File) seek(pos u64) int { return C.PHYSFS_seek(f, pos) }
+pub fn (f &C.PHYSFS_File) read_bytes(buffer voidptr, len u64) i64 { return C.PHYSFS_readBytes(f, buffer, len) }
+pub fn (f &C.PHYSFS_File) close() int { return C.PHYSFS_close(f) }
 
 
 pub struct C.PHYSFS_Version {

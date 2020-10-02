@@ -9,13 +9,15 @@ pub fn set_physfs_file_system(s &fmod.System) int {
 // Physfs implemention
 fn physfs_open_cb(name byteptr, mut filesize &u32, mut handle &voidptr, userdata voidptr) int {
 	if name != byteptr(0) {
-		fp := PHYSFS_openRead(name)
-		if fp == &PHYSFS_File(0) {
+		fp := C.PHYSFS_openRead(name)
+		if fp == &C.PHYSFS_File(0) {
 			return int(fmod.Result.err_file_notfound)
 		}
 
-		*filesize = u32(PHYSFS_fileLength(fp))
-		*handle = **voidptr(fp)
+		unsafe {
+			*filesize = u32(C.PHYSFS_fileLength(fp))
+			*handle = **voidptr(fp)
+		}
 	}
 
 	return int(fmod.Result.ok)
@@ -26,7 +28,7 @@ fn physfs_close_cb(handle voidptr, userdata voidptr) int {
 		return int(fmod.Result.err_invalid_param)
 	}
 
-	PHYSFS_close(handle)
+	C.PHYSFS_close(handle)
 	return int(fmod.Result.ok)
 }
 
@@ -36,7 +38,7 @@ fn physfs_read_cb(handle voidptr, buffer voidptr, sizebytes u32, mut bytesread &
 	}
 
 	if bytesread != 0 {
-		*bytesread = int(PHYSFS_readBytes(handle, buffer, sizebytes))
+		*bytesread = int(C.PHYSFS_readBytes(handle, buffer, sizebytes))
 
 		if *bytesread < int(sizebytes) {
 			return int(fmod.Result.err_file_eof)
@@ -51,7 +53,7 @@ fn physfs_seek_cb(handle voidptr, pos u32, userdata voidptr) int {
 		return int(fmod.Result.err_invalid_param)
 	}
 
-	PHYSFS_seek(handle, u64(pos))
+	C.PHYSFS_seek(handle, u64(pos))
 
 	return int(fmod.Result.ok)
 }
@@ -69,10 +71,14 @@ fn file_open_cb(name byteptr, mut filesize &u32, mut handle &voidptr, userdata v
 		}
 
 		C.fseek(fp, 0, C.SEEK_END)
-		*filesize = C.ftell(fp)
+		unsafe {
+			*filesize = C.ftell(fp)
+		}
 		C.fseek(fp, 0, C.SEEK_SET)
 
-		*handle = fp
+		unsafe {
+			*handle = fp
+		}
 	}
 
 	return int(fmod.Result.ok)
@@ -93,7 +99,9 @@ fn file_read_cb(handle voidptr, buffer voidptr, sizebytes u32, mut bytesread &in
 	}
 
 	if bytesread != 0 {
-		*bytesread = C.fread(buffer, 1, sizebytes, handle)
+		unsafe {
+			*bytesread = C.fread(buffer, 1, sizebytes, handle)
+		}
 
 		if *bytesread < int(sizebytes) {
 			return int(fmod.Result.err_file_eof)

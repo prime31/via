@@ -12,7 +12,7 @@ pub fn deinit() int {
 
 [inline]
 pub fn get_linked_version() C.PHYSFS_Version {
-	version := PHYSFS_Version{}
+	version := C.PHYSFS_Version{}
 	C.PHYSFS_getLinkedVersion(&version)
 	return version
 }
@@ -21,13 +21,17 @@ pub fn get_linked_version() C.PHYSFS_Version {
 pub fn supported_archive_types() []C.PHYSFS_ArchiveInfo {
 	ptr := C.PHYSFS_supportedArchiveTypes()
 
-	mut arr := []PHYSFS_ArchiveInfo{}
-	info_ptr_array := **PHYSFS_ArchiveInfo(ptr)
+	mut arr := []C.PHYSFS_ArchiveInfo{}
+	unsafe {
+		info_ptr_array := **C.PHYSFS_ArchiveInfo(ptr)
+	}
 
 	// iterate until we find a null element
 	for i := 0; info_ptr_array[i]; i++ {
-		info := *PHYSFS_ArchiveInfo(info_ptr_array[i])
-		arr << *info
+		unsafe {
+			info := *C.PHYSFS_ArchiveInfo(info_ptr_array[i])
+			arr << *info
+		}
 	}
 
 	return arr
@@ -40,7 +44,7 @@ pub fn free_list(list_var voidptr) {
 
 [inline]
 pub fn get_dir_separator() string {
-	return string(C.PHYSFS_getDirSeparator())
+	return C.PHYSFS_getDirSeparator().str()
 }
 
 [inline]
@@ -50,7 +54,7 @@ pub fn permit_symbolic_links(allow int) {
 
 [inline]
 pub fn get_base_dir() string {
-	return string(C.PHYSFS_getBaseDir())
+	return C.PHYSFS_getBaseDir().str()
 }
 
 [inline]
@@ -121,12 +125,12 @@ pub fn enumerate_files(dir string) []string /* char** */ {
 
 [inline]
 pub fn exists(fname string) bool {
-	return PHYSFS_exists(fname.str) == 1
+	return C.PHYSFS_exists(fname.str) == 1
 }
 
 [inline]
 pub fn exists_c(fname charptr) bool {
-	return PHYSFS_exists(fname) == 1
+	return C.PHYSFS_exists(fname) == 1
 }
 
 [inline]
@@ -141,7 +145,7 @@ pub fn open_append(filename string) &C.PHYSFS_File {
 
 [inline]
 pub fn open_read(fname string) &C.PHYSFS_File {
-	return PHYSFS_openRead(fname.str)
+	return C.PHYSFS_openRead(fname.str)
 }
 
 [inline]
@@ -166,7 +170,7 @@ pub fn seek(handle &C.PHYSFS_File, pos u64) int {
 
 [inline]
 pub fn file_length(handle &C.PHYSFS_File) i64 {
-	return PHYSFS_fileLength(handle)
+	return C.PHYSFS_fileLength(handle)
 }
 
 [inline]
@@ -197,7 +201,7 @@ pub fn mount(new_dir string, mount_point string, append_to_path bool) bool {
 
 [inline]
 pub fn get_mount_point(dir byteptr) string {
-	return string(C.PHYSFS_getMountPoint(dir))
+	return C.PHYSFS_getMountPoint(dir).str()
 }
 
 [inline]
@@ -233,8 +237,8 @@ pub fn read_bytes(fname string) []byte {
 }
 
 pub fn read_bytes_c(fname charptr) []byte {
-	fp := PHYSFS_openRead(fname)
-	if fp == &PHYSFS_File(0) {
+	fp := C.PHYSFS_openRead(fname)
+	if fp == &C.PHYSFS_File(0) {
 		panic('could not open file: ${tos3(fname)}')
 	}
 	len := fp.get_length()
@@ -258,12 +262,12 @@ pub fn get_last_error_code() ErrorCode {
 
 [inline]
 pub fn get_error_by_code(code ErrorCode) string {
-	return string(C.PHYSFS_getErrorByCode(code))
+	return C.PHYSFS_getErrorByCode(code).str()
 }
 
 [inline]
 pub fn get_pref_dir(org string, app string) string {
-	return string(C.PHYSFS_getPrefDir(org.str, app.str))
+	return C.PHYSFS_getPrefDir(org.str, app.str).str()
 }
 
 [inline]

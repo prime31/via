@@ -5,7 +5,7 @@ import via.libs.sokol.gfx
 
 pub struct FullscreenQuad {
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	verts []math.Vertex
 	last_vert_update_frame u32
 	width int
@@ -47,7 +47,7 @@ pub fn (mut q FullscreenQuad) update_verts() {
 			q.verts[3].x = 0		// bl
 			q.verts[3].y = scaler.h
 
-			sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * q.verts.len)
+			C.sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * q.verts.len)
 			q.last_vert_update_frame = time.frames()
 			q.width = scaler.w
 			q.height = scaler.h
@@ -60,8 +60,8 @@ pub fn (mut q FullscreenQuad) bind_texture(index int, tex Texture) {
 }
 
 pub fn (q &FullscreenQuad) draw() {
-	sg_apply_bindings(&q.bindings)
-	sg_draw(0, 6, 1)
+	C.sg_apply_bindings(&q.bindings)
+	C.sg_draw(0, 6, 1)
 }
 
 pub fn (q &FullscreenQuad) free() {
@@ -70,6 +70,6 @@ pub fn (q &FullscreenQuad) free() {
 
 	unsafe {
 		q.verts.free()
-		free(q)
+		C.free(q)
 	}
 }

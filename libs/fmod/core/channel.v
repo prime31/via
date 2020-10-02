@@ -2,11 +2,11 @@ module core
 
 pub struct Channel {
 pub:
-	ch &FMOD_CHANNEL
+	ch &C.FMOD_CHANNEL
 }
 
 pub fn (c &Channel) set_pitch(pitch f32) int {
-	return FMOD_Channel_SetPitch(c.ch, pitch)
+	return C.FMOD_Channel_SetPitch(c.ch, pitch)
 }
 
 pub fn (c &Channel) set_volume(volume f32) int {
@@ -14,11 +14,11 @@ pub fn (c &Channel) set_volume(volume f32) int {
 }
 
 pub fn (c &Channel) add_dsp(index int, dsp Dsp) int {
-	return FMOD_Channel_AddDSP(c.ch, index, dsp.dsp)
+	return C.FMOD_Channel_AddDSP(c.ch, index, dsp.dsp)
 }
 
 pub fn (c &Channel) remove_dsp(dsp Dsp) int {
-	return FMOD_Channel_RemoveDSP(c.ch, dsp.dsp)
+	return C.FMOD_Channel_RemoveDSP(c.ch, dsp.dsp)
 }
 
 pub fn (c &Channel) set_user_data(userdata voidptr) int {

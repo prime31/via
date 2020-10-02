@@ -74,7 +74,7 @@ pub fn (policy ResolutionPolicy) get_scaler(design_w, design_h int) ResolutionSc
 			// of the round up, we flip the compare of the rt aspect ratio vs the screen aspect ratio.
 			if policy == .no_border_pixel_perfect {
 				scale_f = if rt_aspect_ratio < aspect_ratio { res_x } else { res_y }
-				scale = math.iceil(scale_f)
+				scale = math.iceil(f32(scale_f))
 			}
 
 			x := (w - (rt_w * scale)) / 2
@@ -97,6 +97,6 @@ pub fn (policy ResolutionPolicy) get_scaler(design_w, design_h int) ResolutionSc
 
 			return ResolutionScaler{x:int(x) y:int(y) w:rt_w h:rt_h scale:final_scale}
 		}
-		else { return ResolutionScaler{} }
+		//else { return ResolutionScaler{} }
 	}
 }

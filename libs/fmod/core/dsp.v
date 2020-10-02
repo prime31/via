@@ -2,5 +2,5 @@ module core
 
 pub struct Dsp {
 pub:
-	dsp &FMOD_DSP
+	dsp &C.FMOD_DSP
 }

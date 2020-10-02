@@ -80,7 +80,7 @@ pub fn show_user_guide() {
 
 [inline]
 pub fn get_version() string {
-	return string(C.igGetVersion())
+	return C.igGetVersion().str()
 }
 
 [inline]
@@ -1525,7 +1525,7 @@ pub fn get_draw_list_shared_data() &C.ImDrawListSharedData {
 
 [inline]
 pub fn get_style_color_name(idx int) string {
-	return string(C.igGetStyleColorName(idx))
+	return C.igGetStyleColorName(idx).str()
 }
 
 [inline]
@@ -1665,7 +1665,7 @@ pub fn capture_mouse_from_app(want_capture_mouse_value bool) {
 
 [inline]
 pub fn get_clipboard_text() string {
-	return string(C.igGetClipboardText())
+	return C.igGetClipboardText().str()
 }
 
 [inline]

@@ -8,7 +8,7 @@ pub const ( tb_import = gfx.used_import )
 
 pub struct TextBatch {
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	verts []math.Vertex
 	max_chars int
 	char_cnt int = 0
@@ -99,11 +99,11 @@ pub fn (mut tb TextBatch) flush() {
 	if total_quads == 0 { return }
 
 	total_verts := total_quads * 4
-	tb.bindings.vertex_buffer_offsets[0] = sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_char_cnt * 4], sizeof(math.Vertex) * total_verts)
+	tb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_char_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
 	tb.last_appended_char_cnt = tb.char_cnt
 
-	sg_apply_bindings(&tb.bindings)
-	sg_draw(0, total_quads * 6, 1)
+	C.sg_apply_bindings(&tb.bindings)
+	C.sg_draw(0, total_quads * 6, 1)
 }
 
 pub fn (tb &TextBatch) free() {
