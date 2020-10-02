@@ -10,7 +10,7 @@ pub:
 	frag string = string{0, 0}
 }
 
-pub fn shader_make(src ShaderSourceConfig, shader_desc mut sg_shader_desc) C.sg_shader {
+pub fn shader_make(src ShaderSourceConfig, mut shader_desc sg_shader_desc) C.sg_shader {
 	mut vert_main := string{0, 0}
 	mut frag_main := string{0, 0}
 
