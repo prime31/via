@@ -7,7 +7,7 @@ module math
  * m[2] m[5] m[8]
  */
 struct Mat33 {
-pub:
+pub mut:
     data [9]f32
 }
 
