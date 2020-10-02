@@ -66,7 +66,7 @@ pub fn (s &Sound) get_open_state() (int, OpenState, u32, int, int) {
 }
 
 pub fn (s &Sound) get_name() (int, string) {
-	name := [200]byte
+	name := [200]byte{}
 	res := FMOD_Sound_GetName(s.sound, &name, 200)
 	return res, tos2(name)
 }
