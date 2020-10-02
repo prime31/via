@@ -66,8 +66,8 @@ pub fn mat32_translate(x, y f32) Mat32 {
 
 pub fn mat32_rotate(angle f32) Mat32 {
 	mut result := mat32_zero()
-    c := cosf(angle)
-    s := sinf(angle)
+    c := C.cosf(angle)
+    s := C.sinf(angle)
 
 	result.data[0] = c
 	result.data[1] = s
@@ -134,8 +134,8 @@ pub fn mat32_transform(x, y, angle, sx, sy, ox, oy f32) Mat32 {
 }
 
 pub fn (mut m Mat32) set_transform(x, y, angle, sx, sy, ox, oy f32) {
-    c := cosf(angle)
-    s := sinf(angle)
+    c := C.cosf(angle)
+    s := C.sinf(angle)
 
 	// matrix multiplication carried out on paper:
 	// |1    x| |c -s  | |sx     | |1   -ox|

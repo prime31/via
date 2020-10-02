@@ -20,7 +20,7 @@ mut:
 
 pub fn atlasbatch(tex Texture, max_sprites int) &AtlasBatch {
 	mut sb := &AtlasBatch{
-		verts: utils.new_arr_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
+		//TODO(larpon) verts: utils.new_arr_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
 		max_sprites: max_sprites
 		quad: math.quad(0, 0, 1, 1, tex.w, tex.h)
 	}
@@ -46,7 +46,7 @@ pub fn (ab &AtlasBatch) free() {
 
 pub fn (mut sb AtlasBatch) update_verts() {
 	if sb.v_buffer_safe_to_update {
-		C.sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(math.Vertex) * sb.verts.len)
+		C.sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(math.Vertex) * u32(sb.verts.len))
 		sb.v_buffer_safe_to_update = false
 		sb.v_buffer_dirty = false
 	}

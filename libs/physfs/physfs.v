@@ -116,7 +116,7 @@ pub fn enumerate_files(dir string) []string /* char** */ {
 
 	mut i := 0
 	for voidptr(string_ptr_array[i]) != voidptr(0) {
-		arr << string(string_ptr_array[i])
+		arr << string_ptr_array[i].str()
 		i++
 	}
 
@@ -243,7 +243,7 @@ pub fn read_bytes_c(fname charptr) []byte {
 	}
 	len := fp.get_length()
 
-	buf := make(int(len), int(len), sizeof(byte))
+	buf := []byte{len: int(len)} //make(int(len), int(len), sizeof(byte))
 	fp.read_bytes(buf.data, u64(len))
 	fp.close()
 

@@ -24,7 +24,7 @@ pub enum MouseButton {
 }
 
 const (
-	input = &Input{
+	ginput = &Input{
 		res_scaler: 0
 	}
 	released = 1 // true only the frame the key is released
@@ -34,8 +34,8 @@ const (
 
 pub fn free() {
 	unsafe {
-		input.dirty_keys.free()
-		free(input)
+		ginput.dirty_keys.free()
+		C.free(ginput)
 	}
 }
 
@@ -44,7 +44,7 @@ pub fn free() {
 // used for scaling mouse input. On macos, mouse position is in points but we always render in pixels.
 // scale should be drawable_size / window_size
 pub fn set_window_scale(scale f32) {
-	mut i := input
+	mut i := ginput
 	i.window_scale = int(scale)
 
 	// TODO: this is a bit of a cheat, but we know that graphics is all set here so we fetch the scaler
@@ -53,16 +53,16 @@ pub fn set_window_scale(scale f32) {
 
 // clears any released keys
 pub fn new_frame() {
-	mut i := input
+	mut i := ginput
 
-	if input.dirty_keys.len > 0 {
+	if ginput.dirty_keys.len > 0 {
 		for k in i.dirty_keys {
 			i.keys[k]--
 		}
 		i.dirty_keys.clear()
 	}
 
-	if input.dirty_mouse_buttons.len > 0 {
+	if ginput.dirty_mouse_buttons.len > 0 {
 		for b in i.dirty_mouse_buttons {
 			i.mouse_buttons[b]--
 		}
@@ -75,7 +75,7 @@ pub fn new_frame() {
 }
 
 pub fn handle_event(evt &C.SDL_Event) {
-	mut i := input
+	mut i := ginput
 
 	match evt.@type {
 		.keydown, .keyup { i.handle_keyboard_event(evt.key) }
@@ -144,50 +144,50 @@ fn (mut i Input) handle_mouse_event(evt &C.SDL_MouseButtonEvent) {
 
 // only true if down this frame and not down the previous frame
 pub fn key_pressed(scancode sdl2.Scancode) bool {
-	return input.keys[scancode] == 3
+	return ginput.keys[scancode] == 3
 }
 
 // true the entire time the key is down
 pub fn key_down(scancode sdl2.Scancode) bool {
-	return input.keys[scancode] > 1
+	return ginput.keys[scancode] > 1
 }
 
 // true only the frame the key is released
 pub fn key_up(scancode sdl2.Scancode) bool {
-	return input.keys[scancode] == 1
+	return ginput.keys[scancode] == 1
 }
 
 pub fn mouse_pressed(button MouseButton) bool {
-	return input.mouse_buttons[button] == 3
+	return ginput.mouse_buttons[button] == 3
 }
 
 // true the entire time the button is down
 pub fn mouse_down(button MouseButton) bool {
-	return input.mouse_buttons[button] > 1
+	return ginput.mouse_buttons[button] > 1
 }
 
 pub fn mouse_up(button MouseButton) bool {
-	return input.mouse_buttons[button] == 1
+	return ginput.mouse_buttons[button] == 1
 }
 
 pub fn mouse_wheel() f32 {
-	return input.mouse_wheel_y
+	return ginput.mouse_wheel_y
 }
 
 pub fn mouse_pos() (int, int) {
 	x := 0
 	y := 0
 	C.SDL_GetMouseState(&x, &y)
-	return x * input.window_scale, y * input.window_scale
+	return x * ginput.window_scale, y * ginput.window_scale
 }
 
 // gets the scaled mouse position based on the currently bound render texture scale and offset
 // as calcuated in OffscreenPass. scale should be scale and offset_n is the calculated x, y value.
 pub fn mouse_pos_scaled() (int, int) {
 	x, y := mouse_pos()
-	xf := f32(x) - input.res_scaler.x
-	yf := f32(y) - input.res_scaler.y
-	return int(xf / input.res_scaler.scale), int(yf / input.res_scaler.scale)
+	xf := f32(x) - ginput.res_scaler.x
+	yf := f32(y) - ginput.res_scaler.y
+	return int(xf / ginput.res_scaler.scale), int(yf / ginput.res_scaler.scale)
 }
 
 pub fn mouse_pos_scaledv() math.Vec2 {
@@ -196,7 +196,7 @@ pub fn mouse_pos_scaledv() math.Vec2 {
 }
 
 pub fn mouse_rel_motion() (int, int) {
-	return input.mouse_rel_x, input.mouse_rel_y
+	return ginput.mouse_rel_x, ginput.mouse_rel_y
 }
 
 //#endregion

@@ -72,7 +72,7 @@ fn defaultoffscreenpass(width, height int, policy ResolutionPolicy) &DefaultOffS
 fn (p &DefaultOffScreenPass) free() {
 	window.unsubscribe(.resize, defaultoffscreenpass_on_window_resized)
 	p.offscreen_pass.free(true)
-	unsafe { free(p) }
+	unsafe { C.free(p) }
 }
 
 fn defaultoffscreenpass_on_window_resized(pass mut DefaultOffScreenPass) {

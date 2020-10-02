@@ -7,11 +7,11 @@ module image
 
 
 pub enum Channels {
-	default int = 0
-	grey int = 1
-	grey_alpha int = 2
-	rgb int = 3
-	rgb_alpha int = 4
+	default = 0
+	grey = 1
+	grey_alpha = 2
+	rgb = 3
+	rgb_alpha = 4
 }
 
 pub struct Image {

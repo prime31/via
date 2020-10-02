@@ -17,8 +17,8 @@ pub fn quad(x, y, width, height f32, img_width, img_height int) Quad {
 	mut q := Quad{
 		img_width: img_width
 		img_height: img_height
-		positions: make(4, 4, sizeof(Vec2))
-		texcoords: make(4, 4, sizeof(Vec2))
+		positions: []Vec2{len: 4, cap: 4} //make(4, 4, sizeof(Vec2))
+		texcoords: []Vec2{len: 4, cap: 4} //make(4, 4, sizeof(Vec2))
 	}
 	q.set_viewport(x, y, width, height)
 	return q

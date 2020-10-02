@@ -10,8 +10,8 @@ pub:
 
 pub fn create(maxchannels int, flags int) System {
 	fmod := System{&C.FMOD_SYSTEM(0)}
-	FMOD_System_Create(&fmod.sys)
-	FMOD_System_Init(fmod.sys, maxchannels, flags, C.NULL /*extradriverdata*/)
+	C.FMOD_System_Create(&fmod.sys)
+	C.FMOD_System_Init(fmod.sys, maxchannels, flags, C.NULL /*extradriverdata*/)
 	return fmod
 }
 
@@ -21,15 +21,15 @@ pub fn (s &System) free() {
 
 pub fn (s &System) get_version() u32 {
 	ver := u32(0)
-	FMOD_System_GetVersion(s.sys, &ver)
+	C.FMOD_System_GetVersion(s.sys, &ver)
 	return ver
 }
 
-pub fn (s &System) create_sound(name_or_data byteptr, mode int /* exinfo &FMOD_CREATESOUNDEXINFO */) (int, Sound) {
+pub fn (s &System) create_sound(name_or_data byteptr, mode int /* exinfo &C.FMOD_CREATESOUNDEXINFO */) (int, Sound) {
 	return create_sound(s, name_or_data, mode)
 }
 
-pub fn (s &System) play_sound(sound &C.FMOD_SOUND, channelgroup ChannelGroup /* &FMOD_CHANNELGROUP */, paused int) (int, Channel) {
+pub fn (s &System) play_sound(sound &C.FMOD_SOUND, channelgroup ChannelGroup /* &C.FMOD_CHANNELGROUP */, paused int) (int, Channel) {
 	channel := Channel{&C.FMOD_CHANNEL(0)}
 	res := C.FMOD_System_PlaySound(s.sys, sound, channelgroup.group, paused, &channel.ch)
 	return res, channel

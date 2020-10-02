@@ -24,7 +24,7 @@ mut:
 pub fn quadbatch(max_sprites int) &QuadBatch {
 	mut qb := &QuadBatch{
 		fontbook: new_fontbook(128, 128)
-		verts: utils.new_arr_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
+		//TODO(larpon) verts: utils.new_arr_with_default<math.Vertex>(max_sprites * 4, max_sprites * 4, math.Vertex{})
 		max_sprites: max_sprites
 		quad: math.quad(0, 0, 1, 1, 1, 1)
 	}
@@ -46,7 +46,7 @@ pub fn (qb &QuadBatch) free() {
 
 	unsafe {
 		qb.verts.free()
-		free(qb)
+		C.free(qb)
 	}
 }
 

@@ -341,7 +341,7 @@ pub mut:
 }
 
 pub struct C.sg_image {
-pub:
+pub mut:
     id u32
 }
 pub fn (i C.sg_image) free() { C.sg_destroy_image(i) }
@@ -451,14 +451,12 @@ pub mut:
     val [4]f32
 }
 
-/*
 pub fn (mut action C.sg_color_attachment_action) set_color_values(r, g, b, a f32) {
     action.val[0] = r
     action.val[1] = g
     action.val[2] = b
     action.val[3] = a
 }
-*/
 
 pub struct C.sg_depth_attachment_action {
 pub mut:

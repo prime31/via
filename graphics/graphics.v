@@ -110,7 +110,7 @@ pub fn new_texture_atlas(src string) TextureAtlas {
 	return textureatlas(tex, buf)
 }
 
-pub fn new_shader(src ShaderSourceConfig, shader_desc &C.sg_shader_desc) C.sg_shader {
+pub fn new_shader(src ShaderSourceConfig, mut shader_desc C.sg_shader_desc) C.sg_shader {
 	mut vert_needs_free := false
 	vert_src := if src.vert.len > 0 && src.vert.ends_with('.vert') {
 		vert_needs_free = true
@@ -168,7 +168,7 @@ pub fn new_effectstack() &EffectStack {
 // If another pass is run after blit_to_screen rendering will be to the backbuffer.
 pub fn begin_pass(mut config PassConfig) {
 	mut gg := g
-	config.apply(gg.pass_action)
+	config.apply(mut gg.pass_action)
 
 	mut proj_mat := math.Mat32{}
 
@@ -225,7 +225,7 @@ pub fn blit_to_screen(letterbox_color math.Color) {
 
 //#endregion
 
-pub fn set_pipeline(pipeline mut Pipeline) {
+pub fn set_pipeline(mut pipeline Pipeline) {
 	mut gg := g
 	gg.quad_batch.flush()
 	gg.tri_batch.flush()

@@ -10,7 +10,7 @@ pub fn set_physfs_file_system(s &fmod.System) int {
 fn physfs_open_cb(name byteptr, mut filesize &u32, mut handle &voidptr, userdata voidptr) int {
 	if name != byteptr(0) {
 		fp := C.PHYSFS_openRead(name)
-		if fp == &C.PHYSFS_File(0) {
+		if fp == &C.PHYSFS_File{} {
 			return int(fmod.Result.err_file_notfound)
 		}
 
@@ -38,7 +38,9 @@ fn physfs_read_cb(handle voidptr, buffer voidptr, sizebytes u32, mut bytesread &
 	}
 
 	if bytesread != 0 {
-		*bytesread = int(C.PHYSFS_readBytes(handle, buffer, sizebytes))
+		unsafe {
+			*bytesread = int(C.PHYSFS_readBytes(handle, buffer, sizebytes))
+		}
 
 		if *bytesread < int(sizebytes) {
 			return int(fmod.Result.err_file_eof)

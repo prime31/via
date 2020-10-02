@@ -108,8 +108,8 @@ pub fn (self Mat33) transform(v Vec3) Vec3 {
 }
 
 pub fn mat33_rotate(angle f32, unnormalizedAxis Vec3) Mat33 {
-    c := cosf(angle)
-    s := sinf(angle)
+    c := C.cosf(angle)
+    s := C.sinf(angle)
 
     axis := unnormalizedAxis.normalize()
     temp := axis.scale(1.0 - c)

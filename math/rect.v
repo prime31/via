@@ -49,7 +49,7 @@ pub fn (r &Rect) side(edge Edge) int {
 		.right { r.right() }
 		.top { r.y }
 		.bottom { r.bottom() }
-		else { -1 }
+		//else { -1 }
 	}
 }
 
@@ -84,7 +84,7 @@ pub fn (r &Rect) half_rect(edge Edge) Rect {
 		.bottom { Rect{r.x, r.y + r.h / 2, r.w, r.h / 2} }
 		.left { Rect{r.x, r.y, r.w / 2, r.h} }
 		.right { Rect{r.x + r.w / 2, r.y, r.w / 2, r.h} }
-		else { Rect{} }
+		//else { Rect{} }
 	}
 }
 
@@ -107,7 +107,7 @@ pub fn (mut r Rect) expand_edge(edge Edge, amount int) {
 		.right {
 			r.w += amt
 		}
-		else {}
+		//else {}
 	}
 }
 

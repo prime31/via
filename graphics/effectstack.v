@@ -41,7 +41,8 @@ fn (pp &EffectStack) process(pass OffScreenPass) {
 // helper method for taking the final texture from a postprocessor and blitting it. Simple postprocessors
 // can get away with just calling this method directly.
 pub fn (mut pp EffectStack) blit(tex Texture, pip Pipeline) {
-	begin_pass({color_action:.dontcare pipeline:pip trans_mat:0 pass:0})
+	mut config := PassConfig{color_action:.dontcare, pipeline:pip, trans_mat:0, pass:0}
+	begin_pass(mut config)
 	spritebatch().draw(tex, {x:0 y:0})
 	end_pass()
 }

@@ -23,20 +23,20 @@ pub enum MouseWheelDirection {
 
 pub struct C.SDL_Cursor {}
 
-fn C.SDL_GetMouseFocus() &SDL_Window
+fn C.SDL_GetMouseFocus() &C.SDL_Window
 fn C.SDL_GetMouseState(x &int, y &int) u32
 fn C.SDL_GetGlobalMouseState(x &int, y &int) u32
 fn C.SDL_GetRelativeMouseState(x &int, y &int) u32
-fn C.SDL_WarpMouseInWindow(window &SDL_Window, x int, y int)
+fn C.SDL_WarpMouseInWindow(window &C.SDL_Window, x int, y int)
 fn C.SDL_WarpMouseGlobal(x int, y int) int
 fn C.SDL_SetRelativeMouseMode(enabled Bool) int
 fn C.SDL_CaptureMouse(enabled Bool) int
 fn C.SDL_GetRelativeMouseMode() Bool
-fn C.SDL_CreateCursor(data &byte, mask &byte, w int, h int, hot_x int, hot_y int) &SDL_Cursor
-fn C.SDL_CreateColorCursor(surface &SDL_Surface, hot_x int, hot_y int) &SDL_Cursor
-fn C.SDL_CreateSystemCursor(id SystemCursor) &SDL_Cursor
-fn C.SDL_SetCursor(cursor &SDL_Cursor)
-fn C.SDL_GetCursor() &SDL_Cursor
-fn C.SDL_GetDefaultCursor() &SDL_Cursor
-fn C.SDL_FreeCursor(cursor &SDL_Cursor)
+fn C.SDL_CreateCursor(data &byte, mask &byte, w int, h int, hot_x int, hot_y int) &C.SDL_Cursor
+fn C.SDL_CreateColorCursor(surface &C.SDL_Surface, hot_x int, hot_y int) &C.SDL_Cursor
+fn C.SDL_CreateSystemCursor(id SystemCursor) &C.SDL_Cursor
+fn C.SDL_SetCursor(cursor &C.SDL_Cursor)
+fn C.SDL_GetCursor() &C.SDL_Cursor
+fn C.SDL_GetDefaultCursor() &C.SDL_Cursor
+fn C.SDL_FreeCursor(cursor &C.SDL_Cursor)
 fn C.SDL_ShowCursor(toggle int) int

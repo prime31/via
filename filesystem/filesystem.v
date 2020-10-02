@@ -10,7 +10,7 @@ pub fn init_filesystem(identity string, append_identity bool) {
 	}
 
 	physfs.permit_symbolic_links(1)
-	physfs.mount(os.dir(os.realpath(os.executable())), '', true)
+	physfs.mount(os.dir(os.real_path(os.executable())), '', true)
 
 	mut ident := identity
 	if ident.len == 0 {

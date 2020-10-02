@@ -40,7 +40,7 @@ fn (v &Via) free() {
 	filesystem.free()
 	time.free()
 
-	sg_shutdown()
+	C.sg_shutdown()
 
 	unsafe { free(v) }
 }
@@ -57,19 +57,19 @@ pub fn run<T>(config &ViaConfig, mut ctx T) {
 
 	input.set_window_scale(window.scale())
 
-	if v.imgui { imgui_init(window.win.sdl_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
+	if v.imgui { imgui_init(window.win.C.SDL_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 
 	ctx.initialize()
 
 	for !v.poll_events() {
 		time.tick()
-		if v.imgui { imgui_new_frame(window.win.sdl_window, config.imgui_gfx_debug) }
+		if v.imgui { imgui_new_frame(window.win.C.SDL_window, config.imgui_gfx_debug) }
 
 		ctx.update()
 		ctx.draw()
 		graphics.commit()
 
-		if v.imgui { imgui_render(window.win.sdl_window, window.win.gl_context) }
+		if v.imgui { imgui_render(window.win.C.SDL_window, window.win.gl_context) }
 		window.swap()
 	}
 
@@ -82,7 +82,7 @@ pub fn run<T>(config &ViaConfig, mut ctx T) {
 fn (v &Via) poll_events() bool {
 	input.new_frame()
 
-	ev := SDL_Event{}
+	ev := C.SDL_Event{}
 	for 0 < C.SDL_PollEvent(&ev) {
 		// ignore events imgui eats
 		if v.imgui && imgui_handle_event(&ev) { continue }

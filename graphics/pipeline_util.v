@@ -83,7 +83,7 @@ pub fn index_buffer_create(indices []u16, usage gfx.Usage) C.sg_buffer {
 	mut index_buff_desc := C.sg_buffer_desc{
 		@type: .indexbuffer
 		usage: usage
-		size: sizeof(u16) * u32(indices.len)
+		size: int(sizeof(u16) * u32(indices.len))
 		label: &byte(0)
 		d3d11_buffer: 0
 		content: 0

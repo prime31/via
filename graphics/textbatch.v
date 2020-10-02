@@ -20,7 +20,7 @@ mut:
 pub fn textbatch(max_chars int) &TextBatch {
 	mut tb := &TextBatch{
 		// default colors to white
-		verts: utils.new_arr_with_default(max_chars * 4, max_chars * 4, math.Vertex{})
+		//TODO(larpon) verts: utils.new_arr_with_default(max_chars * 4, max_chars * 4, math.Vertex{})
 		max_chars: max_chars
 		quad: math.quad(0, 0, 1, 1, 1, 1)
 	}
@@ -112,6 +112,6 @@ pub fn (tb &TextBatch) free() {
 
 	unsafe {
 		tb.verts.free()
-		free(tb)
+		C.free(tb)
 	}
 }

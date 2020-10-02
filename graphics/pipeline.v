@@ -26,14 +26,14 @@ pub fn (p1 &Pipeline) eq(p2 &Pipeline) bool {
 
 pub fn (p &Pipeline) free() {
 	for u in p.uniforms {
-		unsafe { free(u.data) }
+		unsafe { C.free(u.data) }
 	}
 	unsafe { p.uniforms.free() }
 	p.pip.free()
 	p.shader.free()
 }
 
-pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, mut pipeline_desc sg_pipeline_desc) Pipeline {
+pub fn pipeline(shader_src ShaderSourceConfig, mut shader_desc C.sg_shader_desc, mut pipeline_desc C.sg_pipeline_desc) Pipeline {
 	pipeline_desc.shader = shader_make(shader_src, mut shader_desc)
 
 	mut uniforms := []UniformBlock{}
@@ -67,27 +67,27 @@ pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, mut p
 
 	return Pipeline{
 		uniforms: uniforms
-		pip: sg_make_pipeline(pipeline_desc)
+		pip: C.sg_make_pipeline(pipeline_desc)
 		shader: pipeline_desc.shader
 	}
 }
 
 pub fn pipeline_new_default() Pipeline {
-	shader_desc := shader_get_default_desc()
+	mut shader_desc := shader_get_default_desc()
 	mut pipeline_desc := pipeline_get_default_desc()
 	pipeline_desc.label = 'Default Pip'.str
-	return pipeline({}, shader_desc, mut pipeline_desc)
+	return pipeline({}, mut shader_desc, mut pipeline_desc)
 }
 
 pub fn pipeline_new_default_text() Pipeline {
-	shader_desc := shader_get_default_desc()
+	mut shader_desc := shader_get_default_desc()
 	mut pipeline_desc := pipeline_get_default_desc()
 	pipeline_desc.label = 'Default Text Pip'.str
 
-	mut frag_main := string{0, 0}
+	mut frag_main := string{}
 	$if metal? { frag_main = default_text_frag_main_metal }
 	$if !metal? { frag_main = default_text_frag_main }
-	return pipeline({frag: frag_main}, shader_desc, mut pipeline_desc)
+	return pipeline({frag: frag_main}, mut shader_desc, mut pipeline_desc)
 }
 
 pub fn (p &Pipeline) get_uniform_index(shader_stage gfx.ShaderStage, index int) int {
@@ -119,7 +119,7 @@ pub fn (mut p Pipeline) set_uniform_raw(shader_stage gfx.ShaderStage, index int,
 pub fn (mut p Pipeline) apply_uniforms() {
 	for i, uni in p.uniforms {
 		if uni.dirty {
-			sg_apply_uniforms(uni.shader_stage, uni.index, uni.data, uni.num_bytes)
+			C.sg_apply_uniforms(uni.shader_stage, uni.index, uni.data, uni.num_bytes)
 			p.uniforms[i].dirty = false
 		}
 	}

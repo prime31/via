@@ -346,55 +346,55 @@ pub struct C.SDL_SysWMEvent {
 pub:
 	@type u32
 	timestamp u32
-	msg &SDL_SysWMmsg
+	msg &C.SDL_SysWMmsg
 }
 
 pub struct C.SDL_Event {
 pub:
 	@type EventType
-	common SDL_CommonEvent
-	display SDL_DisplayEvent
-	window SDL_WindowEvent
-	key SDL_KeyboardEvent
-	edit SDL_TextEditingEvent
-	text SDL_TextInputEvent
-	motion SDL_MouseMotionEvent
-	button SDL_MouseButtonEvent
-	wheel SDL_MouseWheelEvent
-	jaxis SDL_JoyAxisEvent
-	jball SDL_JoyBallEvent
-	jhat SDL_JoyHatEvent
-	jbutton SDL_JoyButtonEvent
-	jdevice SDL_JoyDeviceEvent
-	caxis SDL_ControllerAxisEvent
-	cbutton SDL_ControllerButtonEvent
-	cdevice SDL_ControllerDeviceEvent
-	adevice SDL_AudioDeviceEvent
-	sensor SDL_SensorEvent
-	quit SDL_QuitEvent
-	user SDL_UserEvent
-	syswm SDL_SysWMEvent
-	tfinger SDL_TouchFingerEvent
-	mgesture SDL_MultiGestureEvent
-	dgesture SDL_DollarGestureEvent
-	drop SDL_DropEvent
+	common C.SDL_CommonEvent
+	display C.SDL_DisplayEvent
+	window C.SDL_WindowEvent
+	key C.SDL_KeyboardEvent
+	edit C.SDL_TextEditingEvent
+	text C.SDL_TextInputEvent
+	motion C.SDL_MouseMotionEvent
+	button C.SDL_MouseButtonEvent
+	wheel C.SDL_MouseWheelEvent
+	jaxis C.SDL_JoyAxisEvent
+	jball C.SDL_JoyBallEvent
+	jhat C.SDL_JoyHatEvent
+	jbutton C.SDL_JoyButtonEvent
+	jdevice C.SDL_JoyDeviceEvent
+	caxis C.SDL_ControllerAxisEvent
+	cbutton C.SDL_ControllerButtonEvent
+	cdevice C.SDL_ControllerDeviceEvent
+	adevice C.SDL_AudioDeviceEvent
+	sensor C.SDL_SensorEvent
+	quit C.SDL_QuitEvent
+	user C.SDL_UserEvent
+	syswm C.SDL_SysWMEvent
+	tfinger C.SDL_TouchFingerEvent
+	mgesture C.SDL_MultiGestureEvent
+	dgesture C.SDL_DollarGestureEvent
+	drop C.SDL_DropEvent
 	padding [56]byte
 }
 
 fn C.SDL_PumpEvents()
-fn C.SDL_PeepEvents(events &SDL_Event, numevents int, action Eventaction, minType u32, maxType u32) int
+fn C.SDL_PeepEvents(events &C.SDL_Event, numevents int, action Eventaction, minType u32, maxType u32) int
 fn C.SDL_HasEvent(typ u32) Bool
 fn C.SDL_HasEvents(minType u32, maxType u32) Bool
 fn C.SDL_FlushEvent(typ u32)
 fn C.SDL_FlushEvents(minType u32, maxType u32)
-fn C.SDL_PollEvent(event &SDL_Event) int
-fn C.SDL_WaitEvent(event &SDL_Event) int
-fn C.SDL_WaitEventTimeout(event &SDL_Event, timeout int) int
-fn C.SDL_PushEvent(event &SDL_Event) int
-fn C.SDL_SetEventFilter(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
-fn C.SDL_GetEventFilter(filter fn(voidptr, &SDL_Event) int, userdata &voidptr /* void** */) Bool
-fn C.SDL_AddEventWatch(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
-fn C.SDL_DelEventWatch(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
-fn C.SDL_FilterEvents(filter fn(voidptr, &SDL_Event) int, userdata voidptr)
+fn C.SDL_PollEvent(event &C.SDL_Event) int
+fn C.SDL_WaitEvent(event &C.SDL_Event) int
+fn C.SDL_WaitEventTimeout(event &C.SDL_Event, timeout int) int
+fn C.SDL_PushEvent(event &C.SDL_Event) int
+fn C.SDL_SetEventFilter(filter fn(voidptr, &C.SDL_Event) int, userdata voidptr)
+fn C.SDL_GetEventFilter(filter fn(voidptr, &C.SDL_Event) int, userdata &voidptr /* void** */) Bool
+fn C.SDL_AddEventWatch(filter fn(voidptr, &C.SDL_Event) int, userdata voidptr)
+fn C.SDL_DelEventWatch(filter fn(voidptr, &C.SDL_Event) int, userdata voidptr)
+fn C.SDL_FilterEvents(filter fn(voidptr, &C.SDL_Event) int, userdata voidptr)
 fn C.SDL_EventState(typ u32, state int) byte
 fn C.SDL_RegisterEvents(numevents int) u32
