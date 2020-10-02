@@ -47,7 +47,7 @@ pub fn (mut q FullscreenQuad) update_verts() {
 			q.verts[3].x = 0		// bl
 			q.verts[3].y = scaler.h
 
-			C.sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * q.verts.len)
+			C.sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * u32(q.verts.len))
 			q.last_vert_update_frame = time.frames()
 			q.width = scaler.w
 			q.height = scaler.h

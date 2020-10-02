@@ -68,7 +68,7 @@ pub fn laptime(last_time &u64) f64 {
 	mut dt := f64(0)
 	n := now()
 	if *tmp != 0 {
-		dt = f64((now - *tmp) * 1000) / f64(C.SDL_GetPerformanceFrequency())
+		dt = f64((n - *tmp) * 1000) / f64(C.SDL_GetPerformanceFrequency())
 	}
 	unsafe {
 		*tmp = n

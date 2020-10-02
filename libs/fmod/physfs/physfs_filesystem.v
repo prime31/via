@@ -74,7 +74,7 @@ fn file_open_cb(name byteptr, mut filesize &u32, mut handle &voidptr, userdata v
 
 		C.fseek(fp, 0, C.SEEK_END)
 		unsafe {
-			*filesize = C.ftell(fp)
+			*filesize = u32(C.ftell(fp))
 		}
 		C.fseek(fp, 0, C.SEEK_SET)
 

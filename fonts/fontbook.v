@@ -123,7 +123,7 @@ pub fn (mut font FontBook) update_texture() {
 		if convert_font_tex_to_rgba {
 			tex_area := font.width * font.height
 			unsafe {
-				mut data := malloc(tex_area * 4 * sizeof(byte))
+				mut data := malloc(tex_area * 4 * int(sizeof(byte)))
 
 				for i in 0..tex_area {
 					b := font.stash.texData[i]
@@ -135,7 +135,7 @@ pub fn (mut font FontBook) update_texture() {
 
 				mut content := C.sg_image_content{}
 				content.subimage[0][0].ptr = data
-				content.subimage[0][0].size = tex_area * 4 * sizeof(byte)
+				content.subimage[0][0].size = tex_area * 4 * int(sizeof(byte))
 				C.sg_update_image(font.img, &content)
 
 				free(data)
