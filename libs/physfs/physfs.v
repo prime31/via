@@ -21,7 +21,7 @@ pub fn get_linked_version() C.PHYSFS_Version {
 pub fn supported_archive_types() []C.PHYSFS_ArchiveInfo {
 	ptr := C.PHYSFS_supportedArchiveTypes()
 
-	mut arr := []PHYSFS_ArchiveInfo
+	mut arr := []PHYSFS_ArchiveInfo{}
 	info_ptr_array := **PHYSFS_ArchiveInfo(ptr)
 
 	// iterate until we find a null element
@@ -71,7 +71,7 @@ pub fn set_write_dir(newDir string) int {
 pub fn get_search_path() []string {
 	ptr := C.PHYSFS_getSearchPath()
 
-	mut arr := []string
+	mut arr := []string{}
 	string_ptr_array := **byteptr(ptr)
 
 	mut i := 0
@@ -107,7 +107,7 @@ pub fn get_real_dir(filename string) byteptr {
 pub fn enumerate_files(dir string) []string /* char** */ {
 	ptr := C.PHYSFS_enumerateFiles(dir.str)
 
-	mut arr := []string
+	mut arr := []string{}
 	string_ptr_array := **byteptr(ptr)
 
 	mut i := 0

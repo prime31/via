@@ -435,8 +435,8 @@ fn (mut sh SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) [
 	cl, ct := sh.cell_coords(tl, tt)
 	cw, ch := sh.cell_coords(tw, th)
 
-	mut visited := []int
-	mut collisions := []CollisionResult
+	mut visited := []int{}
+	mut collisions := []CollisionResult{}
 
 	for x := cl; x <= cw; x++ {
 		for y := ct; y <= ch; y++ {

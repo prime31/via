@@ -36,7 +36,7 @@ pub fn (p &Pipeline) free() {
 pub fn pipeline(shader_src ShaderSourceConfig, shader_desc sg_shader_desc, pipeline_desc mut sg_pipeline_desc) Pipeline {
 	pipeline_desc.shader = shader_make(shader_src, mut shader_desc)
 
-	mut uniforms := []UniformBlock
+	mut uniforms := []UniformBlock{}
 	for i in 0..4 {
 		u := shader_desc.vs.uniform_blocks[i]
 		if u.size == 0 { break }
