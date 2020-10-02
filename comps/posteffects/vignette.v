@@ -56,21 +56,21 @@ fn vignette_process(vig &Vignette, tex &graphics.Texture, stack &graphics.Effect
 	stack.blit(tex, mut vig.pip)
 }
 
-pub fn (vig &Vignette) add_to_stack(stack mut graphics.EffectStack) {
+pub fn (mut vig &Vignette) add_to_stack(stack graphics.EffectStack) {
 	stack.add(vig, vignette_process)
 }
 
-pub fn (vig mut Vignette) set_radius(radius f32) {
+pub fn (mut vig Vignette) set_radius(radius f32) {
 	vig.radius = radius
 	vig.pip.set_uniform(vig.radius_index, &vig.radius)
 }
 
-pub fn (vig mut Vignette) set_power(power f32) {
+pub fn (mut vig Vignette) set_power(power f32) {
 	vig.power = power
 	vig.pip.set_uniform(vig.power_index, &vig.power)
 }
 
-pub fn (vig mut Vignette) imgui() {
+pub fn (mut vig Vignette) imgui() {
 	C.igText(c'Vignette')
 	if C.igDragFloat(c'Vignette Radius', &vig.radius, 0.01, 0.01, 5.0, C.NULL, 1) {
 		vig.set_radius(vig.radius)

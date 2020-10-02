@@ -7,7 +7,7 @@ import via.filesystem
 import via.libs.sokol.gfx
 import via.libs.sokol.sdl_metal_util
 
-type DebugRenderFn fn()
+type DebugRenderFn = fn()
 
 struct Graphics {
 mut:

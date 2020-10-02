@@ -116,7 +116,7 @@ fn render_delete(uptr voidptr) {
 	unsafe { free(fs) }
 }
 
-pub fn (font mut FontBook) update_texture() {
+pub fn (mut font FontBook) update_texture() {
 	if font.tex_dirty && time.frames() != font.last_update {
 		font.last_update = time.frames()
 

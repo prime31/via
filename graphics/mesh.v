@@ -59,7 +59,7 @@ pub fn mesh_new_immutable(verts []math.Vertex, indices []u16) &Mesh {
 }
 
 // Mesh updates
-pub fn (m mut Mesh) update_verts() {
+pub fn (mut m Mesh) update_verts() {
 	assert(m.vert_usage != .immutable)
 	if m.v_buffer_safe_to_update {
 		sg_update_buffer(m.bindings.vertex_buffers[0], m.verts.data, sizeof(math.Vertex) * m.verts.len)
@@ -67,7 +67,7 @@ pub fn (m mut Mesh) update_verts() {
 	}
 }
 
-pub fn (m mut Mesh) update_indices() {
+pub fn (mut m Mesh) update_indices() {
 	assert(m.indices_usage != .immutable)
 	if m.i_buffer_safe_to_update {
 		sg_update_buffer(m.bindings.index_buffer, m.indices.data, sizeof(u16) * m.indices.len)
@@ -75,7 +75,7 @@ pub fn (m mut Mesh) update_indices() {
 	}
 }
 
-pub fn (m mut Mesh) bind_texture(index int, tex Texture) {
+pub fn (mut m Mesh) bind_texture(index int, tex Texture) {
 	m.bindings.set_frag_image(index, tex.img)
 }
 
@@ -89,7 +89,7 @@ pub fn (m &Mesh) apply_uniforms(shader_stage gfx.ShaderStage, index int, data vo
 	sg_apply_uniforms(shader_stage, index, data, num_bytes)
 }
 
-pub fn (m mut Mesh) draw() {
+pub fn (mut m Mesh) draw() {
 	sg_draw(0, m.indices.len, 1)
 	m.v_buffer_safe_to_update = true
 	m.i_buffer_safe_to_update = true

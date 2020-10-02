@@ -48,7 +48,7 @@ pub fn (tbb &TextBatch) end() {
 	tb.img.id = 0
 }
 
-fn (tb mut TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.Color) {
+fn (mut tb TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := tb.char_cnt * 4
 	tb.char_cnt++
 	matrix.transform_vec2_arr(&tb.verts[base_vert], &quad.positions[0], 4)
@@ -60,7 +60,7 @@ fn (tb mut TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.
 	}
 }
 
-pub fn (tb mut TextBatch) draw_text(font &fonts.FontBook, str string, config DrawConfig) {
+pub fn (mut tb TextBatch) draw_text(font &fonts.FontBook, str string, config DrawConfig) {
 	if !tb.ensure_capacity(str.len) { return }
 	if tb.img.id != font.img.id {
 		tb.flush()
@@ -94,7 +94,7 @@ pub fn (tb mut TextBatch) draw_text(font &fonts.FontBook, str string, config Dra
 	}
 }
 
-pub fn (tb mut TextBatch) flush() {
+pub fn (mut tb TextBatch) flush() {
 	total_quads := (tb.char_cnt - tb.last_appended_char_cnt)
 	if total_quads == 0 { return }
 

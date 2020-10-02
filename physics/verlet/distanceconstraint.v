@@ -27,11 +27,11 @@ pub fn distanceconstraint(a, b &Particle, stiffness, distance f32) DistanceConst
 	}
 }
 
-pub fn (c mut DistanceConstraint) set_parent(parent &Composite) {
+pub fn (mut c DistanceConstraint) set_parent(parent &Composite) {
 	c.parent = parent
 }
 
-pub fn (c mut DistanceConstraint) solve() {
+pub fn (mut c DistanceConstraint) solve() {
 	// calculate the distance between the two Particles
 	diff := c.particle1.pos - c.particle2.pos
 	d := diff.magnitude()

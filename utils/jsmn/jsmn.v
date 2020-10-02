@@ -93,7 +93,7 @@ pub fn (p &Parser) free() {
 }
 
 // Parse JSON string and fills Parser.tokens with all the tokens found
-pub fn (p mut Parser) parse(js []byte) Error {
+pub fn (mut p Parser) parse(js []byte) Error {
 	p.tokens.clear()
 	mut count := 0
 
@@ -226,7 +226,7 @@ pub fn (p mut Parser) parse(js []byte) Error {
 }
 
 // Fills next available token with JSON primitive.
-fn (p mut Parser) parse_primitive(js []byte) Error {
+fn (mut p Parser) parse_primitive(js []byte) Error {
 	start := p.pos
 	mut non_strict_key := false
 
@@ -288,7 +288,7 @@ fn (p mut Parser) parse_primitive(js []byte) Error {
 }
 
 // Fills next token with JSON string
-fn (p mut Parser) parse_string(js []byte) Error {
+fn (mut p Parser) parse_string(js []byte) Error {
 	start := p.pos
 	p.pos++
 

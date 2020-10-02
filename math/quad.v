@@ -24,12 +24,12 @@ pub fn quad(x, y, width, height f32, img_width, img_height int) Quad {
 	return q
 }
 
-pub fn (q mut Quad) set_image_dimensions(img_width, img_height int) {
+pub fn (mut q Quad) set_image_dimensions(img_width, img_height int) {
 	q.img_width = img_width
 	q.img_height = img_height
 }
 
-pub fn (q mut Quad) set_viewport(x, y, width, height f32) {
+pub fn (mut q Quad) set_viewport(x, y, width, height f32) {
 	q.positions[0] = Vec2{0, 0} // tl
 	q.positions[1] = Vec2{width, 0} // tr
 	q.positions[2] = Vec2{width, height} // br

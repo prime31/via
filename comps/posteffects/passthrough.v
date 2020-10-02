@@ -23,6 +23,6 @@ fn passthrough_process(vig &Passthrough, tex &graphics.Texture, stack &graphics.
 	stack.blit(tex, mut vig.pip)
 }
 
-pub fn (p &Passthrough) add_to_stack(stack mut graphics.EffectStack) {
+pub fn (mut p &Passthrough) add_to_stack(stack graphics.EffectStack) {
 	stack.add(p, passthrough_process)
 }

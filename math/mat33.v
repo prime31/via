@@ -72,12 +72,12 @@ pub fn (self Mat33) get(row int, column int) f32 {
     return self.data[row * 3 + column]
 }
 
-pub fn (self mut Mat33) set(row int, column int, val f32) {
+pub fn (mut self Mat33) set(row int, column int, val f32) {
     self.data[row * 3 + column] = val
 }
 
 // swap two elements within a Mat33
-fn (self mut Mat33) swap(i0 int, i1 int) {
+fn (mut self Mat33) swap(i0 int, i1 int) {
     tmp := self.data[i0]
     self.data[i0] = self.data[i1]
     self.data[i1] = tmp

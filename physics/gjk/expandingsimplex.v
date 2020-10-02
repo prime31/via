@@ -44,7 +44,7 @@ fn simplexedge(pt1, pt2 math.Vec2, winding int) ExpandingSimplexEdge {
 	return e
 }
 
-fn (es mut ExpandingSimplex) start(simplex []math.Vec2) {
+fn (mut es ExpandingSimplex) start(simplex []math.Vec2) {
 	es.edge_queue.clear()
 	es.winding = es.get_winding(simplex)
 
@@ -71,12 +71,12 @@ fn (es &ExpandingSimplex) get_winding(simplex []math.Vec2) int {
 	return 0
 }
 
-fn (es mut ExpandingSimplex) closest_edge() ExpandingSimplexEdge {
+fn (mut es ExpandingSimplex) closest_edge() ExpandingSimplexEdge {
 	es.edge_queue.sort_with_compare(compare_edge)
 	return es.edge_queue[0]
 }
 
-fn (es mut ExpandingSimplex) expand(pt math.Vec2) {
+fn (mut es ExpandingSimplex) expand(pt math.Vec2) {
 	// remove the edge we are splitting
 	es.edge_queue.sort_with_compare(compare_edge)
 	edge := es.edge_queue[0]

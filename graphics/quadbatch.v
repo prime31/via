@@ -59,7 +59,7 @@ fn (qb &QuadBatch) ensure_capacity() bool {
 	return true
 }
 
-pub fn (qb mut QuadBatch) end() {
+pub fn (mut qb QuadBatch) end() {
 	qb.flush()
 	qb.last_appended_quad_cnt = 0
 	qb.quad_cnt = 0
@@ -67,14 +67,14 @@ pub fn (qb mut QuadBatch) end() {
 }
 
 // binds a frag shader image to an additional slot other than 0, which is reserved for the main texture
-pub fn (qb mut QuadBatch) bind_texture(index int, tex Texture) {
+pub fn (mut qb QuadBatch) bind_texture(index int, tex Texture) {
 	assert index != 0
 	qb.bindings.set_frag_image(index, tex.img)
 }
 
 //#region drawing methods
 
-pub fn (qb mut QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
+pub fn (mut qb QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	if !qb.ensure_capacity() { return }
 	if qb.tex_id != tex.id {
 		qb.flush()
@@ -93,25 +93,25 @@ pub fn (qb mut QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math
 	}
 }
 
-pub fn (qb mut QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
+pub fn (mut qb QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
 	qb.draw_q_m(tex.img, quad, config.get_matrix(), config.color)
 }
 
-pub fn (qb mut QuadBatch) draw_vp(tex Texture, viewport math.Rect, config DrawConfig) {
+pub fn (mut qb QuadBatch) draw_vp(tex Texture, viewport math.Rect, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
 
 	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
 }
 
-pub fn (qb mut QuadBatch) draw(tex Texture, config DrawConfig) {
+pub fn (mut qb QuadBatch) draw(tex Texture, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(0, 0, tex.w, tex.h)
 
 	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
 }
 
-pub fn (qb mut QuadBatch) draw_text(str string, config TextDrawConfig) {
+pub fn (mut qb QuadBatch) draw_text(str string, config TextDrawConfig) {
 	matrix := config.get_matrix()
 	font := if config.fontbook != 0 { config.fontbook } else { qb.fontbook }
 
@@ -142,7 +142,7 @@ pub fn (qb mut QuadBatch) draw_text(str string, config TextDrawConfig) {
 
 //#endregion
 
-pub fn (qb mut QuadBatch) flush() {
+pub fn (mut qb QuadBatch) flush() {
 	total_quads := (qb.quad_cnt - qb.last_appended_quad_cnt)
 	if total_quads == 0 { return }
 

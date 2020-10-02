@@ -116,7 +116,7 @@ pub fn (m &IntIntMap) get(key int) int {
 	panic('unreachable')
 }
 
-pub fn (m mut IntIntMap) put(key, value int) int {
+pub fn (mut m IntIntMap) put(key, value int) int {
 	if key == FREE_KEY_NO_VALUE {
 		ret := m.free_value
 		if !m.has_free_key {
@@ -166,7 +166,7 @@ pub fn (m mut IntIntMap) put(key, value int) int {
 	panic('unreachable')
 }
 
-pub fn (m mut IntIntMap) remove(key int) int {
+pub fn (mut m IntIntMap) remove(key int) int {
 	if key == FREE_KEY_NO_VALUE {
 		if !m.has_free_key {
 			return FREE_KEY_NO_VALUE
@@ -234,7 +234,7 @@ fn (m &IntIntMap) shift_keys(ptr int) int {
 	panic('unreachable')
 }
 
-fn (m mut IntIntMap) rehash() {
+fn (mut m IntIntMap) rehash() {
 	new_cap := m.data.len * 2
 	m.threshold = int(f32(new_cap) / 2.0 * m.fill_factor)
 	m.mask = new_cap / 2 - 1

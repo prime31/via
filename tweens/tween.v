@@ -29,17 +29,17 @@ pub fn tween(start, end, duration f32, kind Kind) Tween {
 	}
 }
 
-pub fn (t mut Tween) set_cb(ctx voidptr, cb TweenTickFn) {
+pub fn (mut t Tween) set_cb(ctx voidptr, cb TweenTickFn) {
 	t.ctx = ctx
 	t.cb = cb
 }
 
-pub fn (t mut Tween) set_delay(pre_delay, post_delay f32) {
+pub fn (mut t Tween) set_delay(pre_delay, post_delay f32) {
 	t.pre_delay = pre_delay
 	t.post_delay = post_delay
 }
 
-pub fn (t mut Tween) tick(dt f32) {
+pub fn (mut t Tween) tick(dt f32) {
 	if t.paused || t.done { return }
 
 	mut delta := dt

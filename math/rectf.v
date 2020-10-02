@@ -11,7 +11,7 @@ pub mut:
 pub fn (r RectF) str() string { return '$r.x, $r.y, $r.w, $r.h' }
 
 [inline]
-pub fn (r mut RectF) set(x, y, w, h f32) {
+pub fn (mut r RectF) set(x, y, w, h f32) {
 	r.x = x
 	r.y = y
 	r.w = w

@@ -57,19 +57,19 @@ pub fn (c Color) a_f() f32 {
 	return f32(c.a()) / 255
 }
 
-pub fn (c mut Color) set_r(r byte) {
+pub fn (mut c Color) set_r(r byte) {
 	c.value = (c.value & 0xffffff00) | r
 }
 
-pub fn (c mut Color) set_g(g byte) {
+pub fn (mut c Color) set_g(g byte) {
 	c.value = (c.value & 0xffff00ff) | g << 8
 }
 
-pub fn (c mut Color) set_b(b byte) {
+pub fn (mut c Color) set_b(b byte) {
 	c.value = (c.value & 0xff00ffff) | b << 16
 }
 
-pub fn (c mut Color) set_a(a byte) {
+pub fn (mut c Color) set_a(a byte) {
 	c.value = (c.value & 0x00ffffff) | a << 24
 }
 

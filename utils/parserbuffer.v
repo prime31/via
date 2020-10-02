@@ -14,21 +14,21 @@ pub fn new_parser_buffer(initial_size int) ParserBuffer {
 	}
 }
 
-pub fn (b mut ParserBuffer) str() string {
+pub fn (mut b ParserBuffer) str() string {
 	b.buf[b.len] = `\0`
 	return string(b.buf, b.len)
 }
 
-pub fn (b mut ParserBuffer) reset() {
+pub fn (mut b ParserBuffer) reset() {
 	b.len = 0
 }
 
-pub fn (b mut ParserBuffer) write_b(data byte) {
+pub fn (mut b ParserBuffer) write_b(data byte) {
 	b.buf[b.len] = data
 	b.len++
 }
 
-pub fn (b mut ParserBuffer) free() {
+pub fn (mut b ParserBuffer) free() {
 	unsafe { b.buf.free() }
 	b.len = 0
 }

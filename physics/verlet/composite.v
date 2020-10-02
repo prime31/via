@@ -21,43 +21,43 @@ pub fn composite() Composite {
 
 //#region Particle/Constraint management
 
-pub fn (c mut Composite) add_particle(p Particle) int {
+pub fn (mut c Composite) add_particle(p Particle) int {
 	c.particles << p
 	return c.particles.len - 1
 }
 
-pub fn (c mut Composite) remove_particle(p Particle) {
+pub fn (mut c Composite) remove_particle(p Particle) {
 	panic('not implemented')
 }
 
-pub fn (c mut Composite) clear_particles() {
+pub fn (mut c Composite) clear_particles() {
 	c.particles.clear()
 }
 
 // TODO: should be IConstrainter
-pub fn (c mut Composite) add_constraint(constraint mut DistanceConstraint) {
+pub fn (mut c mut Composite) add_constraint(constraint DistanceConstraint) {
 	constraint.set_parent(c)
 	c.constraints << *constraint
 }
 
 // TODO: should be IConstrainter
-pub fn (c mut Composite) remove_constraint(constraint DistanceConstraint) {
+pub fn (mut c Composite) remove_constraint(constraint DistanceConstraint) {
 	//panic('not implemented')
 }
 
-pub fn (c mut Composite) clear_constraints() {
+pub fn (mut c Composite) clear_constraints() {
 	c.constraints.clear()
 }
 
 //#endregion
 
-pub fn (c mut Composite) apply_force(force math.Vec2) {
+pub fn (mut c Composite) apply_force(force math.Vec2) {
 	for i in 0..c.particles.len {
 		c.particles[i].apply_force(force)
 	}
 }
 
-pub fn (c mut Composite) solve_constraints() {
+pub fn (mut c Composite) solve_constraints() {
 	// loop backwards in case any Constraints break and are removed
 	for i := c.constraints.len - 1; i >= 0; i-- {
 		mut cons := &c.constraints[i]

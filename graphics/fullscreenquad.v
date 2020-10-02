@@ -34,7 +34,7 @@ pub fn fullscreenquad() &FullscreenQuad {
 }
 
 // updates the verts to match the current window drawable size, should be called whenever the window is resized.
-pub fn (q mut FullscreenQuad) update_verts() {
+pub fn (mut q FullscreenQuad) update_verts() {
 	if q.last_vert_update_frame < time.frames() {
 		scaler := get_resolution_scaler()
 		if scaler.w != q.width || scaler.h != q.height {
@@ -55,7 +55,7 @@ pub fn (q mut FullscreenQuad) update_verts() {
 	}
 }
 
-pub fn (q mut FullscreenQuad) bind_texture(index int, tex Texture) {
+pub fn (mut q FullscreenQuad) bind_texture(index int, tex Texture) {
 	q.bindings.set_frag_image(index, tex.img)
 }
 

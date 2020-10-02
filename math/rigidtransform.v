@@ -13,7 +13,7 @@ pub fn rigidtransform(pos Vec2) RigidTransform {
 	}
 }
 
-pub fn (t mut RigidTransform) rotate(radians f32) {
+pub fn (mut t RigidTransform) rotate(radians f32) {
 	sin, cos := sincos(radians)
 
 	// perform an optimized version of matrix multiplication
@@ -28,7 +28,7 @@ pub fn (t mut RigidTransform) rotate(radians f32) {
 	t.pos.y = y
 }
 
-pub fn (t &RigidTransform) inverse_transform_rot(vec mut Vec2) {
+pub fn (t &RigidTransform) inverse_transform_rot(vec Vec2) {
 		x := vec.x
 		y := vec.y
 
@@ -43,7 +43,7 @@ pub fn (t &RigidTransform) get_transformed(vec Vec2) Vec2 {
 	return vec2
 }
 
-pub fn (t &RigidTransform) transformed(vec mut Vec2) {
+pub fn (t &RigidTransform) transformed(vec Vec2) {
 	x := vec.x
 	y := vec.y
 

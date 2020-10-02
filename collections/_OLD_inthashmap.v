@@ -69,7 +69,7 @@ pub fn (hashmap &IntHashMap) has(key int) bool {
     return hashmap.read_index(key) != -1
 }
 
-pub fn (hashmap mut IntHashMap) put(key int, value voidptr) {
+pub fn (mut hashmap IntHashMap) put(key int, value voidptr) {
     mut idx := hashmap.put_index(key)
     for idx < 0 {
         hashmap.rehash()
@@ -110,7 +110,7 @@ pub fn (hashmap &IntHashMap) keys() []int {
 }
 
 // unsafe
-pub fn (hashmap mut IntHashMap) remove(key int) voidptr {
+pub fn (mut hashmap IntHashMap) remove(key int) voidptr {
     idx := hashmap.read_index(key)
     if idx == -1 {
         return 0
@@ -122,7 +122,7 @@ pub fn (hashmap mut IntHashMap) remove(key int) voidptr {
     return res
 }
 
-pub fn (hashmap mut IntHashMap) clear() {
+pub fn (mut hashmap IntHashMap) clear() {
     for idx := 0; idx < hashmap._keys.len; idx++ {
         if hashmap._used[idx] {
             hashmap._size--
@@ -183,7 +183,7 @@ fn (hashmap &IntHashMap) put_index(key int) int {
     return idx
 }
 
-fn (hashmap mut IntHashMap) rehash() {
+fn (mut hashmap IntHashMap) rehash() {
     new_capacity := hashmap._keys.len * 2
     hashmap.threshold = int(f32(new_capacity) * hashmap.fill_factor)
     hashmap.mask = new_capacity - 1
@@ -211,7 +211,7 @@ fn (hashmap mut IntHashMap) rehash() {
     }
 }
 
-fn (hashmap mut IntHashMap) shift_keys(_pos int) int {
+fn (mut hashmap IntHashMap) shift_keys(_pos int) int {
     mut last := 0
     mut k := 0
     mut pos := _pos

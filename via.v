@@ -45,7 +45,7 @@ fn (v &Via) free() {
 	unsafe { free(v) }
 }
 
-pub fn run<T>(config &ViaConfig, ctx mut T) {
+pub fn run<T>(config &ViaConfig, mut ctx T) {
 	v := create_via(config)
 	if C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_HAPTIC | C.SDL_INIT_GAMECONTROLLER) != 0 {
 		C.SDL_Log(c'Unable to initialize SDL: %s', C.SDL_GetError())

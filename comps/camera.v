@@ -25,7 +25,7 @@ pub fn (c &Camera) trans_mat() math.Mat32 {
 }
 
 // set the camera scale. A value of 3 would be zoom in 3x and a value of 0.5 would be zoomed out 2x
-pub fn (c mut Camera) zoom(zoom f32) {
+pub fn (mut c Camera) zoom(zoom f32) {
 	c.scale.x = zoom
 	c.scale.y = zoom
 }

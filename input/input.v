@@ -113,7 +113,7 @@ pub fn handle_event(evt &C.SDL_Event) {
 	}
 }
 
-fn (i mut Input) handle_keyboard_event(evt &C.SDL_KeyboardEvent) {
+fn (mut i Input) handle_keyboard_event(evt &C.SDL_KeyboardEvent) {
 	if evt.state == 0 {
 		i.keys[evt.keysym.scancode] = released
 		i.dirty_keys << evt.keysym.scancode
@@ -126,7 +126,7 @@ fn (i mut Input) handle_keyboard_event(evt &C.SDL_KeyboardEvent) {
 	//println('kbd evt [${time.frames()}]. TING: ${i.keys[evt.keysym.scancode]} key: $key, state: $evt.state, scancode: $evt.keysym.scancode, mod: $evt.keysym.mod')
 }
 
-fn (i mut Input) handle_mouse_event(evt &C.SDL_MouseButtonEvent) {
+fn (mut i Input) handle_mouse_event(evt &C.SDL_MouseButtonEvent) {
 	if evt.state == 0 {
 		i.mouse_buttons[evt.button] = released
 		i.dirty_mouse_buttons << evt.button

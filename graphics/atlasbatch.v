@@ -44,7 +44,7 @@ pub fn (ab &AtlasBatch) free() {
 	}
 }
 
-pub fn (sb mut AtlasBatch) update_verts() {
+pub fn (mut sb AtlasBatch) update_verts() {
 	if sb.v_buffer_safe_to_update {
 		sg_update_buffer(sb.bindings.vertex_buffers[0], sb.verts.data, sizeof(math.Vertex) * sb.verts.len)
 		sb.v_buffer_safe_to_update = false
@@ -52,12 +52,12 @@ pub fn (sb mut AtlasBatch) update_verts() {
 	}
 }
 
-pub fn (sb mut AtlasBatch) set_texture(tex Texture) {
+pub fn (mut sb AtlasBatch) set_texture(tex Texture) {
 	sb.bindings.set_frag_image(0, tex.img)
 	sb.tex = tex
 }
 
-pub fn (ab mut AtlasBatch) clear() {
+pub fn (mut ab AtlasBatch) clear() {
 	ab.sprite_cnt = 0
 }
 
@@ -71,7 +71,7 @@ fn (ab &AtlasBatch) ensure_capacity() bool {
 
 //#region updating quads
 
-pub fn (ab mut AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
+pub fn (mut ab AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := index * 4
 
 	matrix.transform_vec2_arr(&ab.verts[base_vert], &quad.positions[0], 4)
@@ -85,12 +85,12 @@ pub fn (ab mut AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32,
 	ab.v_buffer_dirty = true
 }
 
-pub fn (ab mut AtlasBatch) set_vp(index int, viewport math.Rect, config DrawConfig) {
+pub fn (mut ab AtlasBatch) set_vp(index int, viewport math.Rect, config DrawConfig) {
 	ab.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
 	ab.set_q(index, ab.quad, config.get_matrix(), config.color)
 }
 
-pub fn (ab mut AtlasBatch) set(index int, config DrawConfig) {
+pub fn (mut ab AtlasBatch) set(index int, config DrawConfig) {
 	ab.quad.set_viewport(0, 0, ab.tex.w, ab.tex.h)
 	ab.set_q(index, ab.quad, config.get_matrix(), config.color)
 }
@@ -99,7 +99,7 @@ pub fn (ab mut AtlasBatch) set(index int, config DrawConfig) {
 
 //#region adding quads
 
-pub fn (sb mut AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
+pub fn (mut sb AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
 	if !sb.ensure_capacity() {
 		return -1
 	}
@@ -111,12 +111,12 @@ pub fn (sb mut AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
 	return sb.sprite_cnt - 1
 }
 
-pub fn (ab mut AtlasBatch) add_vp(viewport math.Rect, config DrawConfig) {
+pub fn (mut ab AtlasBatch) add_vp(viewport math.Rect, config DrawConfig) {
 	ab.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
 	ab.add_q(ab.quad, config)
 }
 
-pub fn (sb mut AtlasBatch) add(config DrawConfig) int {
+pub fn (mut sb AtlasBatch) add(config DrawConfig) int {
 	if !sb.ensure_capacity() {
 		return -1
 	}
@@ -130,7 +130,7 @@ pub fn (sb mut AtlasBatch) add(config DrawConfig) int {
 
 //#endregion
 
-pub fn (ab mut AtlasBatch) draw() {
+pub fn (mut ab AtlasBatch) draw() {
 	if ab.v_buffer_dirty {
 		ab.update_verts()
 	}

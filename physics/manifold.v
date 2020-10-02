@@ -10,7 +10,7 @@ mut:
 	normal math.Vec2
 }
 
-pub fn (m mut Manifold) invert() Manifold {
+pub fn (mut m Manifold) invert() Manifold {
 	m.normal = m.normal.scale(-1)
 	return m
 }

@@ -99,7 +99,7 @@ pub fn (p &Pipeline) get_uniform_index(shader_stage gfx.ShaderStage, index int) 
 	return -1
 }
 
-pub fn (p mut Pipeline) set_uniform(uniform_index int, data voidptr) {
+pub fn (mut p Pipeline) set_uniform(uniform_index int, data voidptr) {
 	assert(uniform_index >= 0 && uniform_index < p.uniforms.len)
 
 	mut uni := p.uniforms[uniform_index]
@@ -110,13 +110,13 @@ pub fn (p mut Pipeline) set_uniform(uniform_index int, data voidptr) {
 	}
 }
 
-pub fn (p mut Pipeline) set_uniform_raw(shader_stage gfx.ShaderStage, index int, data voidptr) {
+pub fn (mut p Pipeline) set_uniform_raw(shader_stage gfx.ShaderStage, index int, data voidptr) {
 	uni_index := p.get_uniform_index(shader_stage, index)
 	assert(uni_index >= 0)
 	p.set_uniform(uni_index, data)
 }
 
-pub fn (p mut Pipeline) apply_uniforms() {
+pub fn (mut p Pipeline) apply_uniforms() {
 	for i, uni in p.uniforms {
 		if uni.dirty {
 			sg_apply_uniforms(uni.shader_stage, uni.index, uni.data, uni.num_bytes)

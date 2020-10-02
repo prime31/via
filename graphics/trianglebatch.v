@@ -42,14 +42,14 @@ fn (tb &TriangleBatch) ensure_capacity(tris int) bool {
 	return true
 }
 
-pub fn (tb mut TriangleBatch) end() {
+pub fn (mut tb TriangleBatch) end() {
 	tb.flush()
 	tb.last_appended_tri_cnt = 0
 	tb.tri_cnt = 0
 	tb.tex.img.id = 0
 }
 
-pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config DrawConfig) {
+pub fn (mut tb TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config DrawConfig) {
 	if !tb.ensure_capacity(1) { return }
 
 	base_vert := tb.tri_cnt * 3
@@ -69,18 +69,18 @@ pub fn (tb mut TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config D
 	matrix.transform_vertex_arr(&tb.verts[base_vert], 3)
 }
 
-pub fn (tb mut TriangleBatch) draw_point(x, y, size f32, color math.Color) {
+pub fn (mut tb TriangleBatch) draw_point(x, y, size f32, color math.Color) {
 	tb.draw_rectangle(size, size, {x:x y:y color:color})
 }
 
-pub fn (tb mut TriangleBatch) draw_rectangle(width, height f32, config DrawConfig) {
+pub fn (mut tb TriangleBatch) draw_rectangle(width, height f32, config DrawConfig) {
 	// TODO: should this be from center or top-left?
 	half_w := width * 0.5
 	half_h := height * 0.5
 	tb.draw_polygon([math.Vec2{-half_w, -half_h}, math.Vec2{half_w, -half_h}, math.Vec2{half_w, half_h}, math.Vec2{-half_w, half_h}]!, config)
 }
 
-pub fn (tb mut TriangleBatch) draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
+pub fn (mut tb TriangleBatch) draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
 	half_thick := thickness * 0.5
 
 	tb.draw_line(x - half_thick, y, x + width + half_thick, y, thickness, color)
@@ -89,14 +89,14 @@ pub fn (tb mut TriangleBatch) draw_hollow_rect(x, y, width, height, thickness f3
 	tb.draw_line(x, y + height, x, y, thickness, color)
 }
 
-pub fn (tb mut TriangleBatch) draw_polygon(verts []math.Vec2, config DrawConfig) {
+pub fn (mut tb TriangleBatch) draw_polygon(verts []math.Vec2, config DrawConfig) {
 	assert verts.len > 1
 	for i in 1..verts.len - 1 {
 		tb.draw_triangle(verts[0].x, verts[0].y, verts[i].x, verts[i].y, verts[i + 1].x, verts[i + 1].y, config)
 	}
 }
 
-pub fn (tb mut TriangleBatch) draw_hollow_polygon(x, y f32, verts []math.Vec2, color math.Color) {
+pub fn (mut tb TriangleBatch) draw_hollow_polygon(x, y f32, verts []math.Vec2, color math.Color) {
 	assert verts.len > 1
 
 	for i in 0..verts.len - 1 {
@@ -105,7 +105,7 @@ pub fn (tb mut TriangleBatch) draw_hollow_polygon(x, y f32, verts []math.Vec2, c
 	tb.draw_line(x + verts[verts.len - 1].x, y + verts[verts.len - 1].y, x + verts[0].x, y + verts[0].y, 1, color)
 }
 
-pub fn (tb mut TriangleBatch) draw_circle(radius f32, segments int, config DrawConfig) {
+pub fn (mut tb TriangleBatch) draw_circle(radius f32, segments int, config DrawConfig) {
 	if !tb.ensure_capacity(segments) { return }
 
 	center := math.Vec2{}
@@ -129,7 +129,7 @@ pub fn (tb mut TriangleBatch) draw_circle(radius f32, segments int, config DrawC
 	}
 }
 
-pub fn (tb mut TriangleBatch) draw_hollow_circle(radius f32, segments int, config DrawConfig) {
+pub fn (mut tb TriangleBatch) draw_hollow_circle(radius f32, segments int, config DrawConfig) {
 	center := math.Vec2{config.x, config.y}
 	increment := math.pi * 2.0 / segments
 	mut theta := 0.0
@@ -150,7 +150,7 @@ pub fn (tb mut TriangleBatch) draw_hollow_circle(radius f32, segments int, confi
 	}
 }
 
-pub fn (tb mut TriangleBatch) draw_line(x1, y1, x2, y2, thickness f32, color math.Color) {
+pub fn (mut tb TriangleBatch) draw_line(x1, y1, x2, y2, thickness f32, color math.Color) {
 	v1 := x1 - x2
 	v2 := y1 - y2
 	dist := math.sqrt(v1 * v1 + v2 * v2)

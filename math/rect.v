@@ -15,7 +15,7 @@ pub mut:
 pub fn (r Rect) str() string { return '$r.x, $r.y, $r.w, $r.h' }
 
 [inline]
-pub fn (r mut Rect) set(x, y, w, h int) {
+pub fn (mut r Rect) set(x, y, w, h int) {
 	r.x = x
 	r.y = y
 	r.w = w
@@ -88,7 +88,7 @@ pub fn (r &Rect) half_rect(edge Edge) Rect {
 	}
 }
 
-pub fn (r mut Rect) expand_edge(edge Edge, amount int) {
+pub fn (mut r Rect) expand_edge(edge Edge, amount int) {
 	// ensure we have a positive value
 	amt := abs(amount)
 
@@ -111,7 +111,7 @@ pub fn (r mut Rect) expand_edge(edge Edge, amount int) {
 	}
 }
 
-pub fn (r mut Rect) contract(horiz, vert int) {
+pub fn (mut r Rect) contract(horiz, vert int) {
 	r.x += horiz
 	r.y += vert
 	r.w -= horiz * 2

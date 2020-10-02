@@ -50,16 +50,16 @@ fn sepia_process(s &Sepia, tex &graphics.Texture, stack &graphics.EffectStack) {
 	stack.blit(tex, mut s.pip)
 }
 
-pub fn (s &Sepia) add_to_stack(stack mut graphics.EffectStack) {
+pub fn (mut s &Sepia) add_to_stack(stack graphics.EffectStack) {
 	stack.add(s, sepia_process)
 }
 
-pub fn (s mut Sepia) set_tone(tone math.Vec3) {
+pub fn (mut s Sepia) set_tone(tone math.Vec3) {
 	s.tone = tone
 	s.pip.set_uniform(s.tone_index, &s.tone)
 }
 
-pub fn (s mut Sepia) imgui() {
+pub fn (mut s Sepia) imgui() {
 	C.igText(c'Sepia')
 	if C.igDragFloat3(c'Tone', &s.tone, 0.01, 0, 2.0, C.NULL, 1) {
 		s.set_tone(s.tone)

@@ -81,7 +81,7 @@ fn get_support_point(dir math.Vec2, shape1, shape2 &physics.Collider, trans1, tr
 	return shape1.get_farthest_pt(dir, trans1) - shape2.get_farthest_pt(dir.scale(-1), trans2)
 }
 
-fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
+fn (mut g mut Gjk) check_simplex(dir math.Vec2) bool {
 	if g.simplex.len == 3 {
 		c0 := g.simplex[2].scale(-1)
 		bc := g.simplex[1] - g.simplex[2]
@@ -120,7 +120,7 @@ fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
 	return false
 }
 
-fn (g mut Gjk) get_manifold(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) physics.Manifold {
+fn (mut g Gjk) get_manifold(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) physics.Manifold {
 	mut manifold := physics.Manifold{}
 	manifold.collided = true
 	g.expanding_simplex.start(g.simplex)

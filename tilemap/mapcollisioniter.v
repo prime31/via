@@ -46,7 +46,7 @@ pub fn mapcollisioniter(map Map, bounds math.Rect, edge math.Edge) MapCollisionI
 	}
 }
 
-pub fn (i mut MapCollisionIter) next() bool {
+pub fn (mut i MapCollisionIter) next() bool {
 	// increment the inner loop
 	i.secondary += i.secondary_incr
 	if i.secondary != i.last_secondary + i.secondary_incr {

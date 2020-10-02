@@ -55,7 +55,7 @@ pub fn (s &System) get_user_data(userdata voidptr) int {
 	return FMOD_System_GetUserData(s.sys, userdata)
 }
 
-pub fn (s &System) get_channel(channelid int, channel mut Channel) int {
+pub fn (mut s &System) get_channel(channelid int, channel Channel) int {
 	return FMOD_System_GetChannel(s.sys, channelid, &channel.ch)
 }
 
