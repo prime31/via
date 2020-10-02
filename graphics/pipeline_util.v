@@ -66,7 +66,7 @@ pub fn vert_buffer_create(verts []math.Vertex, usage gfx.Usage) C.sg_buffer {
 	mut vert_buff_desc := C.sg_buffer_desc{
 		@type: .vertexbuffer
 		usage: usage
-		size: sizeof(math.Vertex) * verts.len
+		size: int(sizeof(math.Vertex) * u32(verts.len))
 		label: &byte(0)
 		d3d11_buffer: 0
 		content: 0

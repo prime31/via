@@ -16,7 +16,7 @@ fn (pp &EffectStack) free() {
 	unsafe {
 		pp.callbacks.free()
 		pp.contexts.free()
-		free(pp)
+		C.free(pp)
 	}
 }
 

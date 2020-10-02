@@ -66,10 +66,12 @@ pub fn now() u64 { return C.SDL_GetPerformanceCounter() }
 pub fn laptime(last_time &u64) f64 {
 	mut tmp := last_time
 	mut dt := f64(0)
-	now := now()
+	n := now()
 	if *tmp != 0 {
 		dt = f64((now - *tmp) * 1000) / f64(C.SDL_GetPerformanceFrequency())
 	}
-	*tmp = now
+	unsafe {
+		*tmp = n
+	}
 	return dt
 }

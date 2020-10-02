@@ -16,7 +16,7 @@ pub fn new_parser_buffer(initial_size int) ParserBuffer {
 
 pub fn (mut b ParserBuffer) str() string {
 	b.buf[b.len] = `\0`
-	return string(b.buf, b.len)
+	return b.buf.str()
 }
 
 pub fn (mut b ParserBuffer) reset() {

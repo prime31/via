@@ -116,7 +116,7 @@ pub fn texture_from_data(width, height int, pixels []u32) Texture {
 	}
 	img_desc.content.subimage[0][0] = C.sg_subimage_content{
 		ptr: pixels.data
-		size: sizeof(u32) * pixels.len
+		size: int(sizeof(u32) * u32(pixels.len))
     }
 
 	tex := Texture{
