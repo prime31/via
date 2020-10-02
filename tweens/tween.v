@@ -16,7 +16,7 @@ pub:
 	duration f32
 }
 
-type TweenTickFn fn(ctx voidptr, tween &Tween)
+type TweenTickFn = fn(ctx voidptr, tween &Tween)
 
 
 pub fn tween(start, end, duration f32, kind Kind) Tween {

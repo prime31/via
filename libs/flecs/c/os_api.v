@@ -6,7 +6,7 @@ pub:
 	nanosec u32
 }
 
-pub type ThreadNewFn fn(voidptr) voidptr
+pub type ThreadNewFn = fn(voidptr) voidptr
 
 pub struct C.ecs_os_api_t {
 pub:

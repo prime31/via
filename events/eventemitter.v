@@ -1,6 +1,6 @@
 module events
 
-pub type EventHandlerFn fn(voidptr, voidptr, voidptr)
+pub type EventHandlerFn = fn(voidptr, voidptr, voidptr)
 
 pub struct EventEmitter {
 mut:
