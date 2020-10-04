@@ -8,9 +8,13 @@ pub fn set_physfs_file_system(s &fmod.System) int {
 
 // Physfs implemention
 fn physfs_open_cb(name byteptr, mut filesize &u32, mut handle &voidptr, userdata voidptr) int {
+	/*
 	if name != byteptr(0) {
 		fp := C.PHYSFS_openRead(name)
-		if fp == &C.PHYSFS_File{} {
+
+		pf := C.PHYSFS_File{}
+
+		if fp == &pf {
 			return int(fmod.Result.err_file_notfound)
 		}
 
@@ -19,7 +23,7 @@ fn physfs_open_cb(name byteptr, mut filesize &u32, mut handle &voidptr, userdata
 			*handle = **voidptr(fp)
 		}
 	}
-
+*/
 	return int(fmod.Result.ok)
 }
 

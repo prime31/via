@@ -43,7 +43,7 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 	}
 	img_desc.content.subimage[0][0] = C.sg_subimage_content{
 		ptr: img.data
-		size: img.channels * img.width * img.height
+		size: int(img.channels) * img.width * img.height
     }
 
 	tex := Texture{

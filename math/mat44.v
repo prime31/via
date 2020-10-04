@@ -179,11 +179,11 @@ pub fn mat44_look_at(eye Vec3, center Vec3, up Vec3) Mat44 {
     result.data[1] = u.x
     result.data[5] = u.y
     result.data[9] = u.z
-    result.data[2] = -f.x
-    result.data[6] = -f.y
-    result.data[10] = -f.z
-    result.data[12] = -s.dot(eye)
-    result.data[13] = -u.dot(eye)
+    result.data[2] = -(f.x)
+    result.data[6] = -(f.y)
+    result.data[10] = -(f.z)
+    result.data[12] = -(s.dot(eye))
+    result.data[13] = -(u.dot(eye))
     result.data[14] = f.dot(eye)
 
     return result

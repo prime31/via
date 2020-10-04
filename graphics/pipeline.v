@@ -1,7 +1,7 @@
 module graphics
 import via.libs.sokol.gfx
 
-fn C.memcmp() int
+//fn C.memcmp() int
 
 pub struct Pipeline {
 mut:

@@ -19,9 +19,11 @@ pub fn trianglebatch(max_tris int) &TriangleBatch {
 	// 2x2 white pixel texture
 	pixels := [u32(0xFFFFFFFF), 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]!
 
+	//arr := utils.new_arr_with_default<math.Vertex>(max_tris * 3, max_tris * 3, math.Vertex{})
+	arr := []math.Vertex{len: max_tris * 3, cap: max_tris * 3, init: math.Vertex{}}
 	mut tb := &TriangleBatch{
 		// default colors to white
-		//TODO(larpon) verts: utils.new_arr_with_default(max_tris * 3, max_tris * 3, math.Vertex{})
+		verts: arr
 		max_tris: max_tris
 		tex: texture_from_data(2, 2, pixels)
 	}

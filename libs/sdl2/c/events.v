@@ -60,12 +60,14 @@ pub enum Eventaction {
 	getevent
 }
 
+[typedef]
 pub struct C.SDL_CommonEvent {
 pub:
 	@type u32
 	timestamp u32
 }
 
+[typedef]
 pub struct C.SDL_DisplayEvent {
 pub:
     @type u32        /**< ::SDL_DISPLAYEVENT */
@@ -78,6 +80,7 @@ pub:
     data1 int       /**< event dependent data */
 }
 
+[typedef]
 pub struct C.SDL_WindowEvent {
 pub:
 	@type EventType   	/**< ::SDL_WINDOWEVENT */
@@ -91,6 +94,7 @@ pub:
 	data2 int
 }
 
+[typedef]
 pub struct C.SDL_KeyboardEvent {
 pub:
 	@type u32   	/**< ::SDL_KEYDOWN or ::SDL_KEYUP */
@@ -103,6 +107,7 @@ pub:
 	keysym C.SDL_Keysym
 }
 
+[typedef]
 pub struct C.SDL_TextEditingEvent {
 pub:
     @type u32                                /**< ::SDL_TEXTEDITING */
@@ -113,6 +118,7 @@ pub:
     length int                              /**< The length of selected editing text */
 }
 
+[typedef]
 pub struct C.SDL_TextInputEvent {
 pub:
     @type u32    	/**< ::SDL_TEXTINPUT */
@@ -121,6 +127,7 @@ pub:
     text [32]byte  	/**< The input text */
 }
 
+[typedef]
 pub struct C.SDL_MouseMotionEvent {
 pub:
     @type u32        /**< ::SDL_MOUSEMOTION */
@@ -134,6 +141,7 @@ pub:
     yrel int        /**< The relative motion in the Y direction */
 }
 
+[typedef]
 pub struct C.SDL_MouseButtonEvent {
 pub:
     @type u32        /**< ::SDL_MOUSEBUTTONDOWN or ::SDL_MOUSEBUTTONUP */
@@ -151,6 +159,7 @@ pub fn (e &C.SDL_MouseButtonEvent) str() string {
 	return 'MouseButtonEvent. button: $e.button, state: $e.state, clicks: $e.clicks, x: $e.x, y: $e.y'
 }
 
+[typedef]
 pub struct C.SDL_MouseWheelEvent {
 pub:
     @type u32        /**< ::SDL_MOUSEWHEEL */
@@ -162,6 +171,7 @@ pub:
     direction u32   /**< Set to one of the SDL_MOUSEWHEEL_* defines. When FLIPPED the values in X and Y will be opposite. Multiply by -1 to change them back */
 }
 
+[typedef]
 pub struct C.SDL_JoyAxisEvent {
 pub:
     @type u32        /**< ::SDL_JOYAXISMOTION */
@@ -175,6 +185,7 @@ pub:
     padding4 u16
 }
 
+[typedef]
 pub struct C.SDL_JoyBallEvent {
 pub:
     @type u32        /**< ::SDL_JOYBALLMOTION */
@@ -188,6 +199,7 @@ pub:
     yrel i16        /**< The relative motion in the Y direction */
 }
 
+[typedef]
 pub struct C.SDL_JoyHatEvent {
 pub:
 	@type u32       /**< SDL_JOYHATMOTION */
@@ -204,6 +216,7 @@ pub:
     padding2 byte
 }
 
+[typedef]
 pub struct C.SDL_JoyButtonEvent {
 pub:
 	@type u32 		/**< SDL_JOYBUTTONDOWN or SDL_JOYBUTTONUP */
@@ -215,6 +228,7 @@ pub:
     padding2 byte
 }
 
+[typedef]
 pub struct C.SDL_JoyDeviceEvent {
 pub:
     @type u32        /**< ::SDL_JOYDEVICEADDED or ::SDL_JOYDEVICEREMOVED */
@@ -222,6 +236,7 @@ pub:
     which int       /**< The joystick device index for the ADDED event, instance id for the REMOVED event */
 }
 
+[typedef]
 pub struct C.SDL_ControllerAxisEvent {
 pub:
     @type u32        /**< ::SDL_CONTROLLERAXISMOTION */
@@ -235,6 +250,7 @@ pub:
     padding4 u16
 }
 
+[typedef]
 pub struct C.SDL_ControllerButtonEvent {
 pub:
     @type u32        /**< ::SDL_CONTROLLERBUTTONDOWN or ::SDL_CONTROLLERBUTTONUP */
@@ -246,6 +262,7 @@ pub:
     padding2 byte
 }
 
+[typedef]
 pub struct C.SDL_ControllerDeviceEvent {
 pub:
     @type u32        /**< ::SDL_CONTROLLERDEVICEADDED, ::SDL_CONTROLLERDEVICEREMOVED, or ::SDL_CONTROLLERDEVICEREMAPPED */
@@ -253,6 +270,7 @@ pub:
     which int       /**< The joystick device index for the ADDED event, instance id for the REMOVED or REMAPPED event */
 }
 
+[typedef]
 pub struct C.SDL_AudioDeviceEvent {
 pub:
     @type u32        /**< ::SDL_AUDIODEVICEADDED, or ::SDL_AUDIODEVICEREMOVED */
@@ -264,6 +282,7 @@ pub:
     padding3 byte
 }
 
+[typedef]
 pub struct C.SDL_TouchFingerEvent {
 pub:
     @type u32        /**< ::SDL_FINGERMOTION or ::SDL_FINGERDOWN or ::SDL_FINGERUP */
@@ -277,6 +296,7 @@ pub:
     pressure f32     /**< Normalized in the range 0...1 */
 }
 
+[typedef]
 pub struct C.SDL_MultiGestureEvent {
 pub:
     @type u32        /**< ::SDL_MULTIGESTURE */
@@ -290,6 +310,7 @@ pub:
     padding u16
 }
 
+[typedef]
 pub struct C.SDL_DollarGestureEvent {
 pub:
 	@type u32
@@ -302,6 +323,7 @@ pub:
 	y f32
 }
 
+[typedef]
 pub struct C.SDL_DropEvent {
 pub:
     @type u32        /**< ::SDL_DROPBEGIN or ::SDL_DROPFILE or ::SDL_DROPTEXT or ::SDL_DROPCOMPLETE */
@@ -310,6 +332,7 @@ pub:
     windowID u32    /**< The window that was dropped on, if any */
 }
 
+[typedef]
 pub struct C.SDL_SensorEvent {
 pub:
     @type u32        /**< ::SDL_SENSORUPDATE */
@@ -318,18 +341,21 @@ pub:
     data [6]f32      /**< Up to 6 values from the sensor - additional values can be queried using SDL_SensorGetData() */
 }
 
+[typedef]
 pub struct C.SDL_QuitEvent {
 pub:
 	@type u32 /**< SDL_QUIT */
 	timestamp u32
 }
 
+[typedef]
 pub struct C.SDL_OSEvent {
 pub:
 	@type u32
 	timestamp u32
 }
 
+[typedef]
 pub struct C.SDL_UserEvent {
 pub:
     @type u32        /**< ::SDL_USEREVENT through ::SDL_LASTEVENT-1 */
@@ -340,8 +366,10 @@ pub:
     data2 voidptr        /**< User defined data pointer */
 }
 
+[typedef]
 pub struct C.SDL_SysWMmsg {}
 
+[typedef]
 pub struct C.SDL_SysWMEvent {
 pub:
 	@type u32
@@ -349,13 +377,14 @@ pub:
 	msg &C.SDL_SysWMmsg
 }
 
+[typedef]
 pub struct C.SDL_Event {
 pub:
-	@type EventType
-	common C.SDL_CommonEvent
-	display C.SDL_DisplayEvent
-	window C.SDL_WindowEvent
-	key C.SDL_KeyboardEvent
+	@type		EventType
+	common		C.SDL_CommonEvent
+	display		C.SDL_DisplayEvent
+	window		C.SDL_WindowEvent
+	key			C.SDL_KeyboardEvent
 	edit C.SDL_TextEditingEvent
 	text C.SDL_TextInputEvent
 	motion C.SDL_MouseMotionEvent

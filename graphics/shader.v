@@ -37,8 +37,8 @@ pub fn shader_make(src ShaderSourceConfig, mut shader_desc C.sg_shader_desc) C.s
 		frag_src = default_frag + frag_main
 	}
 
-	shader_desc = shader_desc.set_vert_src(vert_src)
-	shader_desc = shader_desc.set_frag_src(frag_src)
+	shader_desc.set_vert_src(vert_src)
+	shader_desc.set_frag_src(frag_src)
 	shader := shader_desc.make_shader()
 
 	vert_src.free()
@@ -53,8 +53,8 @@ pub fn shader_get_default_desc() C.sg_shader_desc {
 		_start_canary: 0 // hack because struct initialization fails if something isnt set
 		label: &byte(0)
 	}
-	mut img := shader_desc.set_frag_image(0, 'MainTex')
-	img.set_vert_uniform_block_size(0, int(sizeof(math.Mat32)))
-	img.set_vert_uniform(0, 0, 'TransformMatrix', .float3, 2)
+	shader_desc.set_frag_image(0, 'MainTex')
+	shader_desc.set_vert_uniform_block_size(0, int(sizeof(math.Mat32)))
+	shader_desc.set_vert_uniform(0, 0, 'TransformMatrix', .float3, 2)
 	return shader_desc
 }

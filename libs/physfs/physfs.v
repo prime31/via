@@ -21,18 +21,16 @@ pub fn get_linked_version() C.PHYSFS_Version {
 pub fn supported_archive_types() []C.PHYSFS_ArchiveInfo {
 	ptr := C.PHYSFS_supportedArchiveTypes()
 
-	mut arr := []C.PHYSFS_ArchiveInfo{}
-	unsafe {
-		info_ptr_array := **C.PHYSFS_ArchiveInfo(ptr)
-	}
 
-	// iterate until we find a null element
-	for i := 0; info_ptr_array[i]; i++ {
-		unsafe {
+	mut arr := []C.PHYSFS_ArchiveInfo{}
+	/*unsafe {
+		info_ptr_array := **C.PHYSFS_ArchiveInfo(ptr)
+		// iterate until we find a null element
+		for i := 0; info_ptr_array[i]; i++ {
 			info := *C.PHYSFS_ArchiveInfo(info_ptr_array[i])
 			arr << *info
 		}
-	}
+	}*/
 
 	return arr
 }
@@ -73,17 +71,20 @@ pub fn set_write_dir(newDir string) int {
 
 [inline]
 pub fn get_search_path() []string {
-	ptr := C.PHYSFS_getSearchPath()
 
 	mut arr := []string{}
-	string_ptr_array := **byteptr(ptr)
+	/*
+	unsafe {
+		ptr := C.PHYSFS_getSearchPath()
 
-	mut i := 0
-	for voidptr(string_ptr_array[i]) != voidptr(0) {
-		arr << string_ptr_array[i].str()
-		i++
-	}
+		string_ptr_array := **byteptr(ptr)
 
+		mut i := 0
+		for voidptr(string_ptr_array[i]) != voidptr(0) {
+			arr << string_ptr_array[i].str()
+			i++
+		}
+	}*/
 	return arr
 }
 
@@ -112,13 +113,14 @@ pub fn enumerate_files(dir string) []string /* char** */ {
 	ptr := C.PHYSFS_enumerateFiles(dir.str)
 
 	mut arr := []string{}
+	/*
 	string_ptr_array := **byteptr(ptr)
 
 	mut i := 0
 	for voidptr(string_ptr_array[i]) != voidptr(0) {
 		arr << string_ptr_array[i].str()
 		i++
-	}
+	}*/
 
 	return arr
 }

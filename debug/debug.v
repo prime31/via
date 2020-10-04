@@ -72,7 +72,7 @@ struct DebugText {
 
 //#endregion
 
-__global d Debug
+__global ( d Debug )
 
 pub fn setup() {
 	d = Debug{}

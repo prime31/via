@@ -64,13 +64,13 @@ fn defaultoffscreenpass(width, height int, policy ResolutionPolicy) &DefaultOffS
 
 	// we have to update our scaler when the window resizes
 	// TODO: if the policy is .default we need to recreate the render textures with the new backbuffer size
-	window.subscribe(.resize, defaultoffscreenpass_on_window_resized, pass, false)
+	//TODO(larpon) window.subscribe(.resize, defaultoffscreenpass_on_window_resized, pass, false)
 
 	return pass
 }
 
 fn (p &DefaultOffScreenPass) free() {
-	window.unsubscribe(.resize, defaultoffscreenpass_on_window_resized)
+	//TODO(larpon) window.unsubscribe(.resize, defaultoffscreenpass_on_window_resized)
 	p.offscreen_pass.free(true)
 	unsafe { C.free(p) }
 }

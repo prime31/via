@@ -22,9 +22,12 @@ mut:
 }
 
 pub fn quadbatch(max_sprites int) &QuadBatch {
+
+	//arr := utils.new_arr_with_default<math.Vertex>(max_sprites * 4, max_sprites * 4, math.Vertex{})
+	arr := []math.Vertex{len: max_sprites * 4, cap: max_sprites * 4, init: math.Vertex{}}
 	mut qb := &QuadBatch{
 		fontbook: new_fontbook(128, 128)
-		//TODO(larpon) verts: utils.new_arr_with_default<math.Vertex>(max_sprites * 4, max_sprites * 4, math.Vertex{})
+		verts: arr
 		max_sprites: max_sprites
 		quad: math.quad(0, 0, 1, 1, 1, 1)
 	}
@@ -93,21 +96,24 @@ pub fn (mut qb QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math
 }
 
 pub fn (mut qb QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
-	qb.draw_q_m(tex.img, quad, config.get_matrix(), config.color)
+	mat := config.get_matrix()
+	qb.draw_q_m(tex.img, quad, mat, config.color)
 }
 
 pub fn (mut qb QuadBatch) draw_vp(tex Texture, viewport math.Rect, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
 
-	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
+	mat := config.get_matrix()
+	qb.draw_q_m(tex.img, qb.quad, mat, config.color)
 }
 
 pub fn (mut qb QuadBatch) draw(tex Texture, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(0, 0, tex.w, tex.h)
 
-	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
+	mat := config.get_matrix()
+	qb.draw_q_m(tex.img, qb.quad, mat, config.color)
 }
 
 pub fn (mut qb QuadBatch) draw_text(str string, config TextDrawConfig) {

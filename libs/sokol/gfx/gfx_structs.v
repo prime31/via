@@ -131,48 +131,48 @@ pub mut:
     _end_canary u32
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_src(src string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_src(src string) {
     desc.vs.source = src.str
-    return desc
+    //return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_src(src string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_src(src string) {
     desc.fs.source = src.str
-    return desc
+    //return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_image(index int, name string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_image(index int, name string) {
     desc.vs.images[index].name = name.str
     desc.vs.images[index].@type = ._2d
-    return desc
+    //return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_image(index int, name string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_image(index int, name string) {
     desc.fs.images[index].name = name.str
     desc.fs.images[index].@type = ._2d
-    return desc
+    //return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_uniform_block_size(block_index, size int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_uniform_block_size(block_index, size int) {
     desc.vs.uniform_blocks[block_index].size = size
-    return desc
+    //return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_uniform_block_size(block_index, size int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_uniform_block_size(block_index, size int) {
     desc.fs.uniform_blocks[block_index].size = size
-    return desc
+    //return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) {
     desc.vs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
 	desc.vs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
-    return desc
+    //return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) {
     desc.fs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
 	desc.fs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
-    return desc
+    //return desc
 }
 
 pub fn (desc &C.sg_shader_desc) make_shader() C.sg_shader {

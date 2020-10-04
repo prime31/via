@@ -18,9 +18,13 @@ mut:
 }
 
 pub fn textbatch(max_chars int) &TextBatch {
+
+	//arr := utils.new_arr_with_default<math.Vertex>(max_chars * 4, max_chars * 4, math.Vertex{})
+	arr := []math.Vertex{len: max_chars * 4, cap: max_chars * 4, init: math.Vertex{}}
+
 	mut tb := &TextBatch{
 		// default colors to white
-		//TODO(larpon) verts: utils.new_arr_with_default(max_chars * 4, max_chars * 4, math.Vertex{})
+		verts: arr
 		max_chars: max_chars
 		quad: math.quad(0, 0, 1, 1, 1, 1)
 	}

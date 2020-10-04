@@ -1,5 +1,6 @@
 module physfs
 
+[typedef]
 pub struct C.PHYSFS_File {
 	opaque voidptr
 }
@@ -9,7 +10,7 @@ pub fn (f &C.PHYSFS_File) seek(pos u64) int { return C.PHYSFS_seek(f, pos) }
 pub fn (f &C.PHYSFS_File) read_bytes(buffer voidptr, len u64) i64 { return C.PHYSFS_readBytes(f, buffer, len) }
 pub fn (f &C.PHYSFS_File) close() int { return C.PHYSFS_close(f) }
 
-
+[typedef]
 pub struct C.PHYSFS_Version {
 pub:
     major byte
@@ -18,6 +19,7 @@ pub:
 }
 pub fn (v C.PHYSFS_Version) str() string { return '${v.major}.${v.minor}.${v.patch}' }
 
+[typedef]
 pub struct C.PHYSFS_ArchiveInfo {
 pub:
     extension byteptr   /**< Archive file extension: "ZIP", for example. */
@@ -28,6 +30,7 @@ pub:
 }
 pub fn (i C.PHYSFS_ArchiveInfo) str() string { return 'ext=$i.extension, desc=$i.description, author=$i.author, url=$i.url, symlinks=$i.supportsSymlinks' }
 
+[typedef]
 pub struct C.PHYSFS_Allocator {
 pub:
 	Init fn() int
@@ -37,6 +40,7 @@ pub:
 	Free fn(voidptr)
 }
 
+[typedef]
 pub struct C.PHYSFS_Stat {
 pub:
 	filesize i64

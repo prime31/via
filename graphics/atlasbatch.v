@@ -19,8 +19,11 @@ mut:
 }
 
 pub fn atlasbatch(tex Texture, max_sprites int) &AtlasBatch {
+	arr := []math.Vertex{len: max_sprites * 4, cap: max_sprites * 4, init: math.Vertex{}}
+	//utils.new_arr_with_default<math.Vertex>(max_sprites * 4, max_sprites * 4, math.Vertex{})
+
 	mut sb := &AtlasBatch{
-		//TODO(larpon) verts: utils.new_arr_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
+		verts: arr
 		max_sprites: max_sprites
 		quad: math.quad(0, 0, 1, 1, tex.w, tex.h)
 	}
@@ -87,12 +90,16 @@ pub fn (mut ab AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32,
 
 pub fn (mut ab AtlasBatch) set_vp(index int, viewport math.Rect, config DrawConfig) {
 	ab.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
-	ab.set_q(index, ab.quad, config.get_matrix(), config.color)
+	quad := ab.quad
+	mat := config.get_matrix()
+	ab.set_q(index, quad, mat, config.color)
 }
 
 pub fn (mut ab AtlasBatch) set(index int, config DrawConfig) {
 	ab.quad.set_viewport(0, 0, ab.tex.w, ab.tex.h)
-	ab.set_q(index, ab.quad, config.get_matrix(), config.color)
+	quad := ab.quad
+	mat := config.get_matrix()
+	ab.set_q(index, quad, mat, config.color)
 }
 
 //#endregion
@@ -104,7 +111,8 @@ pub fn (mut sb AtlasBatch) add_q(quad &math.Quad, config DrawConfig) int {
 		return -1
 	}
 
-	sb.set_q(sb.sprite_cnt, quad, config.get_matrix(), config.color)
+	mat := config.get_matrix()
+	sb.set_q(sb.sprite_cnt, quad, mat, config.color)
 
 	sb.v_buffer_dirty = true
 	sb.sprite_cnt++

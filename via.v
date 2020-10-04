@@ -51,25 +51,28 @@ pub fn run<T>(config &ViaConfig, mut ctx T) {
 		C.SDL_Log(c'Unable to initialize SDL: %s', C.SDL_GetError())
 	}
 
-	window.create(config.window_config())
-	graphics.setup(config.graphics_config())
+	wcnf := config.window_config()
+	window.create(wcnf)
+
+	cnfg := config.graphics_config()
+	graphics.setup(cnfg)
 	debug.setup()
 
 	input.set_window_scale(window.scale())
 
-	if v.imgui { imgui_init(window.win.C.SDL_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
+	if v.imgui { imgui_init(window.win.sdl_window, window.win.gl_context, config.imgui_viewports, config.imgui_docking, config.imgui_gfx_debug) }
 
 	ctx.initialize()
 
 	for !v.poll_events() {
 		time.tick()
-		if v.imgui { imgui_new_frame(window.win.C.SDL_window, config.imgui_gfx_debug) }
+		if v.imgui { imgui_new_frame(window.win.sdl_window, config.imgui_gfx_debug) }
 
 		ctx.update()
 		ctx.draw()
 		graphics.commit()
 
-		if v.imgui { imgui_render(window.win.C.SDL_window, window.win.gl_context) }
+		if v.imgui { imgui_render(window.win.sdl_window, window.win.gl_context) }
 		window.swap()
 	}
 
