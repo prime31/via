@@ -24,41 +24,6 @@ pub struct C.sg_desc {
     _end_canary u32
 }
 
-
-pub struct C.sg_context_desc {
-	/*
-    sg_pixel_format color_format;
-    sg_pixel_format depth_format;
-    int sample_count;
-    sg_wgpu_context_desc wgpu;
-   */
-  sample_count int
-gl     C.sg_gl_context_desc
-metal    C.sg_mtl_context_desc
-d3d11    C.sg_d3d11_context_desc
-
-    color_format PixelFormat
-    depth_format PixelFormat
-}
-
-pub struct C.sg_gl_context_desc {
-    gl_force_gles2 bool
-}
-
-pub struct C.sg_mtl_context_desc {
-    device voidptr
-    renderpass_descriptor_cb fn() voidptr
-    drawable_cb fn() voidptr
-}
-
-pub struct C.sg_d3d11_context_desc {
-   device voidptr
-    device_context voidptr
-    render_target_view_cb fn() voidptr
-    depth_stencil_view_cb fn() voidptr
-}
-
-
 pub struct C.sg_pipeline_desc {
 pub mut:
 	_start_canary u32
@@ -69,13 +34,11 @@ pub mut:
     depth_stencil C.sg_depth_stencil_state
     blend C.sg_blend_state
     rasterizer C.sg_rasterizer_state
-    label byteptr
+    label byteptr = &byte(0)
     _end_canary u32
 }
 
-pub struct C.sg_pipeline_info {
-
-}
+pub struct C.sg_pipeline_info {}
 
 pub struct C.sg_pipeline {
 pub:
@@ -127,52 +90,53 @@ pub mut:
     attrs [16]C.sg_shader_attr_desc
     vs C.sg_shader_stage_desc
     fs C.sg_shader_stage_desc
-    label byteptr
+    label byteptr = &byte(0)
     _end_canary u32
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_src(src string) {
+pub fn (mut desc C.sg_shader_desc) set_vert_src(src string) &C.sg_shader_desc {
     desc.vs.source = src.str
-    //return desc
+    return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_src(src string) {
+pub fn (mut desc C.sg_shader_desc) set_frag_src(src string) &C.sg_shader_desc {
     desc.fs.source = src.str
-    //return desc
+    return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_image(index int, name string) {
+pub fn (mut desc C.sg_shader_desc) set_vert_image(index int, name string) &C.sg_shader_desc {
     desc.vs.images[index].name = name.str
     desc.vs.images[index].@type = ._2d
-    //return desc
+    return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_image(index int, name string) {
+pub fn (mut desc C.sg_shader_desc) set_frag_image(index int, name string) &C.sg_shader_desc {
     desc.fs.images[index].name = name.str
     desc.fs.images[index].@type = ._2d
-    //return desc
+    return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_uniform_block_size(block_index, size int) {
+pub fn (mut desc C.sg_shader_desc) set_vert_uniform_block_size(block_index, size int) &C.sg_shader_desc {
     desc.vs.uniform_blocks[block_index].size = size
-    //return desc
+    return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_uniform_block_size(block_index, size int) {
+pub fn (mut desc C.sg_shader_desc) set_frag_uniform_block_size(block_index, size int) &C.sg_shader_desc {
     desc.fs.uniform_blocks[block_index].size = size
-    //return desc
+    return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) {
+pub fn (mut desc C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
     desc.vs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
 	desc.vs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
-    //return desc
+    desc.vs.uniform_blocks[block_index].uniforms[uniform_index].array_count = array_count
+    return desc
 }
 
-pub fn (mut desc C.sg_shader_desc) set_frag_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) {
+pub fn (mut desc C.sg_shader_desc) set_frag_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
     desc.fs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
 	desc.fs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
-    //return desc
+    return desc
 }
 
 pub fn (desc &C.sg_shader_desc) make_shader() C.sg_shader {
@@ -197,10 +161,10 @@ pub mut:
     images [12]C.sg_shader_image_desc
 }
 
-pub fn (mut desc C.sg_shader_stage_desc) set_image(index int, name string) C.sg_shader_stage_desc {
+pub fn (mut desc C.sg_shader_stage_desc) set_image(index int, name string) &C.sg_shader_stage_desc {
     desc.images[index].name = name.str
     desc.images[index].@type = ._2d
-    return *desc
+    return desc
 }
 
 
@@ -241,7 +205,7 @@ pub mut:
     _start_canary u32
     color_attachments [4]C.sg_attachment_desc
     depth_stencil_attachment C.sg_attachment_desc
-    label byteptr
+    label byteptr = &byte(0)
     _end_canary u32
 }
 
@@ -271,7 +235,7 @@ pub mut:
     @type BufferType
     usage Usage
     content byteptr
-    label byteptr
+    label byteptr = &byte(0)
     /* GL specific */
     gl_buffers [2]u32
     /* Metal specific */
@@ -322,7 +286,7 @@ pub mut:
     min_lod f32
     max_lod f32
     content C.sg_image_content
-    label byteptr
+    label byteptr = &byte(0)
     /* GL specific */
     gl_textures [2]u32
     /* Metal specific */
@@ -335,7 +299,7 @@ pub mut:
 pub struct C.sg_image_info {
 pub mut:
     slot C.sg_slot_info            /* resource pool slot info */
-    upd_frame_index u32            /* frame index of last sg_update_image() */
+    upd_frame_index u32            /* frame index of last C.sg_update_image() */
     num_slots int                  /* number of renaming-slots for dynamically updated images */
     active_slot int                /* currently active write-slot for dynamically updated images */
 }
@@ -360,13 +324,13 @@ pub mut:
 
 pub struct C.sg_features {
 pub:
-    instancing bool              /* hardware instancing supported */
-    origin_top_left bool         /* framebuffer and texture origin is in top left corner */
-    multiple_render_targets bool /* offscreen render passes can have multiple render targets attached */
-    msaa_render_targets bool     /* offscreen render passes support MSAA antialiasing */
-    imagetype_3d bool            /* creation of SG_IMAGETYPE_3D images is supported */
-    imagetype_array bool         /* creation of SG_IMAGETYPE_ARRAY images is supported */
-    image_clamp_to_border bool   /* border color and clamp-to-border UV-wrap mode is supported */
+    instancing bool
+    origin_top_left bool
+    multiple_render_targets bool
+    msaa_render_targets bool
+    imagetype_3d bool          /* creation of SG_IMAGETYPE_3D images is supported */
+    imagetype_array bool       /* creation of SG_IMAGETYPE_ARRAY images is supported */
+    image_clamp_to_border bool /* border color and clamp-to-border UV-wrap mode is supported */
 }
 
 pub struct C.sg_limits {
@@ -374,8 +338,8 @@ pub:
     max_image_size_2d u32         /* max width/height of SG_IMAGETYPE_2D images */
     max_image_size_cube u32       /* max width/height of SG_IMAGETYPE_CUBE images */
     max_image_size_3d u32         /* max width/height/depth of SG_IMAGETYPE_3D images */
-    max_image_size_array u32      /* max width/height pf SG_IMAGETYPE_ARRAY images */
-    max_image_array_layers u32    /* max number of layers in SG_IMAGETYPE_ARRAY images */
+    max_image_size_array u32
+    max_image_array_layers u32
     max_vertex_attrs u32          /* <= SG_MAX_VERTEX_ATTRIBUTES (only on some GLES2 impls) */
 }
 
@@ -400,8 +364,8 @@ pub mut:
 }
 
 pub struct C.sg_depth_stencil_state {
-    stencil_front sg_stencil_state
-    stencil_back sg_stencil_state
+    stencil_front C.sg_stencil_state
+    stencil_back C.sg_stencil_state
     depth_compare_func CompareFunc
     depth_write_enabled bool
     stencil_enabled bool
@@ -418,7 +382,6 @@ pub struct C.sg_stencil_state {
 }
 
 pub struct C.sg_blend_state {
-pub mut:
     enabled bool
     src_factor_rgb BlendFactor
     dst_factor_rgb BlendFactor
@@ -451,7 +414,7 @@ pub mut:
     val [4]f32
 }
 
-pub fn (mut action C.sg_color_attachment_action) set_color_values(r, g, b, a f32) {
+pub fn (action mut C.sg_color_attachment_action) set_color_values(r, g, b, a f32) {
     action.val[0] = r
     action.val[1] = g
     action.val[2] = b
@@ -486,8 +449,6 @@ pub mut:
     mip_level int
     face int
 
-    // image sg_image
-    // mip_level int
     // union {
     //     face int
     //     layer int
