@@ -414,7 +414,7 @@ pub mut:
     val [4]f32
 }
 
-pub fn (action mut C.sg_color_attachment_action) set_color_values(r, g, b, a f32) {
+pub fn (mut action C.sg_color_attachment_action) set_color_values(r, g, b, a f32) {
     action.val[0] = r
     action.val[1] = g
     action.val[2] = b
