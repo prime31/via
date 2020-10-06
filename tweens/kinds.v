@@ -67,6 +67,6 @@ pub fn (k Kind) eval(val f32) f32 {
 		.bounce_in { bounce_in(val) }
 		.bounce_out { bounce_out(val) }
 		.bounce_in_out { bounce_in_out(val) }
-		else { -1 }
+		//else { -1 }
 	}
 }

@@ -60,7 +60,7 @@ pub fn (mut t Tween) tick(dt f32) {
 		}
 		if t.post_delay <= 0 {
 			t.done = true
-			if t.cb != 0 {
+			if !isnil(t.cb) {
 				t.cb(t.ctx, t)
 			}
 		}
