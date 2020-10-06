@@ -1,4 +1,5 @@
 module audio
+import via.libs.fmod as ffsmod
 import via.libs.fmod.core as fmod
 import via.libs.fmod.physfs as fmod_physfs
 
@@ -25,7 +26,7 @@ pub fn free() {
 pub fn new_sound(fname string) fmod.Sound {
 	res, snd := m_audio.sys.create_sound(fname.str, C.FMOD_DEFAULT)
 	if res != 0 {
-		println('new_sound error. Result enum value: $res')
+		println('new_sound error. Result enum value: $res string: "${ffsmod.error_string(res)}"')
 	}
 	return snd
 }
