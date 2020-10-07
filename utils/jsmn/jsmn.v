@@ -38,7 +38,10 @@ pub fn (t &Token) str() string {
 
 [inline]
 pub fn (t &Token) as_str(js []byte) string {
-	return string(&js[t.start], t.end - t.start)
+	unsafe {
+		//return string(&js[t.start], t.end - t.start)
+		return js[t.start..t.end - t.start].bytestr()
+	}
 }
 
 [inline]
@@ -46,18 +49,24 @@ pub fn (t &Token) as_int(js []byte) int {
 	len := t.end - t.start
 
 	// optimization for single digit ints
-	if len == 1 {
-		return js[t.start] - `0`
-	}
+	//TODO(larpon) if len == 1 {
+	//	return js[t.start] - `0`
+	//}
 
-	return C.atoi(string(&js[t.start], len).str)
-	// return strconv.atoi(string(&js[t.start], t.end - t.start))
+	//unsafe {
+		//return C.atoi(string(&js[t.start], len).str)
+		return C.atoi(js[t.start..len].bytestr())
+		// return strconv.atoi(string(&js[t.start], t.end - t.start))
+	//}
 }
 
 [inline]
 pub fn (t &Token) as_f32(js []byte) f32 {
-	return f32(C.atof(string(&js[t.start], t.end - t.start).str))
-	// return f32(strconv.atof64(string(&js[t.start], t.end - t.start)))
+	//unsafe {
+		//return f32(C.atof(string(&js[t.start], t.end - t.start).str))
+		return f32(C.atof(js[t.start..t.end - t.start].bytestr()))
+		// return f32(strconv.atof64(string(&js[t.start], t.end - t.start)))
+	//}
 }
 
 // checks to see if a .string token is equal to str
@@ -84,7 +93,7 @@ mut:
 pub fn parser(strict bool) Parser {
 	return Parser{
 		strict: strict
-		tokens: make(0, 1000, sizeof(Token))
+		tokens: []Token{len: 1000, cap: 1000, init: 0}
 	}
 }
 
@@ -106,15 +115,17 @@ pub fn (mut p Parser) parse(js []byte) Error {
 				mut token := Token{}
 
 				if p.toksuper != -1 {
-					mut t := &p.tokens[p.toksuper]
-					if p.strict {
-						// In strict mode an object or array can't become a key
-						if t.kind == .object {
-							return .invalid_char
+					unsafe {
+						mut t := &p.tokens[p.toksuper]
+						if p.strict {
+							// In strict mode an object or array can't become a key
+							if t.kind == .object {
+								return .invalid_char
+							}
 						}
-					}
 
-					t.size++
+						t.size++
+					}
 					token.parent = p.toksuper
 				}
 				token.kind = if c == `{` { Kind.object } else { Kind.array }
@@ -131,7 +142,10 @@ pub fn (mut p Parser) parse(js []byte) Error {
 					return .invalid_char
 				}
 
-				mut token := &p.tokens[p.toknext - 1]
+				mut token := &Token(0)
+				unsafe {
+					token = &p.tokens[p.toknext - 1]
+				}
 				for {
 					if token.start != -1 && token.end == -1 {
 						if token.kind != kind {
@@ -149,7 +163,9 @@ pub fn (mut p Parser) parse(js []byte) Error {
 						}
 						break
 					}
-					token = &p.tokens[token.parent]
+					unsafe {
+						token = &p.tokens[token.parent]
+					}
 				}
 			}
 			`"` {
@@ -184,10 +200,12 @@ pub fn (mut p Parser) parse(js []byte) Error {
 				// And they must not be keys of the object
 				if p.strict {
 					if p.toksuper != -1 {
-						t := &p.tokens[p.toksuper]
+						unsafe {
+							t := &p.tokens[p.toksuper]
 
-						if t.kind == .object || (t.kind == .string && t.size != 0) {
-							return .invalid_char
+							if t.kind == .object || (t.kind == .string && t.size != 0) {
+								return .invalid_char
+							}
 						}
 					}
 				}
@@ -198,8 +216,10 @@ pub fn (mut p Parser) parse(js []byte) Error {
 				}
 				count++
 				if p.toksuper != -1 {
-					mut tmp := &p.tokens[p.toksuper]
-					tmp.size++
+					unsafe {
+						mut tmp := &p.tokens[p.toksuper]
+						tmp.size++
+					}
 				}
 			}
 			else {
@@ -211,8 +231,10 @@ pub fn (mut p Parser) parse(js []byte) Error {
 					}
 					count++
 					if p.toksuper != -1 {
-						mut tmp := &p.tokens[p.toksuper]
-						tmp.size++
+						unsafe {
+							mut tmp := &p.tokens[p.toksuper]
+							tmp.size++
+						}
 					}
 				} else {
 					// Unexpected char in strict mode
@@ -261,18 +283,23 @@ fn (mut p Parser) parse_primitive(js []byte) Error {
 		return .partial_packet
 	}
 
-	found:
-	mut kind := match js[start] {
+	//found:
+	mut kind := Kind.null
+	match js[start] {
 		`-`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` {
-			Kind.number
+			kind = Kind.number
 		}
-		`t`, `f` { Kind.bool }
-		else { .null }
+		`t`, `f` {
+			kind =  Kind.bool
+		}
+		else {
+			kind = Kind.null
+		}
 	}
 
 	// override the kind
 	if !p.strict && non_strict_key {
-		kind = .string
+		kind = Kind.string
 	}
 
 	p.tokens << Token{
