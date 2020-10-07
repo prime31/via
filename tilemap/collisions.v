@@ -15,7 +15,7 @@ pub fn move(map &Map, rect math.Rect, mut movement math.Vec2) {
 
 	if movement.x != 0 {
 		movement.x = movex(map, layer, rectm, int(movement.x))
-		rectm.x += movement.x
+		rectm.x += int(movement.x)
 	}
 	movement.y = movey(map, layer, rectm, int(movement.y))
 }
@@ -45,7 +45,8 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 				if tileset_tile.oneway {
 					continue
 				} else if tileset_tile.slope {
-					slope_rows[last_slope_row++] = y
+					last_slope_row++
+					slope_rows[last_slope_row] = y
 					continue
 				}
 			}

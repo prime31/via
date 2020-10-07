@@ -35,9 +35,9 @@ pub fn (c &Collider) get_bounds() math.RectF {
 		} .polygon {
 			poly := &PolygonCollider(c)
 			return poly.get_bounds()
-		} else {
+		} /*else {
 			panic('unknown ColliderKind')
-		}
+		}*/
 	}
 }
 
@@ -52,9 +52,9 @@ pub fn (c &Collider) get_farthest_pt(dir math.Vec2, trans math.RigidTransform) m
 		} .polygon {
 			poly := &PolygonCollider(c)
 			return poly.get_farthest_pt(dir, trans)
-		} else {
+		}/* else {
 			panic('unknown ColliderKind')
-		}
+		}*/
 	}
 }
 

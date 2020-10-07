@@ -20,17 +20,24 @@ pub fn load(js []byte) Map {
 	}
 
 	for i in 0..p.tokens[8].size {
-		m.tilesets << parse_tileset(js, jsmn.array_get_at(&p.tokens[8], i))
+		unsafe {
+			m.tilesets << parse_tileset(js, jsmn.array_get_at(&p.tokens[8], i))
+		}
 	}
 
-	tile_layers_arr := jsmn.object_get_member(js, &p.tokens[0], 'tile_layers')
-	for i in 0..tile_layers_arr.size {
-		m.tile_layers << parse_tilelayer(js, jsmn.array_get_at(tile_layers_arr, i))
+	unsafe {
+		tile_layers_arr := jsmn.object_get_member(js, &p.tokens[0], 'tile_layers')
+		for i in 0..tile_layers_arr.size {
+			m.tile_layers << parse_tilelayer(js, jsmn.array_get_at(tile_layers_arr, i))
+		}
 	}
 
-	obj_layers_arr := jsmn.object_get_member(js, &p.tokens[0], 'object_layers')
-	for i in 0..obj_layers_arr.size {
-		m.object_layers << parse_objectlayer(js, jsmn.array_get_at(obj_layers_arr, i))
+
+	unsafe {
+		obj_layers_arr := jsmn.object_get_member(js, &p.tokens[0], 'object_layers')
+		for i in 0..obj_layers_arr.size {
+			m.object_layers << parse_objectlayer(js, jsmn.array_get_at(obj_layers_arr, i))
+		}
 	}
 
 	p.free()
@@ -88,12 +95,15 @@ fn parse_tileset(js []byte, tokens &jsmn.Token) Tileset {
 fn parse_tilelayer(js []byte, tokens &jsmn.Token) TileLayer {
 	tiles_arr_tok := &tokens[10]
 
+	//make(0, tiles_arr_tok.size, sizeof(int))
+	tiles := []TileId{len: tiles_arr_tok.size, cap: tiles_arr_tok.size, init: 0}
+
 	mut tl := TileLayer{
 		name: tokens[2].as_str(js)
 		visible: tokens[4].as_str(js).bool()
 		width: tokens[6].as_int(js)
 		height: tokens[8].as_int(js)
-		tiles: make(0, tiles_arr_tok.size, sizeof(int))
+		tiles: tiles
 	}
 
 	for i in 0..tiles_arr_tok.size {

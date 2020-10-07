@@ -41,21 +41,25 @@ pub fn (m &Map) world_height() int {
 }
 
 pub fn (m &Map) tilelayer_with_name(name string) &TileLayer {
-	for i in 0..m.tile_layers.len {
-		if m.tile_layers[i].name == name {
-			return &m.tile_layers[i]
+	unsafe {
+		for i in 0..m.tile_layers.len {
+			if m.tile_layers[i].name == name {
+				return &m.tile_layers[i]
+			}
 		}
+		return &TileLayer(0)
 	}
-	return &TileLayer(0)
 }
 
 pub fn (m &Map) objectlayer_with_name(name string) &ObjectLayer {
-	for i in 0..m.object_layers.len {
-		if m.object_layers[i].name == name {
-			return &m.object_layers[i]
+	unsafe {
+		for i in 0..m.object_layers.len {
+			if m.object_layers[i].name == name {
+				return &m.object_layers[i]
+			}
 		}
+		return &ObjectLayer(0)
 	}
-	return &ObjectLayer(0)
 }
 
 pub fn (m &Map) world_to_tilex(x f32) int {

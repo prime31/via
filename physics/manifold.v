@@ -2,7 +2,7 @@ module physics
 import via.math
 
 pub struct Manifold {
-mut:
+pub mut:
 	collided bool
 	depth f32
 	contact_pt math.Vec2
@@ -10,7 +10,7 @@ mut:
 	normal math.Vec2
 }
 
-pub fn (mut m Manifold) invert() Manifold {
+pub fn (mut m Manifold) invert() &Manifold {
 	m.normal = m.normal.scale(-1)
 	return m
 }

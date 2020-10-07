@@ -55,7 +55,9 @@ pub fn (tbb &TextBatch) end() {
 fn (mut tb TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := tb.char_cnt * 4
 	tb.char_cnt++
-	matrix.transform_vec2_arr(&tb.verts[base_vert], &quad.positions[0], 4)
+	unsafe {
+		matrix.transform_vec2_arr(&tb.verts[base_vert], &quad.positions[0], 4)
+	}
 
 	for i in 0..4 {
 		tb.verts[base_vert + i].s = quad.texcoords[i].x
@@ -103,7 +105,9 @@ pub fn (mut tb TextBatch) flush() {
 	if total_quads == 0 { return }
 
 	total_verts := total_quads * 4
-	tb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_char_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
+	unsafe {
+		tb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_char_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
+	}
 	tb.last_appended_char_cnt = tb.char_cnt
 
 	C.sg_apply_bindings(&tb.bindings)

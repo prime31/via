@@ -86,7 +86,9 @@ pub fn (mut qb QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math
 
 	base_vert := qb.quad_cnt * 4
 	qb.quad_cnt++
-	matrix.transform_vec2_arr(&qb.verts[base_vert], &quad.positions[0], 4)
+	unsafe {
+		matrix.transform_vec2_arr(&qb.verts[base_vert], &quad.positions[0], 4)
+	}
 
 	for i in 0..4 {
 		qb.verts[base_vert + i].s = quad.texcoords[i].x
@@ -152,7 +154,9 @@ pub fn (mut qb QuadBatch) flush() {
 	if total_quads == 0 { return }
 
 	total_verts := total_quads * 4
-	qb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(qb.bindings.vertex_buffers[0], &qb.verts[qb.last_appended_quad_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
+	unsafe {
+		qb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(qb.bindings.vertex_buffers[0], &qb.verts[qb.last_appended_quad_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
+	}
 	qb.last_appended_quad_cnt = qb.quad_cnt
 
 	C.sg_apply_bindings(&qb.bindings)

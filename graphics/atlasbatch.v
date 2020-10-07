@@ -77,12 +77,18 @@ fn (ab &AtlasBatch) ensure_capacity() bool {
 pub fn (mut ab AtlasBatch) set_q(index int, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := index * 4
 
-	matrix.transform_vec2_arr(&ab.verts[base_vert], &quad.positions[0], 4)
+	unsafe {
+		if ab.verts.len > base_vert && quad.positions.len > 1 {
+			matrix.transform_vec2_arr(&ab.verts[base_vert], &quad.positions[0], 4)
+		}
+	}
 
 	for i in 0..4 {
-		ab.verts[base_vert + i].s = quad.texcoords[i].x
-		ab.verts[base_vert + i].t = quad.texcoords[i].y
-		ab.verts[base_vert + i].color = *color
+		if ab.verts.len > base_vert + i && quad.texcoords.len > i {
+			ab.verts[base_vert + i].s = quad.texcoords[i].x
+			ab.verts[base_vert + i].t = quad.texcoords[i].y
+			ab.verts[base_vert + i].color = *color
+		}
 	}
 
 	ab.v_buffer_dirty = true

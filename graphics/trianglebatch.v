@@ -68,7 +68,11 @@ pub fn (mut tb TriangleBatch) draw_triangle(x1, y1, x2, y2, x3, y3 f32, config D
 	tb.verts[base_vert + 2].color = config.color
 
 	matrix := config.get_matrix()
-	matrix.transform_vertex_arr(&tb.verts[base_vert], 3)
+	unsafe {
+		addr := &tb.verts[base_vert]
+		matrix.transform_vertex_arr(addr, 3)
+	}
+
 }
 
 pub fn (mut tb TriangleBatch) draw_point(x, y, size f32, color math.Color) {
@@ -169,7 +173,11 @@ pub fn (tbb &TriangleBatch) flush() {
 	if total_tris == 0 { return }
 
 	total_verts := total_tris * 3
-	tb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_tri_cnt * 3], sizeof(math.Vertex) * u32(total_verts))
+	unsafe {
+		addr := &tb.verts[tb.last_appended_tri_cnt * 3]
+		tb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(tb.bindings.vertex_buffers[0], addr, sizeof(math.Vertex) * u32(total_verts))
+	}
+
 	tb.last_appended_tri_cnt = tb.tri_cnt
 
 	C.sg_apply_bindings(&tb.bindings)
