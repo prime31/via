@@ -17,7 +17,7 @@ mut:
 
 pub fn trianglebatch(max_tris int) &TriangleBatch {
 	// 2x2 white pixel texture
-	pixels := [u32(0xFFFFFFFF), 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]!
+	pixels := [u32(0xFFFFFFFF), 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]/*!*/
 
 	//arr := utils.new_arr_with_default<math.Vertex>(max_tris * 3, max_tris * 3, math.Vertex{})
 	arr := []math.Vertex{len: max_tris * 3, cap: max_tris * 3, init: math.Vertex{}}
@@ -83,7 +83,7 @@ pub fn (mut tb TriangleBatch) draw_rectangle(width, height f32, config DrawConfi
 	// TODO: should this be from center or top-left?
 	half_w := width * 0.5
 	half_h := height * 0.5
-	tb.draw_polygon([math.Vec2{-half_w, -half_h}, math.Vec2{half_w, -half_h}, math.Vec2{half_w, half_h}, math.Vec2{-half_w, half_h}]!, config)
+	tb.draw_polygon([math.Vec2{-half_w, -half_h}, math.Vec2{half_w, -half_h}, math.Vec2{half_w, half_h}, math.Vec2{-half_w, half_h}]/*!*/, config)
 }
 
 pub fn (mut tb TriangleBatch) draw_hollow_rect(x, y, width, height, thickness f32, color math.Color) {
@@ -163,7 +163,7 @@ pub fn (mut tb TriangleBatch) draw_line(x1, y1, x2, y2, thickness f32, color mat
 	angle := math.angle_between_points(x1, y1, x2, y2)
 	half_thick := thickness * 0.51
 
-	verts := [math.Vec2{0, -half_thick}, math.Vec2{dist, -half_thick}, math.Vec2{dist, half_thick}, math.Vec2{0, half_thick}]!
+	verts := [math.Vec2{0, -half_thick}, math.Vec2{dist, -half_thick}, math.Vec2{dist, half_thick}, math.Vec2{0, half_thick}] //!
 	tb.draw_polygon(verts, {x:x1 y:y1 rot:math.degrees(angle) color:color})
 }
 

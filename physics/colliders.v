@@ -7,6 +7,63 @@ pub enum ColliderKind {
 	polygon
 }
 
+//#region Collider
+
+// common base data for all Collider sub-types
+pub struct Collider {
+pub:
+	kind ColliderKind
+	trigger bool
+	filter CollisionFilter
+}
+
+fn collider(kind ColliderKind) Collider {
+	return Collider{
+		kind: kind
+		filter: collisionfilter()
+	}
+}
+
+pub fn (c &Collider) get_bounds() math.RectF {
+	match c.kind {
+		.aabb {
+			aabb := &AabbCollider(c)
+			return aabb.get_bounds()
+		} .circle {
+			circle := &CircleCollider(c)
+			return circle.get_bounds()
+		} .polygon {
+			poly := &PolygonCollider(c)
+			return poly.get_bounds()
+		} /*else {
+			panic('unknown ColliderKind')
+		}*/
+	}
+}
+
+pub fn (c &Collider) get_farthest_pt(dir math.Vec2, trans math.RigidTransform) math.Vec2 {
+	match c.kind {
+		.aabb {
+			aabb := &AabbCollider(c)
+			return aabb.get_farthest_pt(dir, trans)
+		} .circle {
+			circle := &CircleCollider(c)
+			return circle.get_farthest_pt(dir, trans)
+		} .polygon {
+			poly := &PolygonCollider(c)
+			return poly.get_farthest_pt(dir, trans)
+		}/* else {
+			panic('unknown ColliderKind')
+		}*/
+	}
+}
+
+pub fn (c &Collider) collides_with(other &Collider) bool {
+	return c.filter.collides_with(other.filter)
+}
+
+//#endregion
+
 //#region AABB
 
 pub struct AabbCollider {
@@ -155,63 +212,6 @@ pub fn (c &PolygonCollider) get_farthest_pt(dir math.Vec2, trans math.RigidTrans
 	}
 
 	return furthest_vert
-}
-
-//#endregion
-
-//#region Collider
-
-// common base data for all Collider sub-types
-pub struct Collider {
-pub:
-	kind ColliderKind
-	trigger bool
-	filter CollisionFilter
-}
-
-fn collider(kind ColliderKind) Collider {
-	return Collider{
-		kind: kind
-		filter: collisionfilter()
-	}
-}
-
-pub fn (c &Collider) get_bounds() math.RectF {
-	match c.kind {
-		.aabb {
-			aabb := &AabbCollider(c)
-			return aabb.get_bounds()
-		} .circle {
-			circle := &CircleCollider(c)
-			return circle.get_bounds()
-		} .polygon {
-			poly := &PolygonCollider(c)
-			return poly.get_bounds()
-		} /*else {
-			panic('unknown ColliderKind')
-		}*/
-	}
-}
-
-pub fn (c &Collider) get_farthest_pt(dir math.Vec2, trans math.RigidTransform) math.Vec2 {
-	match c.kind {
-		.aabb {
-			aabb := &AabbCollider(c)
-			return aabb.get_farthest_pt(dir, trans)
-		} .circle {
-			circle := &CircleCollider(c)
-			return circle.get_farthest_pt(dir, trans)
-		} .polygon {
-			poly := &PolygonCollider(c)
-			return poly.get_farthest_pt(dir, trans)
-		}/* else {
-			panic('unknown ColliderKind')
-		}*/
-	}
-}
-
-pub fn (c &Collider) collides_with(other &Collider) bool {
-	return c.filter.collides_with(other.filter)
 }
 
 //#endregion

@@ -90,6 +90,7 @@ fn render() {
 	mut tribatch := graphics.tribatch()
 	mut quadbatch := graphics.spritebatch()
 
+	unsafe {
 	for item in d.items {
 		match item.kind {
 			.point {
@@ -111,6 +112,7 @@ fn render() {
 			}
 			//else {}
 		}
+	}
 	}
 
 	mut dd := d

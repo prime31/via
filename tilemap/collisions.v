@@ -20,8 +20,9 @@ pub fn move(map &Map, rect math.Rect, mut movement math.Vec2) {
 	movement.y = movey(map, layer, rectm, int(movement.y))
 }
 
+type MathEdge = math.Edge
 pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
-	edge := math.take(movex > 0, math.Edge.right, math.Edge.left)
+	edge := math.Edge( math.take<MathEdge>(movex > 0, math.Edge.right, math.Edge.left) )
 	mut bounds := rect.half_rect(edge)
 	// we contract horizontally for vertical movement and vertically for horizontal movement
 	bounds.contract(0, vert_inset)
@@ -71,7 +72,7 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 }
 
 pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
-	edge := math.take(movey >= 0, math.Edge.bottom, math.Edge.top)
+	edge := math.Edge( math.take<MathEdge>(movey >= 0, math.Edge.bottom, math.Edge.top) )
 	mut bounds := rect.half_rect(edge)
 	// we contract horizontally for vertical movement and vertically for horizontal movement
 	bounds.contract(horiz_inset, 0)

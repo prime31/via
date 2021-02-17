@@ -96,7 +96,7 @@ fn (v &Via) poll_events() bool {
 			}
 			.windowevent {
 				if ev.window.windowID == window.win.id {
-					if ev.window.event == C.SDL_WINDOWEVENT_CLOSE { return true }
+					if ev.window.event == .close /*C.SDL_WINDOWEVENT_CLOSE */ { return true }
 					window.handle_event(&ev)
 				}
 			}

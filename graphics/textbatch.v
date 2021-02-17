@@ -78,7 +78,7 @@ pub fn (mut tb TextBatch) draw_text(font &fonts.FontBook, str string, config Dra
 
 	mut f := font
 	f.update_texture()
-	iter := C.FONStextIter{}
+	iter := C.FONStextIter{font: C.NULL}
 	C.fonsTextIterInit(font.stash, &iter, 0, 0, str.str, C.NULL)
 
 	fons_quad := C.FONSquad{}

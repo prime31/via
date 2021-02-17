@@ -20,8 +20,8 @@ pub fn fullscreenquad() &FullscreenQuad {
 		math.Vertex{0,0,	1,0,	math.Color{}}, // tr
 		math.Vertex{0,0, 	1,1,	math.Color{}}, // br
 		math.Vertex{0,0,	0,1,	math.Color{}}  // bl
-	]!
-	indices := [u16(0), 1, 2, 0, 2, 3]!
+	]//!
+	indices := [u16(0), 1, 2, 0, 2, 3]//!
 
 	mut mesh := &FullscreenQuad{
 		verts: verts.clone()

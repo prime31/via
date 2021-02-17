@@ -240,7 +240,8 @@ pub fn read_bytes(fname string) []byte {
 
 pub fn read_bytes_c(fname charptr) []byte {
 	fp := C.PHYSFS_openRead(fname)
-	if fp == &C.PHYSFS_File(0) {
+
+	if isnil(fp) /*fp == &C.PHYSFS_File(0)*/ {
 		panic('could not open file: ${tos3(fname)}')
 	}
 	len := fp.get_length()

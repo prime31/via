@@ -39,8 +39,8 @@ pub fn mesh_new_quad(usage gfx.Usage) &Mesh {
 		math.Vertex{ 1,-1,	1, 0,	math.Color{}}, // tr
 		math.Vertex{ 1, 1, 	1, 1,	math.Color{}}, // br
 		math.Vertex{-1, 1,	0, 1,	math.Color{}}  // bl
-	]!
-	indices := [u16(0), 1, 2, 0, 2, 3]!
+	]/*!*/
+	indices := [u16(0), 1, 2, 0, 2, 3]//!
 
 	if usage == .immutable {
 		return mesh_new_immutable(verts, indices)

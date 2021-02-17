@@ -8,9 +8,10 @@ fn skip_token(token &Token) &Token {
 	mut pending := 1
 	for pending > 0 {
 		pending += tok.size - 1
-		tok = &Token(int(tok)+1)
+		unsafe {
+			tok = tok++
+		}
 	}
-
 	return tok
 }
 
@@ -24,13 +25,13 @@ pub fn object_get_member(js []byte, object &Token, name string) &Token {
 	mut token := &Token(int(object) + 1)
 	for members > 0 && !token.eq(js, name) {
 		members--
-		token = &Token(skip_token((int(token) + 1)))
+		token = skip_token(token++)
 	}
 
 	if members == 0 {
 		return &Token(0)
 	}
-	return int(token) + 1
+	return token++
 }
 
 // find the element at the given position of an array (starting at 0)

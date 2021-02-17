@@ -55,7 +55,7 @@ pub fn (t &Token) as_int(js []byte) int {
 
 	//unsafe {
 		//return C.atoi(string(&js[t.start], len).str)
-		return C.atoi(js[t.start..len].bytestr())
+		return strconv.atoi(js[t.start..len].bytestr())
 		// return strconv.atoi(string(&js[t.start], t.end - t.start))
 	//}
 }
@@ -64,7 +64,7 @@ pub fn (t &Token) as_int(js []byte) int {
 pub fn (t &Token) as_f32(js []byte) f32 {
 	//unsafe {
 		//return f32(C.atof(string(&js[t.start], t.end - t.start).str))
-		return f32(C.atof(js[t.start..t.end - t.start].bytestr()))
+		return f32(strconv.atof64(js[t.start..t.end - t.start].bytestr()))
 		// return f32(strconv.atof64(string(&js[t.start], t.end - t.start)))
 	//}
 }
@@ -283,7 +283,7 @@ fn (mut p Parser) parse_primitive(js []byte) Error {
 		return .partial_packet
 	}
 
-	//found:
+	found:
 	mut kind := Kind.null
 	match js[start] {
 		`-`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` {

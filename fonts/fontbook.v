@@ -31,7 +31,7 @@ pub fn fontbook(width, height int, min_filter, mag_filter gfx.Filter) &FontBook 
 	params := C.FONSparams{
 		width: width
 		height: height
-		flags: fontstash.FonsFlags.top_left
+		flags: byte(fontstash.FonsFlags.top_left)
 		userPtr: fs
 		renderCreate: render_create
 		renderResize: render_resize
@@ -212,7 +212,7 @@ fn (font &FontBook) draw_text(x f32, y f32, str string) f32 {
 }
 
 pub fn (font &FontBook) iter_text(x f32, y f32, str string) {
-	iter := C.FONStextIter{}
+	iter := C.FONStextIter{font: C.NULL}
 	C.fonsTextIterInit(font.stash, &iter, x, y, str.str, C.NULL)
 
 	quad := C.FONSquad{}

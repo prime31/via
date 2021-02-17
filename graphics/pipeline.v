@@ -92,7 +92,7 @@ pub fn pipeline_new_default_text() Pipeline {
 
 pub fn (p &Pipeline) get_uniform_index(shader_stage gfx.ShaderStage, index int) int {
 	for i, uni in p.uniforms {
-		if uni.shader_stage == int(shader_stage) && uni.index == index {
+		if uni.shader_stage == shader_stage && uni.index == index {
 			return i
 		}
 	}

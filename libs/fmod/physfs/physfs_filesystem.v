@@ -8,7 +8,7 @@ pub fn set_physfs_file_system(s &fmod.System) int {
 
 // Physfs implemention
 fn physfs_open_cb(name byteptr, mut filesize &u32, mut handle &voidptr, userdata voidptr) int {
-	/*
+	/* TODO(larpon)
 	if name != byteptr(0) {
 		fp := C.PHYSFS_openRead(name)
 
@@ -106,7 +106,7 @@ fn file_read_cb(handle voidptr, buffer voidptr, sizebytes u32, mut bytesread &in
 
 	if bytesread != 0 {
 		unsafe {
-			*bytesread = C.fread(buffer, 1, sizebytes, handle)
+			*bytesread = int(C.fread(buffer, 1, sizebytes, handle))
 		}
 
 		if *bytesread < int(sizebytes) {

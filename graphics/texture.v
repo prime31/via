@@ -133,7 +133,7 @@ pub fn checker_texture() Texture {
         0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
         0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
         0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
-	]!
+	]/*!*/
 	return texture_from_data(4, 4, pixels)
 }
 

@@ -125,7 +125,7 @@ pub fn (mut qb QuadBatch) draw_text(str string, config TextDrawConfig) {
 	mut f := font
 	f.update_texture()
 	f.set_align(config.align)
-	iter := C.FONStextIter{}
+	iter := C.FONStextIter{font: C.NULL}
 	C.fonsTextIterInit(font.stash, &iter, 0, 0, str.str, C.NULL)
 
 	fons_quad := C.FONSquad{}

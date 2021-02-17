@@ -1,4 +1,5 @@
 module imgui
+
 import via.libs.imgui.c
 
 const ( imgui_used_import = c.used_import )
