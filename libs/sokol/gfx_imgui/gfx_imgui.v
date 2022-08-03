@@ -7,6 +7,8 @@ const (
 
 #flag -DSOKOL_TRACE_HOOKS
 
+#flag -I @VROOT/libs/imgui
+
 #include "thirdparty/cimgui.h"
 #define SOKOL_GFX_IMGUI_IMPL
 #include "sokol_gfx_imgui.h"

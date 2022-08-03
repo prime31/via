@@ -20,5 +20,5 @@ pub const ( used_import = c_core.used_import )
 fn C.FMOD_ErrorString(errcode int) byteptr
 
 pub fn error_string(errcode int) string {
-	return tos2(FMOD_ErrorString(errcode))
+	return tos2(C.FMOD_ErrorString(errcode))
 }

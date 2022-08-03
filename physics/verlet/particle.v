@@ -19,21 +19,21 @@ pub fn particle(pos math.Vec2) Particle {
 	}
 }
 
-pub fn (p mut Particle) apply_force(force math.Vec2) {
+pub fn (mut p Particle) apply_force(force math.Vec2) {
 	assert p.mass != 0
 	p.accel = p.accel + force.scale(1.0 / p.mass)
 }
 
-pub fn (p mut Particle) pin() {
+pub fn (mut p Particle) pin() {
 	p.pinned = true
 	p.pin_pos = p.last_pos
 }
 
-pub fn (p mut Particle) pin_to(pos math.Vec2) {
+pub fn (mut p Particle) pin_to(pos math.Vec2) {
 	p.pinned = true
 	p.pin_pos = pos
 }
 
-pub fn (p mut Particle) unpin() {
+pub fn (mut p Particle) unpin() {
 	p.pinned = false
 }

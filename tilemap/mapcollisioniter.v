@@ -46,7 +46,7 @@ pub fn mapcollisioniter(map Map, bounds math.Rect, edge math.Edge) MapCollisionI
 	}
 }
 
-pub fn (i mut MapCollisionIter) next() bool {
+pub fn (mut i MapCollisionIter) next() bool {
 	// increment the inner loop
 	i.secondary += i.secondary_incr
 	if i.secondary != i.last_secondary + i.secondary_incr {
@@ -65,10 +65,11 @@ pub fn (i mut MapCollisionIter) next() bool {
 	return true
 }
 
+type MathEdge = math.Edge
 pub fn (i &MapCollisionIter) current() (int, int) {
-	return math.take(i.is_h, i.primary, i.secondary), math.take(!i.is_h, i.primary, i.secondary)
+	return math.Edge( math.take<MathEdge>(i.is_h, i.primary, i.secondary) ), math.Edge( math.take<MathEdge>(!i.is_h, i.primary, i.secondary) )
 }
 
 fn world_to_tile(map Map, pos int, axis math.Axis) int {
-	return math.take(axis == .x, map.world_to_tilex(pos), map.world_to_tiley(pos))
+	return int( math.take<MathEdge>(axis == .x, map.world_to_tilex(pos), map.world_to_tiley(pos)) )
 }

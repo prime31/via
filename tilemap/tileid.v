@@ -1,6 +1,6 @@
 module tilemap
 
-type TileId int
+type TileId = int
 
 pub fn (t TileId) id() int { return int(t) & ~(flipped_h | flipped_v | flipped_d) }
 

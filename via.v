@@ -40,19 +40,22 @@ fn (v &Via) free() {
 	filesystem.free()
 	time.free()
 
-	sg_shutdown()
+	C.sg_shutdown()
 
-	unsafe { free(v) }
+	unsafe { C.free(v) }
 }
 
-pub fn run<T>(config &ViaConfig, ctx mut T) {
+pub fn run<T>(config &ViaConfig, mut ctx T) {
 	v := create_via(config)
 	if C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_HAPTIC | C.SDL_INIT_GAMECONTROLLER) != 0 {
 		C.SDL_Log(c'Unable to initialize SDL: %s', C.SDL_GetError())
 	}
 
-	window.create(config.window_config())
-	graphics.setup(config.graphics_config())
+	wcnf := config.window_config()
+	window.create(wcnf)
+
+	cnfg := config.graphics_config()
+	graphics.setup(cnfg)
 	debug.setup()
 
 	input.set_window_scale(window.scale())
@@ -82,7 +85,7 @@ pub fn run<T>(config &ViaConfig, ctx mut T) {
 fn (v &Via) poll_events() bool {
 	input.new_frame()
 
-	ev := SDL_Event{}
+	ev := C.SDL_Event{}
 	for 0 < C.SDL_PollEvent(&ev) {
 		// ignore events imgui eats
 		if v.imgui && imgui_handle_event(&ev) { continue }
@@ -93,7 +96,7 @@ fn (v &Via) poll_events() bool {
 			}
 			.windowevent {
 				if ev.window.windowID == window.win.id {
-					if ev.window.event == C.SDL_WINDOWEVENT_CLOSE { return true }
+					if ev.window.event == .close /*C.SDL_WINDOWEVENT_CLOSE */ { return true }
 					window.handle_event(&ev)
 				}
 			}

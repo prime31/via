@@ -14,8 +14,8 @@ const (
 )
 
 pub struct Gjk {
-	expanding_simplex ExpandingSimplex = ExpandingSimplex{}
 mut:
+	expanding_simplex ExpandingSimplex = ExpandingSimplex{}
 	simplex []math.Vec2
 }
 
@@ -81,7 +81,8 @@ fn get_support_point(dir math.Vec2, shape1, shape2 &physics.Collider, trans1, tr
 	return shape1.get_farthest_pt(dir, trans1) - shape2.get_farthest_pt(dir.scale(-1), trans2)
 }
 
-fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
+fn (mut g mut Gjk) check_simplex(mut dir math.Vec2) bool {
+
 	if g.simplex.len == 3 {
 		c0 := g.simplex[2].scale(-1)
 		bc := g.simplex[1] - g.simplex[2]
@@ -92,10 +93,10 @@ fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
 
 		if bc_norm.dot(c0) > 0 {
 			g.simplex.delete(0)
-			*dir = bc_norm
+			dir = bc_norm
 		} else if ca_norm.dot(c0) > 0 {
 			g.simplex.delete(1)
-			*dir = ca_norm
+			dir = ca_norm
 		} else {
 			return true
 		}
@@ -104,23 +105,24 @@ fn (g mut Gjk) check_simplex(dir mut math.Vec2) bool {
 		ab := g.simplex[1] - g.simplex[0]
 		a0 := g.simplex[0].scale(-1)
 
-		*dir = triple_prod(ab, a0, ab)
+		dir = triple_prod(ab, a0, ab)
 
 		// check for degenerate cases where the origin lies on the segment created by a -> b which will yield a
 		// zero edge normal
 		if dir.sq_magnitude() <= distance_epsilon
 		{
 			// in this case just choose either normal (left or right)
-			*dir = math.Vec2{ab.y, -ab.x}
+			dir = math.Vec2{ab.y, -ab.x}
 		}
 	} else if g.simplex.len == 1 {
-		*dir = dir.scale(-1)
+		dir = dir.scale(-1)
 	}
+
 
 	return false
 }
 
-fn (g mut Gjk) get_manifold(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) physics.Manifold {
+fn (mut g Gjk) get_manifold(shape1, shape2 &physics.Collider, trans1, trans2 math.RigidTransform) physics.Manifold {
 	mut manifold := physics.Manifold{}
 	manifold.collided = true
 	g.expanding_simplex.start(g.simplex)

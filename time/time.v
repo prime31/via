@@ -16,15 +16,15 @@ pub mut:
 }
 
 const (
-	time = &Time{}
+	m_time = &Time{}
 )
 
 pub fn free() {
-	unsafe { free(time) }
+	unsafe { C.free(m_time) }
 }
 
 pub fn tick() {
-	mut t := time
+	mut t := m_time
 
 	t.frame_count++
 	t.fps_frames++
@@ -41,35 +41,37 @@ pub fn tick() {
 }
 
 [inline]
-pub fn sleep(seconds f32) { SDL_Delay(u32(seconds * 1000)) }
+pub fn sleep(seconds f32) { C.SDL_Delay(u32(seconds * 1000)) }
 
 [inline]
-pub fn dt() f32 { return time.dt }
+pub fn dt() f32 { return m_time.dt }
 
 [inline]
-pub fn frames() u32 { return time.frame_count }
+pub fn frames() u32 { return m_time.frame_count }
 
 // number of milliseconds since the SDL library initialization
 [inline]
-pub fn ticks() u32 { return SDL_GetTicks() }
+pub fn ticks() u32 { return C.SDL_GetTicks() }
 
 [inline]
-pub fn seconds() f32 { return f32(SDL_GetTicks()) / 1000.0 }
+pub fn seconds() f32 { return f32(C.SDL_GetTicks()) / 1000.0 }
 
 [inline]
-pub fn fps() u32 { return time.fps }
+pub fn fps() u32 { return m_time.fps }
 
 [inline]
-pub fn now() u64 { return SDL_GetPerformanceCounter() }
+pub fn now() u64 { return C.SDL_GetPerformanceCounter() }
 
 // returns the time in milliseconds since the last call
 pub fn laptime(last_time &u64) f64 {
 	mut tmp := last_time
 	mut dt := f64(0)
-	now := now()
+	n := now()
 	if *tmp != 0 {
-		dt = f64((now - *tmp) * 1000) / f64(C.SDL_GetPerformanceFrequency())
+		dt = f64((n - *tmp) * 1000) / f64(C.SDL_GetPerformanceFrequency())
 	}
-	*tmp = now
+	unsafe {
+		*tmp = n
+	}
 	return dt
 }

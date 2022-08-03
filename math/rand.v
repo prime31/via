@@ -37,7 +37,7 @@ pub fn int_next(max int) int {
 }
 
 [inline]
-pub fn take<T>(a bool, b, c T) T {
+pub fn take<T>(a bool, b T, c T) T {
 	if a { return b }
 	return c
 }

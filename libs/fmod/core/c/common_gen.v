@@ -3,6 +3,7 @@ module c
 pub const ( used_import = 1 )
 
 pub struct C.FMOD_SYSTEM {}
+[typedef]
 pub struct C.FMOD_SOUND {}
 pub struct C.FMOD_CHANNELCONTROL {}
 pub struct C.FMOD_CHANNEL {}

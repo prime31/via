@@ -3,12 +3,12 @@ import via.libs.imgui
 import via.libs.sokol.gfx_imgui
 
 const (
-	sg_imgui = &sg_imgui_t{}
+	sg_imgui = &C.sg_imgui_t{}
 )
 
 fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool) {
 	if gfx_dbg { gfx_imgui.initialize(sg_imgui) }
-	igCreateContext(C.NULL)
+	C.igCreateContext(C.NULL)
 
 	mut io := C.igGetIO()
 	io.ConfigFlags |= C.ImGuiConfigFlags_NavEnableKeyboard
@@ -16,7 +16,7 @@ fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool)
 	if viewports { io.ConfigFlags |= C.ImGuiConfigFlags_ViewportsEnable }
 
 	if (io.ConfigFlags & C.ImGuiConfigFlags_ViewportsEnable) != 0 {
-		mut style := igGetStyle()
+		mut style := C.igGetStyle()
 		style.WindowRounding = 0
 	}
 
@@ -25,7 +25,7 @@ fn imgui_init(win voidptr, gl_context voidptr, viewports, docking, gfx_dbg bool)
 
 // returns true if the event is handled by imgui and should be ignored by via
 fn imgui_handle_event(evt &C.SDL_Event) bool {
-	if ImGui_ImplSDL2_ProcessEvent(evt) {
+	if C.ImGui_ImplSDL2_ProcessEvent(evt) {
 		match evt.@type {
 			.mousewheel, .mousebuttondown { return C.igGetIO().WantCaptureMouse }
 			.textinput, .keydown, .keyup { return C.igGetIO().WantCaptureKeyboard }
@@ -46,16 +46,16 @@ fn imgui_new_frame(win voidptr, gfx_dbg bool) {
 }
 
 fn imgui_render(win voidptr, gl_context voidptr) {
-	igRender()
+	C.igRender()
 
 	io := C.igGetIO()
-	sg_apply_viewport(0, 0, int(io.DisplaySize.x), int(io.DisplaySize.y), false)
-	ImGui_ImplOpenGL3_RenderDrawData(C.igGetDrawData())
+	C.sg_apply_viewport(0, 0, int(io.DisplaySize.x), int(io.DisplaySize.y), false)
+	C.ImGui_ImplOpenGL3_RenderDrawData(C.igGetDrawData())
 
 	if (io.ConfigFlags & C.ImGuiConfigFlags_ViewportsEnable) != 0 {
 		C.igUpdatePlatformWindows()
 		C.igRenderPlatformWindowsDefault(C.NULL, C.NULL)
-		SDL_GL_MakeCurrent(win, gl_context)
+		C.SDL_GL_MakeCurrent(win, gl_context)
 	}
 }
 

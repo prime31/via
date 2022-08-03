@@ -30,7 +30,7 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 	img := image.load_from_memory(bytes.data, bytes.len)
 	defer { img.free() }
 
-	mut img_desc := sg_image_desc{
+	mut img_desc := C.sg_image_desc{
 		width: img.width
 		height: img.height
 		num_mipmaps: 0
@@ -41,13 +41,13 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 		label: &byte(0)
 		d3d11_texture: 0
 	}
-	img_desc.content.subimage[0][0] = sg_subimage_content{
+	img_desc.content.subimage[0][0] = C.sg_subimage_content{
 		ptr: img.data
-		size: img.channels * img.width * img.height
+		size: int(img.channels) * img.width * img.height
     }
 
 	tex := Texture{
-		img: sg_make_image(&img_desc)
+		img: C.sg_make_image(&img_desc)
 		w: img.width
 		h: img.height
 	}
@@ -55,7 +55,7 @@ pub fn texture(bytes []byte, min_filter, mag_filter gfx.Filter) Texture {
 }
 
 pub fn dyn_texture(width int, height int, min_filter, mag_filter gfx.Filter) Texture {
-	mut img_desc := sg_image_desc{
+	mut img_desc := C.sg_image_desc{
 		width: width
 		height: height
 		num_mipmaps: 0
@@ -69,7 +69,7 @@ pub fn dyn_texture(width int, height int, min_filter, mag_filter gfx.Filter) Tex
 	}
 
 	tex := Texture{
-		img: sg_make_image(&img_desc)
+		img: C.sg_make_image(&img_desc)
 		w: width
 		h: height
 	}
@@ -77,7 +77,7 @@ pub fn dyn_texture(width int, height int, min_filter, mag_filter gfx.Filter) Tex
 }
 
 pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth_stencil bool) Texture {
-	mut img_desc := sg_image_desc{
+	mut img_desc := C.sg_image_desc{
 		render_target: true
 		width: width
 		height: height
@@ -95,7 +95,7 @@ pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth
 	}
 
 	tex := Texture{
-		img: sg_make_image(&img_desc)
+		img: C.sg_make_image(&img_desc)
 		w: width
 		h: height
 	}
@@ -103,7 +103,7 @@ pub fn rendertexture(width, height int, min_filter, mag_filter gfx.Filter, depth
 }
 
 pub fn texture_from_data(width, height int, pixels []u32) Texture {
-	mut img_desc := sg_image_desc{
+	mut img_desc := C.sg_image_desc{
 		width: width
 		height: height
 		pixel_format: .rgba8
@@ -114,13 +114,13 @@ pub fn texture_from_data(width, height int, pixels []u32) Texture {
 		label: &byte(0)
 		d3d11_texture: 0
 	}
-	img_desc.content.subimage[0][0] = sg_subimage_content{
+	img_desc.content.subimage[0][0] = C.sg_subimage_content{
 		ptr: pixels.data
-		size: sizeof(u32) * pixels.len
+		size: int(sizeof(u32) * u32(pixels.len))
     }
 
 	tex := Texture{
-		img: sg_make_image(&img_desc)
+		img: C.sg_make_image(&img_desc)
 		w: width
 		h: height
 	}
@@ -133,13 +133,13 @@ pub fn checker_texture() Texture {
         0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
         0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
         0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
-	]!
+	]/*!*/
 	return texture_from_data(4, 4, pixels)
 }
 
 pub fn (t &Texture) update_content(data byteptr, size int) {
-	mut content := sg_image_content{}
+	mut content := C.sg_image_content{}
 	content.subimage[0][0].ptr = data
 	content.subimage[0][0].size = size
-	sg_update_image(t.img, &content)
+	C.sg_update_image(t.img, &content)
 }

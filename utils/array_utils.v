@@ -3,7 +3,7 @@ module utils
 pub fn new_arr<T>(len int, cap int) []T {
 	assert(len <= cap)
 	cap_ := if cap == 0 { 1 } else { cap }
-	elm_size := sizeof(T)
+	elm_size := int(sizeof(T))
 	arr := array{
 		len: len
 		cap: cap_

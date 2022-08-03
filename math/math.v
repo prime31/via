@@ -12,7 +12,7 @@ fn C.atanf(x f32) f32
 fn C.atan2f(y f32, x f32) f32
 fn C.cbrtf(x f32) f32
 fn C.ceilf(x f32) f32
-// fn C.cosf(x f32) f32
+ fn C.cosf(x f32) f32
 fn C.coshf(x f32) f32
 fn C.erff(x f32) f32
 fn C.erfcf(x f32) f32
@@ -29,13 +29,13 @@ fn C.logf(x f32) f32
 fn C.log2f(x f32) f32
 fn C.log10f(x f32) f32
 fn C.lgammaf(x f32) f32
-// fn C.powf(x f32, y f32) f32
+ fn C.powf(x f32, y f32) f32
 fn C.roundf(x f32) f32
-// fn C.sinf(x f32) f32
+ fn C.sinf(x f32) f32
 fn C.sinhf(x f32) f32
-// fn C.sqrtf(x f32) f32
+ fn C.sqrtf(x f32) f32
 fn C.tgammaf(x f32) f32
-// fn C.tanf(x f32) f32
+ fn C.tanf(x f32) f32
 fn C.tanhf(x f32) f32
 fn C.truncf(x f32) f32
 

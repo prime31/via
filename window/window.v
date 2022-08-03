@@ -51,30 +51,30 @@ pub fn create(config &WindowConfig) {
 
 pub fn free() {
 	$if !metal? { C.SDL_GL_DeleteContext(win.gl_context) }
-	unsafe { free(win) }
+	unsafe { C.free(win) }
 }
 
 fn create_gl_window(config &WindowConfig, window_flags int) {
 	mut w := win
 
-	SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_FLAGS, C.SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
-	SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK, C.SDL_GL_CONTEXT_PROFILE_CORE)
-	SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
-	SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 3)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_FLAGS, C.SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK, C.SDL_GL_CONTEXT_PROFILE_CORE)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 3)
 
-	SDL_GL_SetAttribute(C.SDL_GL_DOUBLEBUFFER, 1)
-	SDL_GL_SetAttribute(C.SDL_GL_DEPTH_SIZE, 24)
-	SDL_GL_SetAttribute(C.SDL_GL_STENCIL_SIZE, 8)
+	C.SDL_GL_SetAttribute(C.SDL_GL_DOUBLEBUFFER, 1)
+	C.SDL_GL_SetAttribute(C.SDL_GL_DEPTH_SIZE, 24)
+	C.SDL_GL_SetAttribute(C.SDL_GL_STENCIL_SIZE, 8)
 
-	w.sdl_window = SDL_CreateWindow(config.title.str, C.SDL_WINDOWPOS_CENTERED, C.SDL_WINDOWPOS_CENTERED, config.width, config.height, window_flags)
-	w.gl_context = SDL_GL_CreateContext(w.sdl_window)
-	w.id = SDL_GetWindowID(w.sdl_window)
+	w.sdl_window = C.SDL_CreateWindow(config.title.str, C.SDL_WINDOWPOS_CENTERED, C.SDL_WINDOWPOS_CENTERED, config.width, config.height, window_flags)
+	w.gl_context = C.SDL_GL_CreateContext(w.sdl_window)
+	w.id = C.SDL_GetWindowID(w.sdl_window)
 
-	SDL_GL_MakeCurrent(w.sdl_window, w.gl_context)
+	C.SDL_GL_MakeCurrent(w.sdl_window, w.gl_context)
 	if config.vsync {
-		SDL_GL_SetSwapInterval(1)
+		C.SDL_GL_SetSwapInterval(1)
 	} else {
-		SDL_GL_SetSwapInterval(0)
+		C.SDL_GL_SetSwapInterval(0)
 	}
 
 	flextgl.flext_init()

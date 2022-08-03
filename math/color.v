@@ -14,11 +14,11 @@ pub fn color_from_bytes(r byte, g byte, b byte, a byte) Color {
 }
 
 pub fn rgb(r f32, g f32, b f32) Color {
-    return color_from_bytes(byte(r * 255), byte(g * 255), byte(b * 255), byte(255))
+    return color_from_bytes(byte(int(r * 255)), byte(int(g * 255)), byte(int(b * 255)), byte(255))
 }
 
 pub fn rgba(r f32, g f32, b f32, a f32) Color {
-    return color_from_bytes(byte(r * 255), byte(g * 255), byte(b * 255), byte(a * 255))
+    return color_from_bytes(byte(int(r * 255)), byte(int(g * 255)), byte(int(b * 255)), byte(int(a * 255)))
 }
 
 pub fn color_from_ints(r int, g int, b int, a int) Color {
@@ -57,19 +57,19 @@ pub fn (c Color) a_f() f32 {
 	return f32(c.a()) / 255
 }
 
-pub fn (c mut Color) set_r(r byte) {
+pub fn (mut c Color) set_r(r byte) {
 	c.value = (c.value & 0xffffff00) | r
 }
 
-pub fn (c mut Color) set_g(g byte) {
+pub fn (mut c Color) set_g(g byte) {
 	c.value = (c.value & 0xffff00ff) | g << 8
 }
 
-pub fn (c mut Color) set_b(b byte) {
+pub fn (mut c Color) set_b(b byte) {
 	c.value = (c.value & 0xff00ffff) | b << 16
 }
 
-pub fn (c mut Color) set_a(a byte) {
+pub fn (mut c Color) set_a(a byte) {
 	c.value = (c.value & 0x00ffffff) | a << 24
 }
 

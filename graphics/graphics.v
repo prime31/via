@@ -7,7 +7,7 @@ import via.filesystem
 import via.libs.sokol.gfx
 import via.libs.sokol.sdl_metal_util
 
-type DebugRenderFn fn()
+type DebugRenderFn = fn()
 
 struct Graphics {
 mut:
@@ -40,22 +40,22 @@ pub fn free() {
 	g.tri_batch.free()
 	g.def_pip.free()
 	g.def_pass.free()
-	unsafe { free(g) }
+	unsafe { C.free(g) }
 }
 
 pub fn setup(config GraphicsConfig) {
 	mut gg := g
 
-	desc := sg_desc{
+	desc := C.sg_desc{
 		mtl_device: sdl_metal_util.get_metal_device()
 		mtl_renderpass_descriptor_cb: C.mu_get_render_pass_descriptor
 		mtl_drawable_cb: C.mu_get_drawable
-		d3d11_device: 0
-		d3d11_device_context: 0
-		d3d11_render_target_view_cb: 0
-		d3d11_depth_stencil_view_cb: 0
+		d3d11_device: C.NULL
+		d3d11_device_context: C.NULL
+		d3d11_render_target_view_cb: C.NULL
+		d3d11_depth_stencil_view_cb: C.NULL
 	}
-	sg_setup(&desc)
+	C.sg_setup(&desc)
 
 	set_default_filter(config.min_filter, config.mag_filter)
 	gg.quad_batch = quadbatch(config.max_quads)
@@ -103,14 +103,14 @@ pub fn new_texture(src string) Texture {
 }
 
 pub fn new_texture_atlas(src string) TextureAtlas {
-	tex_src := src.replace(os.ext(src), '.png')
+	tex_src := src.replace(os.file_ext(src), '.png')
 	tex := new_texture(tex_src)
 
 	buf := filesystem.read_bytes(src)
 	return textureatlas(tex, buf)
 }
 
-pub fn new_shader(src ShaderSourceConfig, shader_desc &sg_shader_desc) C.sg_shader {
+pub fn new_shader(src ShaderSourceConfig, mut shader_desc C.sg_shader_desc) C.sg_shader {
 	mut vert_needs_free := false
 	vert_src := if src.vert.len > 0 && src.vert.ends_with('.vert') {
 		vert_needs_free = true
@@ -140,7 +140,7 @@ pub fn new_shader(src ShaderSourceConfig, shader_desc &sg_shader_desc) C.sg_shad
 }
 
 pub fn new_pipeline(pipeline_desc &C.sg_pipeline_desc) C.sg_pipeline {
-	return sg_make_pipeline(pipeline_desc)
+	return C.sg_make_pipeline(pipeline_desc)
 }
 
 pub fn new_atlasbatch(tex Texture, max_sprites int) &AtlasBatch {
@@ -166,7 +166,7 @@ pub fn new_effectstack() &EffectStack {
 // offscreen passes should be rendered first. If no pass is in the PassConfig rendering will be done to the
 // default offscreen pass. After all passes are run you can optionally call postprocess and then blit_to_screen.
 // If another pass is run after blit_to_screen rendering will be to the backbuffer.
-pub fn begin_pass(config PassConfig) {
+pub fn begin_pass(mut config PassConfig) {
 	mut gg := g
 	config.apply(mut gg.pass_action)
 
@@ -175,7 +175,7 @@ pub fn begin_pass(config PassConfig) {
 	// if we already blitted to the screen we have to use a default pass
 	if gg.blitted_to_screen {
 		w, h := window.drawable_size()
-		sg_begin_default_pass(&gg.pass_action, w, h)
+		C.sg_begin_default_pass(&gg.pass_action, w, h)
 		proj_mat = math.mat32_ortho(w, h)
 	} else {
 		pass := if config.pass == 0 { &gg.def_pass.offscreen_pass } else { config.pass }
@@ -199,10 +199,10 @@ pub fn begin_pass(config PassConfig) {
 
 pub fn end_pass() {
 	flush()
-	if g.debug_render_fn != 0 {
+	if !isnil(g.debug_render_fn) {
 		g.debug_render_fn()
 	}
-	sg_end_pass()
+	C.sg_end_pass()
 }
 
 pub fn postprocess(pp &EffectStack) {
@@ -216,7 +216,8 @@ pub fn blit_to_screen(letterbox_color math.Color) {
 	mut gg := g
 	gg.blitted_to_screen = true
 
-	begin_pass({color:letterbox_color trans_mat:0 pipeline:0 pass:0})
+	mut config := PassConfig{color:letterbox_color trans_mat:0 pipeline:0 pass:0}
+	begin_pass(mut config)
 	scaler := g.def_pass.scaler
 	gg.quad_batch.draw(g.def_pass.offscreen_pass.color_tex, {x:scaler.x y:scaler.y sx:scaler.scale sy:scaler.scale})
 	end_pass()
@@ -224,12 +225,12 @@ pub fn blit_to_screen(letterbox_color math.Color) {
 
 //#endregion
 
-pub fn set_pipeline(pipeline mut Pipeline) {
+pub fn set_pipeline(mut pipeline Pipeline) {
 	mut gg := g
 	gg.quad_batch.flush()
 	gg.tri_batch.flush()
 
-	sg_apply_pipeline(pipeline.pip)
+	C.sg_apply_pipeline(pipeline.pip)
 	pipeline.set_uniform_raw(.vs, 0, &gg.pass_proj_mat)
 	pipeline.apply_uniforms()
 }

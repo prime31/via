@@ -10,8 +10,9 @@ pub const ( used_import = 1 )
 
 #flag -I @VROOT/libs/imgui
 
-#flag linux @VROOT/libs/imgui/thirdparty/linux/cimgui.a
-#flag linux -lGL -lstdc++
+//#flag linux @VROOT/libs/imgui/thirdparty/linux/cimgui.a
+#flag linux -L @VROOT/libs/imgui/thirdparty/linux
+#flag linux -lGL -lstdc++ -lcimgui
 
 #flag linux @VROOT/libs/imgui/thirdparty/linux/imgui_impl_sdl.o
 #flag linux @VROOT/libs/imgui/thirdparty/linux/imgui_impl_opengl3.o

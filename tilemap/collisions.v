@@ -9,19 +9,20 @@ const (
 	vert_inset = 2
 )
 
-pub fn move(map &Map, rect math.Rect, movement mut math.Vec2) {
+pub fn move(map &Map, rect math.Rect, mut movement math.Vec2) {
 	layer := map.tile_layers[0]
 	mut rectm := rect
 
 	if movement.x != 0 {
 		movement.x = movex(map, layer, rectm, int(movement.x))
-		rectm.x += movement.x
+		rectm.x += int(movement.x)
 	}
 	movement.y = movey(map, layer, rectm, int(movement.y))
 }
 
+type MathEdge = math.Edge
 pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
-	edge := math.take(movex > 0, math.Edge.right, math.Edge.left)
+	edge := math.Edge( math.take<MathEdge>(movex > 0, math.Edge.right, math.Edge.left) )
 	mut bounds := rect.half_rect(edge)
 	// we contract horizontally for vertical movement and vertically for horizontal movement
 	bounds.contract(0, vert_inset)
@@ -45,7 +46,8 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 				if tileset_tile.oneway {
 					continue
 				} else if tileset_tile.slope {
-					slope_rows[last_slope_row++] = y
+					last_slope_row++
+					slope_rows[last_slope_row] = y
 					continue
 				}
 			}
@@ -70,7 +72,7 @@ pub fn movex(map &Map, layer &TileLayer, rect math.Rect, movex int) int {
 }
 
 pub fn movey(map &Map, layer &TileLayer, rect math.Rect, movey int) int {
-	edge := math.take(movey >= 0, math.Edge.bottom, math.Edge.top)
+	edge := math.Edge( math.take<MathEdge>(movey >= 0, math.Edge.bottom, math.Edge.top) )
 	mut bounds := rect.half_rect(edge)
 	// we contract horizontally for vertical movement and vertically for horizontal movement
 	bounds.contract(horiz_inset, 0)

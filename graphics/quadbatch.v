@@ -1,6 +1,5 @@
 module graphics
 import via.math
-import via.fonts
 import via.utils
 import via.fonts
 import via.libs.sokol.gfx
@@ -13,7 +12,7 @@ const ( used = gfx.used_import )
 pub struct QuadBatch {
 mut:
 	fontbook &fonts.FontBook
-	bindings sg_bindings
+	bindings C.sg_bindings
 	verts []math.Vertex
 	max_sprites int
 	quad_cnt int = 0
@@ -23,9 +22,12 @@ mut:
 }
 
 pub fn quadbatch(max_sprites int) &QuadBatch {
+
+	//arr := utils.new_arr_with_default<math.Vertex>(max_sprites * 4, max_sprites * 4, math.Vertex{})
+	arr := []math.Vertex{len: max_sprites * 4, cap: max_sprites * 4, init: math.Vertex{}}
 	mut qb := &QuadBatch{
 		fontbook: new_fontbook(128, 128)
-		verts: utils.new_arr_with_default(max_sprites * 4, max_sprites * 4, math.Vertex{})
+		verts: arr
 		max_sprites: max_sprites
 		quad: math.quad(0, 0, 1, 1, 1, 1)
 	}
@@ -47,7 +49,7 @@ pub fn (qb &QuadBatch) free() {
 
 	unsafe {
 		qb.verts.free()
-		free(qb)
+		C.free(qb)
 	}
 }
 
@@ -59,7 +61,7 @@ fn (qb &QuadBatch) ensure_capacity() bool {
 	return true
 }
 
-pub fn (qb mut QuadBatch) end() {
+pub fn (mut qb QuadBatch) end() {
 	qb.flush()
 	qb.last_appended_quad_cnt = 0
 	qb.quad_cnt = 0
@@ -67,14 +69,14 @@ pub fn (qb mut QuadBatch) end() {
 }
 
 // binds a frag shader image to an additional slot other than 0, which is reserved for the main texture
-pub fn (qb mut QuadBatch) bind_texture(index int, tex Texture) {
+pub fn (mut qb QuadBatch) bind_texture(index int, tex Texture) {
 	assert index != 0
 	qb.bindings.set_frag_image(index, tex.img)
 }
 
 //#region drawing methods
 
-pub fn (qb mut QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
+pub fn (mut qb QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	if !qb.ensure_capacity() { return }
 	if qb.tex_id != tex.id {
 		qb.flush()
@@ -84,7 +86,9 @@ pub fn (qb mut QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math
 
 	base_vert := qb.quad_cnt * 4
 	qb.quad_cnt++
-	matrix.transform_vec2_arr(&qb.verts[base_vert], &quad.positions[0], 4)
+	unsafe {
+		matrix.transform_vec2_arr(&qb.verts[base_vert], &quad.positions[0], 4)
+	}
 
 	for i in 0..4 {
 		qb.verts[base_vert + i].s = quad.texcoords[i].x
@@ -93,32 +97,35 @@ pub fn (qb mut QuadBatch) draw_q_m(tex C.sg_image, quad &math.Quad, matrix &math
 	}
 }
 
-pub fn (qb mut QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
-	qb.draw_q_m(tex.img, quad, config.get_matrix(), config.color)
+pub fn (mut qb QuadBatch) draw_q(tex Texture, quad &math.Quad, config DrawConfig) {
+	mat := config.get_matrix()
+	qb.draw_q_m(tex.img, quad, mat, config.color)
 }
 
-pub fn (qb mut QuadBatch) draw_vp(tex Texture, viewport math.Rect, config DrawConfig) {
+pub fn (mut qb QuadBatch) draw_vp(tex Texture, viewport math.Rect, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(viewport.x, viewport.y, viewport.w, viewport.h)
 
-	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
+	mat := config.get_matrix()
+	qb.draw_q_m(tex.img, qb.quad, mat, config.color)
 }
 
-pub fn (qb mut QuadBatch) draw(tex Texture, config DrawConfig) {
+pub fn (mut qb QuadBatch) draw(tex Texture, config DrawConfig) {
 	qb.quad.set_image_dimensions(tex.w, tex.h)
 	qb.quad.set_viewport(0, 0, tex.w, tex.h)
 
-	qb.draw_q_m(tex.img, qb.quad, config.get_matrix(), config.color)
+	mat := config.get_matrix()
+	qb.draw_q_m(tex.img, qb.quad, mat, config.color)
 }
 
-pub fn (qb mut QuadBatch) draw_text(str string, config TextDrawConfig) {
+pub fn (mut qb QuadBatch) draw_text(str string, config TextDrawConfig) {
 	matrix := config.get_matrix()
 	font := if config.fontbook != 0 { config.fontbook } else { qb.fontbook }
 
 	mut f := font
 	f.update_texture()
 	f.set_align(config.align)
-	iter := C.FONStextIter{}
+	iter := C.FONStextIter{font: C.NULL}
 	C.fonsTextIterInit(font.stash, &iter, 0, 0, str.str, C.NULL)
 
 	fons_quad := C.FONSquad{}
@@ -142,14 +149,16 @@ pub fn (qb mut QuadBatch) draw_text(str string, config TextDrawConfig) {
 
 //#endregion
 
-pub fn (qb mut QuadBatch) flush() {
+pub fn (mut qb QuadBatch) flush() {
 	total_quads := (qb.quad_cnt - qb.last_appended_quad_cnt)
 	if total_quads == 0 { return }
 
 	total_verts := total_quads * 4
-	qb.bindings.vertex_buffer_offsets[0] = sg_append_buffer(qb.bindings.vertex_buffers[0], &qb.verts[qb.last_appended_quad_cnt * 4], sizeof(math.Vertex) * total_verts)
+	unsafe {
+		qb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(qb.bindings.vertex_buffers[0], &qb.verts[qb.last_appended_quad_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
+	}
 	qb.last_appended_quad_cnt = qb.quad_cnt
 
-	sg_apply_bindings(&qb.bindings)
-	sg_draw(0, total_quads * 6, 1)
+	C.sg_apply_bindings(&qb.bindings)
+	C.sg_draw(0, total_quads * 6, 1)
 }

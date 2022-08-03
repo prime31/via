@@ -74,7 +74,7 @@ fn C.FMOD_System_GetVersion(system &FMOD_SYSTEM, version &u32) int
 fn C.FMOD_System_GetOutputHandle(system &FMOD_SYSTEM, handle voidptr) int
 fn C.FMOD_System_GetChannelsPlaying(system &FMOD_SYSTEM, channels &int, realchannels &int) int
 fn C.FMOD_System_GetCPUUsage(system &FMOD_SYSTEM, dsp &f32, stream &f32, geometry &f32, update &f32, total &f32) int
-fn C.FMOD_System_GetFileUsage(system &FMOD_SYSTEM, long &i64, long &i64, long &i64) int
+fn C.FMOD_System_GetFileUsage(system &FMOD_SYSTEM, sampleBytesRead &i64, streamBytesRead &i64, otherBytesRead &i64) int
 
 // Sound/DSP/Channel/FX creation and retrieval.
 fn C.FMOD_System_CreateSound(system &FMOD_SYSTEM, name_or_data byteptr, mode int, exinfo &FMOD_CREATESOUNDEXINFO, sound &voidptr /* FMOD_SOUND** */) int
@@ -253,20 +253,20 @@ fn C.FMOD_ChannelGroup_SetMixMatrix(channelgroup &FMOD_CHANNELGROUP, matrix &f32
 fn C.FMOD_ChannelGroup_GetMixMatrix(channelgroup &FMOD_CHANNELGROUP, matrix &f32, outchannels &int, inchannels &int, inchannel_hop int) int
 
 // Clock based functionality.
-fn C.FMOD_Channel_GetDSPClock(channel &FMOD_CHANNEL, long &u64, long &u64) int
-fn C.FMOD_Channel_SetDelay(channel &FMOD_CHANNEL, long u64, long u64, stopchannels int) int
-fn C.FMOD_Channel_GetDelay(channel &FMOD_CHANNEL, long &u64, long &u64, stopchannels &int) int
-fn C.FMOD_Channel_AddFadePoint(channel &FMOD_CHANNEL, long u64, volume f32) int
-fn C.FMOD_Channel_SetFadePointRamp(channel &FMOD_CHANNEL, long u64, volume f32) int
-fn C.FMOD_Channel_RemoveFadePoints(channel &FMOD_CHANNEL, long u64, long u64) int
-fn C.FMOD_Channel_GetFadePoints(channel &FMOD_CHANNEL, numpoints &u32, long &u64, point_volume &f32) int
-fn C.FMOD_ChannelGroup_GetDSPClock(channelgroup &FMOD_CHANNELGROUP, long &u64, long &u64) int
-fn C.FMOD_ChannelGroup_SetDelay(channelgroup &FMOD_CHANNELGROUP, long u64, long u64, stopchannels int) int
-fn C.FMOD_ChannelGroup_GetDelay(channelgroup &FMOD_CHANNELGROUP, long &u64, long &u64, stopchannels &int) int
-fn C.FMOD_ChannelGroup_AddFadePoint(channelgroup &FMOD_CHANNELGROUP, long u64, volume f32) int
-fn C.FMOD_ChannelGroup_SetFadePointRamp(channelgroup &FMOD_CHANNELGROUP, long u64, volume f32) int
-fn C.FMOD_ChannelGroup_RemoveFadePoints(channelgroup &FMOD_CHANNELGROUP, long u64, long u64) int
-fn C.FMOD_ChannelGroup_GetFadePoints(channelgroup &FMOD_CHANNELGROUP, numpoints &u32, long &u64, point_volume &f32) int
+fn C.FMOD_Channel_GetDSPClock(channel &FMOD_CHANNEL, dspclock &u64, parentclock &u64) int
+fn C.FMOD_Channel_SetDelay(channel &FMOD_CHANNEL, dspclock_start u64, dspclock_end u64, stopchannels int) int
+fn C.FMOD_Channel_GetDelay(channel &FMOD_CHANNEL, dspclock_start &u64, dspclock_end &u64, stopchannels &int) int
+fn C.FMOD_Channel_AddFadePoint(channel &FMOD_CHANNEL, dspclock u64, volume f32) int
+fn C.FMOD_Channel_SetFadePointRamp(channel &FMOD_CHANNEL, dspclock u64, volume f32) int
+fn C.FMOD_Channel_RemoveFadePoints(channel &FMOD_CHANNEL, dspclock_start u64, dspclock_end u64) int
+fn C.FMOD_Channel_GetFadePoints(channel &FMOD_CHANNEL, numpoints &u32, point_dspclock &u64, point_volume &f32) int
+fn C.FMOD_ChannelGroup_GetDSPClock(channelgroup &FMOD_CHANNELGROUP, dspclock &u64, parentclock &u64) int
+fn C.FMOD_ChannelGroup_SetDelay(channelgroup &FMOD_CHANNELGROUP, dspclock_start u64, dspclock_end u64, stopchannels int) int
+fn C.FMOD_ChannelGroup_GetDelay(channelgroup &FMOD_CHANNELGROUP, dspclock_start &u64, dspclock_end &u64, stopchannels &int) int
+fn C.FMOD_ChannelGroup_AddFadePoint(channelgroup &FMOD_CHANNELGROUP, dspclock u64, volume f32) int
+fn C.FMOD_ChannelGroup_SetFadePointRamp(channelgroup &FMOD_CHANNELGROUP, dspclock u64, volume f32) int
+fn C.FMOD_ChannelGroup_RemoveFadePoints(channelgroup &FMOD_CHANNELGROUP, dspclock_start u64, dspclock_end u64) int
+fn C.FMOD_ChannelGroup_GetFadePoints(channelgroup &FMOD_CHANNELGROUP, numpoints &u32, point_dspclock &u64, point_volume &f32) int
 
 // DSP effects.
 fn C.FMOD_Channel_GetDSP(channel &FMOD_CHANNEL, index int, dsp &voidptr /* FMOD_DSP** */) int

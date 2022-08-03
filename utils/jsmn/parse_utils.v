@@ -8,9 +8,10 @@ fn skip_token(token &Token) &Token {
 	mut pending := 1
 	for pending > 0 {
 		pending += tok.size - 1
-		tok++
+		unsafe {
+			tok = tok++
+		}
 	}
-
 	return tok
 }
 
@@ -21,16 +22,16 @@ pub fn object_get_member(js []byte, object &Token, name string) &Token {
 	}
 
 	mut members := object.size
-	mut token := object + 1
+	mut token := &Token(int(object) + 1)
 	for members > 0 && !token.eq(js, name) {
 		members--
-		token = skip_token(token + 1)
+		token = skip_token(token++)
 	}
 
 	if members == 0 {
 		return &Token(0)
 	}
-	return token + 1
+	return token++
 }
 
 // find the element at the given position of an array (starting at 0)
@@ -39,7 +40,7 @@ pub fn array_get_at(arr &Token, index int) &Token {
 		return &Token(0)
 	}
 
-	mut token := arr + 1
+	mut token := &Token(int(arr) + 1)
 	for i := 0; i < index; i++ {
 		token = skip_token(token)
 	}
@@ -55,13 +56,17 @@ pub fn dump(js []byte, tokens &Token, count int, indent int) int {
 	mut j := 0
 	match tokens.kind {
 		.number, .bool, .null {
-			s := string(&js[tokens.start], tokens.end - tokens.start)
-			print('$s')
+			unsafe {
+				s := js[tokens.start..tokens.end - tokens.start].bytestr() //string(&js[tokens.start], tokens.end - tokens.start)
+				print('$s')
+			}
 			return 1
 		}
 		.string {
-			s := string(&js[tokens.start], tokens.end - tokens.start)
-			print(s)
+			unsafe {
+				s := js[tokens.start..tokens.end - tokens.start].bytestr() //string(&js[tokens.start], tokens.end - tokens.start)
+				print(s)
+			}
 			return 1
 		}
 		.object {

@@ -48,7 +48,7 @@ pub:
 	userdata voidptr
 	locked int
 	lock_data voidptr
-	clip_rect SDL_Rect
+	clip_rect C.SDL_Rect
 	map voidptr
 	refcount int
 }

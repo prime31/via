@@ -49,7 +49,9 @@ pub fn (t &Tileset) has_tileset_tile(id int) bool {
 pub fn (t &Tileset) tileset_tile(id int) &TilesetTile {
 	for i in 0..t.tiles.len {
 		if t.tiles[i].id == id {
-			return &t.tiles[i]
+			unsafe {
+				return &t.tiles[i]
+			}
 		}
 	}
 	return &TilesetTile(0)

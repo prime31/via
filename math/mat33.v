@@ -7,7 +7,7 @@ module math
  * m[2] m[5] m[8]
  */
 struct Mat33 {
-pub:
+pub mut:
     data [9]f32
 }
 
@@ -72,12 +72,12 @@ pub fn (self Mat33) get(row int, column int) f32 {
     return self.data[row * 3 + column]
 }
 
-pub fn (self mut Mat33) set(row int, column int, val f32) {
+pub fn (mut self Mat33) set(row int, column int, val f32) {
     self.data[row * 3 + column] = val
 }
 
 // swap two elements within a Mat33
-fn (self mut Mat33) swap(i0 int, i1 int) {
+fn (mut self Mat33) swap(i0 int, i1 int) {
     tmp := self.data[i0]
     self.data[i0] = self.data[i1]
     self.data[i1] = tmp
@@ -92,7 +92,7 @@ pub fn (self Mat33) transpose() Mat33 {
 }
 
 pub fn (self Mat33) det() f32 {
-    m := *f32(self.data)
+    m := &f32(self.data)
     result :=   m[0] * (m[4] * m[8] - m[7] * m[5])
               - m[3] * (m[1] * m[8] - m[7] * m[2])
               + m[6] * (m[1] * m[5] - m[4] * m[2])
@@ -108,8 +108,8 @@ pub fn (self Mat33) transform(v Vec3) Vec3 {
 }
 
 pub fn mat33_rotate(angle f32, unnormalizedAxis Vec3) Mat33 {
-    c := cosf(angle)
-    s := sinf(angle)
+    c := C.cosf(angle)
+    s := C.sinf(angle)
 
     axis := unnormalizedAxis.normalize()
     temp := axis.scale(1.0 - c)

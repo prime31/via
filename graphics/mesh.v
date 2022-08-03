@@ -6,7 +6,7 @@ pub struct Mesh {
 	vert_usage gfx.Usage
 	indices_usage gfx.Usage
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	v_buffer_safe_to_update bool = true
 	i_buffer_safe_to_update bool = true
 pub mut:
@@ -39,8 +39,8 @@ pub fn mesh_new_quad(usage gfx.Usage) &Mesh {
 		math.Vertex{ 1,-1,	1, 0,	math.Color{}}, // tr
 		math.Vertex{ 1, 1, 	1, 1,	math.Color{}}, // br
 		math.Vertex{-1, 1,	0, 1,	math.Color{}}  // bl
-	]!
-	indices := [u16(0), 1, 2, 0, 2, 3]!
+	]/*!*/
+	indices := [u16(0), 1, 2, 0, 2, 3]//!
 
 	if usage == .immutable {
 		return mesh_new_immutable(verts, indices)
@@ -59,38 +59,38 @@ pub fn mesh_new_immutable(verts []math.Vertex, indices []u16) &Mesh {
 }
 
 // Mesh updates
-pub fn (m mut Mesh) update_verts() {
+pub fn (mut m Mesh) update_verts() {
 	assert(m.vert_usage != .immutable)
 	if m.v_buffer_safe_to_update {
-		sg_update_buffer(m.bindings.vertex_buffers[0], m.verts.data, sizeof(math.Vertex) * m.verts.len)
+		C.sg_update_buffer(m.bindings.vertex_buffers[0], m.verts.data, sizeof(math.Vertex) * u32(m.verts.len))
 		m.v_buffer_safe_to_update = false
 	}
 }
 
-pub fn (m mut Mesh) update_indices() {
+pub fn (mut m Mesh) update_indices() {
 	assert(m.indices_usage != .immutable)
 	if m.i_buffer_safe_to_update {
-		sg_update_buffer(m.bindings.index_buffer, m.indices.data, sizeof(u16) * m.indices.len)
+		C.sg_update_buffer(m.bindings.index_buffer, m.indices.data, sizeof(u16) * u32(m.indices.len))
 		m.i_buffer_safe_to_update = false
 	}
 }
 
-pub fn (m mut Mesh) bind_texture(index int, tex Texture) {
+pub fn (mut m Mesh) bind_texture(index int, tex Texture) {
 	m.bindings.set_frag_image(index, tex.img)
 }
 
 // drawing
 pub fn (m &Mesh) apply_bindings() {
-	sg_apply_bindings(&m.bindings)
+	C.sg_apply_bindings(&m.bindings)
 }
 
 // TODO: uniforms should probably by handled by Pipeline
 pub fn (m &Mesh) apply_uniforms(shader_stage gfx.ShaderStage, index int, data voidptr, num_bytes int) {
-	sg_apply_uniforms(shader_stage, index, data, num_bytes)
+	C.sg_apply_uniforms(shader_stage, index, data, num_bytes)
 }
 
-pub fn (m mut Mesh) draw() {
-	sg_draw(0, m.indices.len, 1)
+pub fn (mut m Mesh) draw() {
+	C.sg_draw(0, m.indices.len, 1)
 	m.v_buffer_safe_to_update = true
 	m.i_buffer_safe_to_update = true
 }
@@ -102,6 +102,6 @@ pub fn (m &Mesh) free() {
 	unsafe {
 		m.verts.free()
 		m.indices.free()
-		free(m)
+		C.free(m)
 	}
 }

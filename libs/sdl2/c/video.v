@@ -141,63 +141,63 @@ fn C.SDL_VideoQuit()
 fn C.SDL_GetCurrentVideoDriver() byteptr
 fn C.SDL_GetNumVideoDisplays() int
 fn C.SDL_GetDisplayName(displayIndex int) byteptr
-fn C.SDL_GetDisplayBounds(displayIndex int, rect &SDL_Rect) int
-fn C.SDL_GetDisplayUsableBounds(displayIndex int, rect &SDL_Rect) int
+fn C.SDL_GetDisplayBounds(displayIndex int, rect &C.SDL_Rect) int
+fn C.SDL_GetDisplayUsableBounds(displayIndex int, rect &C.SDL_Rect) int
 fn C.SDL_GetDisplayDPI(displayIndex int, ddpi &f32, hdpi &f32, vdpi &f32) int
 fn C.SDL_GetDisplayOrientation(displayIndex int) DisplayOrientation
 fn C.SDL_GetNumDisplayModes(displayIndex int) int
-fn C.SDL_GetDisplayMode(displayIndex int, modeIndex int, mode &SDL_DisplayMode) int
-fn C.SDL_GetDesktopDisplayMode(displayIndex int, mode &SDL_DisplayMode) int
-fn C.SDL_GetCurrentDisplayMode(displayIndex int, mode &SDL_DisplayMode) int
-fn C.SDL_GetClosestDisplayMode(displayIndex int, mode &SDL_DisplayMode, closest &SDL_DisplayMode) &SDL_DisplayMode
-fn C.SDL_GetWindowDisplayIndex(window &SDL_Window) int
-fn C.SDL_SetWindowDisplayMode(window &SDL_Window, mode &SDL_DisplayMode) int
-fn C.SDL_GetWindowDisplayMode(window &SDL_Window, mode &SDL_DisplayMode) int
-fn C.SDL_GetWindowPixelFormat(window &SDL_Window) u32
-fn C.SDL_CreateWindow(title byteptr, x int, y int, w int, h int, flags u32) &SDL_Window
-fn C.SDL_CreateWindowFrom(data voidptr) &SDL_Window
-fn C.SDL_GetWindowID(window &SDL_Window) u32
-fn C.SDL_GetWindowFromID(id u32) &SDL_Window
-fn C.SDL_GetWindowFlags(window &SDL_Window) u32
-fn C.SDL_SetWindowTitle(window &SDL_Window, title byteptr)
-fn C.SDL_GetWindowTitle(window &SDL_Window) byteptr
-fn C.SDL_SetWindowIcon(window &SDL_Window, icon &SDL_Surface)
-fn C.SDL_SetWindowData(window &SDL_Window, name byteptr, userdata voidptr) voidptr
-fn C.SDL_GetWindowData(window &SDL_Window, name byteptr) voidptr
-fn C.SDL_SetWindowPosition(window &SDL_Window, x int, y int)
-fn C.SDL_GetWindowPosition(window &SDL_Window, x &int, y &int)
-fn C.SDL_SetWindowSize(window &SDL_Window, w int, h int)
-fn C.SDL_GetWindowSize(window &SDL_Window, w &int, h &int)
-fn C.SDL_GetWindowBordersSize(window &SDL_Window, top &int, left &int, bottom &int, right &int) int
-fn C.SDL_SetWindowMinimumSize(window &SDL_Window, min_w int, min_h int)
-fn C.SDL_GetWindowMinimumSize(window &SDL_Window, w &int, h &int)
-fn C.SDL_SetWindowMaximumSize(window &SDL_Window, max_w int, max_h int)
-fn C.SDL_GetWindowMaximumSize(window &SDL_Window, w &int, h &int)
-fn C.SDL_SetWindowBordered(window &SDL_Window, bordered Bool)
-fn C.SDL_SetWindowResizable(window &SDL_Window, resizable Bool)
-fn C.SDL_ShowWindow(window &SDL_Window)
-fn C.SDL_HideWindow(window &SDL_Window)
-fn C.SDL_RaiseWindow(window &SDL_Window)
-fn C.SDL_MaximizeWindow(window &SDL_Window)
-fn C.SDL_MinimizeWindow(window &SDL_Window)
-fn C.SDL_RestoreWindow(window &SDL_Window)
-fn C.SDL_SetWindowFullscreen(window &SDL_Window, flags u32) int
-fn C.SDL_GetWindowSurface(window &SDL_Window) &SDL_Surface
-fn C.SDL_UpdateWindowSurface(window &SDL_Window) int
-fn C.SDL_UpdateWindowSurfaceRects(window &SDL_Window, rects &SDL_Rect, numrects int) int
-fn C.SDL_SetWindowGrab(window &SDL_Window, grabbed Bool)
-fn C.SDL_GetWindowGrab(window &SDL_Window) Bool
-fn C.SDL_GetGrabbedWindow() &SDL_Window
-fn C.SDL_SetWindowBrightness(window &SDL_Window, brightness f32) int
-fn C.SDL_GetWindowBrightness(window &SDL_Window) f32
-fn C.SDL_SetWindowOpacity(window &SDL_Window, opacity f32) int
-fn C.SDL_GetWindowOpacity(window &SDL_Window, out_opacity &f32) int
-fn C.SDL_SetWindowModalFor(modal_window &SDL_Window, parent_window &SDL_Window) int
-fn C.SDL_SetWindowInputFocus(window &SDL_Window) int
-fn C.SDL_SetWindowGammaRamp(window &SDL_Window, red &u16, green &u16, blue &u16) int
-fn C.SDL_GetWindowGammaRamp(window &SDL_Window, red &u16, green &u16, blue &u16) int
-fn C.SDL_SetWindowHitTest(window &SDL_Window, callback fn(&SDL_Window, &SDL_Point, voidptr) HitTestResult, callback_data voidptr) int
-fn C.SDL_DestroyWindow(window &SDL_Window)
+fn C.SDL_GetDisplayMode(displayIndex int, modeIndex int, mode &C.SDL_DisplayMode) int
+fn C.SDL_GetDesktopDisplayMode(displayIndex int, mode &C.SDL_DisplayMode) int
+fn C.SDL_GetCurrentDisplayMode(displayIndex int, mode &C.SDL_DisplayMode) int
+fn C.SDL_GetClosestDisplayMode(displayIndex int, mode &C.SDL_DisplayMode, closest &C.SDL_DisplayMode) &C.SDL_DisplayMode
+fn C.SDL_GetWindowDisplayIndex(window &C.SDL_Window) int
+fn C.SDL_SetWindowDisplayMode(window &C.SDL_Window, mode &C.SDL_DisplayMode) int
+fn C.SDL_GetWindowDisplayMode(window &C.SDL_Window, mode &C.SDL_DisplayMode) int
+fn C.SDL_GetWindowPixelFormat(window &C.SDL_Window) u32
+fn C.SDL_CreateWindow(title byteptr, x int, y int, w int, h int, flags u32) &C.SDL_Window
+fn C.SDL_CreateWindowFrom(data voidptr) &C.SDL_Window
+fn C.SDL_GetWindowID(window &C.SDL_Window) u32
+fn C.SDL_GetWindowFromID(id u32) &C.SDL_Window
+fn C.SDL_GetWindowFlags(window &C.SDL_Window) u32
+fn C.SDL_SetWindowTitle(window &C.SDL_Window, title byteptr)
+fn C.SDL_GetWindowTitle(window &C.SDL_Window) byteptr
+fn C.SDL_SetWindowIcon(window &C.SDL_Window, icon &C.SDL_Surface)
+fn C.SDL_SetWindowData(window &C.SDL_Window, name byteptr, userdata voidptr) voidptr
+fn C.SDL_GetWindowData(window &C.SDL_Window, name byteptr) voidptr
+fn C.SDL_SetWindowPosition(window &C.SDL_Window, x int, y int)
+fn C.SDL_GetWindowPosition(window &C.SDL_Window, x &int, y &int)
+fn C.SDL_SetWindowSize(window &C.SDL_Window, w int, h int)
+fn C.SDL_GetWindowSize(window &C.SDL_Window, w &int, h &int)
+fn C.SDL_GetWindowBordersSize(window &C.SDL_Window, top &int, left &int, bottom &int, right &int) int
+fn C.SDL_SetWindowMinimumSize(window &C.SDL_Window, min_w int, min_h int)
+fn C.SDL_GetWindowMinimumSize(window &C.SDL_Window, w &int, h &int)
+fn C.SDL_SetWindowMaximumSize(window &C.SDL_Window, max_w int, max_h int)
+fn C.SDL_GetWindowMaximumSize(window &C.SDL_Window, w &int, h &int)
+fn C.SDL_SetWindowBordered(window &C.SDL_Window, bordered Bool)
+fn C.SDL_SetWindowResizable(window &C.SDL_Window, resizable Bool)
+fn C.SDL_ShowWindow(window &C.SDL_Window)
+fn C.SDL_HideWindow(window &C.SDL_Window)
+fn C.SDL_RaiseWindow(window &C.SDL_Window)
+fn C.SDL_MaximizeWindow(window &C.SDL_Window)
+fn C.SDL_MinimizeWindow(window &C.SDL_Window)
+fn C.SDL_RestoreWindow(window &C.SDL_Window)
+fn C.SDL_SetWindowFullscreen(window &C.SDL_Window, flags u32) int
+fn C.SDL_GetWindowSurface(window &C.SDL_Window) &C.SDL_Surface
+fn C.SDL_UpdateWindowSurface(window &C.SDL_Window) int
+fn C.SDL_UpdateWindowSurfaceRects(window &C.SDL_Window, rects &C.SDL_Rect, numrects int) int
+fn C.SDL_SetWindowGrab(window &C.SDL_Window, grabbed Bool)
+fn C.SDL_GetWindowGrab(window &C.SDL_Window) Bool
+fn C.SDL_GetGrabbedWindow() &C.SDL_Window
+fn C.SDL_SetWindowBrightness(window &C.SDL_Window, brightness f32) int
+fn C.SDL_GetWindowBrightness(window &C.SDL_Window) f32
+fn C.SDL_SetWindowOpacity(window &C.SDL_Window, opacity f32) int
+fn C.SDL_GetWindowOpacity(window &C.SDL_Window, out_opacity &f32) int
+fn C.SDL_SetWindowModalFor(modal_window &C.SDL_Window, parent_window &C.SDL_Window) int
+fn C.SDL_SetWindowInputFocus(window &C.SDL_Window) int
+fn C.SDL_SetWindowGammaRamp(window &C.SDL_Window, red &u16, green &u16, blue &u16) int
+fn C.SDL_GetWindowGammaRamp(window &C.SDL_Window, red &u16, green &u16, blue &u16) int
+fn C.SDL_SetWindowHitTest(window &C.SDL_Window, callback fn(&C.SDL_Window, &C.SDL_Point, voidptr) HitTestResult, callback_data voidptr) int
+fn C.SDL_DestroyWindow(window &C.SDL_Window)
 fn C.SDL_IsScreenSaverEnabled() Bool
 fn C.SDL_EnableScreenSaver()
 fn C.SDL_DisableScreenSaver()
@@ -208,12 +208,12 @@ fn C.SDL_GL_ExtensionSupported(extension byteptr) Bool
 fn C.SDL_GL_ResetAttributes()
 fn C.SDL_GL_SetAttribute(attr GLattr, value int) int
 fn C.SDL_GL_GetAttribute(attr GLattr, value &int) int
-fn C.SDL_GL_CreateContext(window &SDL_Window) voidptr
-fn C.SDL_GL_MakeCurrent(window &SDL_Window, context voidptr) int
-fn C.SDL_GL_GetCurrentWindow() &SDL_Window
+fn C.SDL_GL_CreateContext(window &C.SDL_Window) voidptr
+fn C.SDL_GL_MakeCurrent(window &C.SDL_Window, context voidptr) int
+fn C.SDL_GL_GetCurrentWindow() &C.SDL_Window
 fn C.SDL_GL_GetCurrentContext() voidptr
-fn C.SDL_GL_GetDrawableSize(window &SDL_Window, w &int, h &int)
+fn C.SDL_GL_GetDrawableSize(window &C.SDL_Window, w &int, h &int)
 fn C.SDL_GL_SetSwapInterval(interval int) int
 fn C.SDL_GL_GetSwapInterval() int
-fn C.SDL_GL_SwapWindow(window &SDL_Window)
+fn C.SDL_GL_SwapWindow(window &C.SDL_Window)
 fn C.SDL_GL_DeleteContext(context voidptr)

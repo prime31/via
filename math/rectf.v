@@ -11,7 +11,7 @@ pub mut:
 pub fn (r RectF) str() string { return '$r.x, $r.y, $r.w, $r.h' }
 
 [inline]
-pub fn (r mut RectF) set(x, y, w, h f32) {
+pub fn (mut r RectF) set(x, y, w, h f32) {
 	r.x = x
 	r.y = y
 	r.w = w
@@ -94,7 +94,7 @@ pub fn (r1 &RectF) minkowski_diff(r2 &RectF) RectF {
 }
 
 fn nearestf(x, a, b f32) f32 {
-	if abs(a - x) < abs(b - x) {
+	if f32_abs(a - x) < f32_abs(b - x) {
 		return a
 	}
 	return b

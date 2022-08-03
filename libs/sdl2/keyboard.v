@@ -5,10 +5,10 @@ pub const ( used_import = c.used_import )
 
 pub struct C.SDL_Keysym {
 pub:
-	scancode Scancode	/**< SDL physical key code - see ::SDL_Scancode for details */
-	sym int				/**< SDL virtual key code - see ::SDL_Keycode for details */
+	scancode Scancode	/**< SDL physical key code - see ::C.SDL_Scancode for details */
+	sym int				/**< SDL virtual key code - see ::C.SDL_Keycode for details */
 	mod u16				/**< current key modifiers */
-	unused u32			/**< \deprecated use SDL_TextInputEvent instead */
+	unused u32			/**< \deprecated use C.SDL_TextInputEvent instead */
 }
 
 pub enum Keymod {
@@ -27,7 +27,7 @@ pub enum Keymod {
 	reserved = 32768
 }
 
-fn C.SDL_GetKeyboardFocus() &SDL_Window
+fn C.SDL_GetKeyboardFocus() &C.SDL_Window
 fn C.SDL_GetKeyboardState(numkeys &int) &byte
 fn C.SDL_GetModState() Keymod
 fn C.SDL_SetModState(modstate Keymod)
@@ -40,6 +40,6 @@ fn C.SDL_GetKeyFromName(name byteptr) int
 fn C.SDL_StartTextInput()
 fn C.SDL_IsTextInputActive() c.Bool
 fn C.SDL_StopTextInput()
-fn C.SDL_SetTextInputRect(rect &SDL_Rect)
+fn C.SDL_SetTextInputRect(rect &C.SDL_Rect)
 fn C.SDL_HasScreenKeyboardSupport() c.Bool
-fn C.SDL_IsScreenKeyboardShown(window &SDL_Window) c.Bool
+fn C.SDL_IsScreenKeyboardShown(window &C.SDL_Window) c.Bool

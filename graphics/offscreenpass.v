@@ -6,7 +6,7 @@ pub struct OffScreenPass {
 pub:
 	color_tex Texture
 	depth_tex Texture
-	pass sg_pass
+	pass C.sg_pass
 }
 
 struct DefaultOffScreenPass {
@@ -43,7 +43,7 @@ pub fn offscreenpass(width, height int, min_filter gfx.Filter, mag_filter gfx.Fi
 	return OffScreenPass{
 		color_tex: color_tex
 		depth_tex: depth_tex
-		pass: sg_make_pass(&pass_desc)
+		pass: C.sg_make_pass(&pass_desc)
 	}
 }
 
@@ -64,15 +64,15 @@ fn defaultoffscreenpass(width, height int, policy ResolutionPolicy) &DefaultOffS
 
 	// we have to update our scaler when the window resizes
 	// TODO: if the policy is .default we need to recreate the render textures with the new backbuffer size
-	window.subscribe(.resize, defaultoffscreenpass_on_window_resized, pass, false)
+	//TODO(larpon) window.subscribe(.resize, defaultoffscreenpass_on_window_resized, pass, false)
 
 	return pass
 }
 
 fn (p &DefaultOffScreenPass) free() {
-	window.unsubscribe(.resize, defaultoffscreenpass_on_window_resized)
+	//TODO(larpon) window.unsubscribe(.resize, defaultoffscreenpass_on_window_resized)
 	p.offscreen_pass.free(true)
-	unsafe { free(p) }
+	unsafe { C.free(p) }
 }
 
 fn defaultoffscreenpass_on_window_resized(pass mut DefaultOffScreenPass) {

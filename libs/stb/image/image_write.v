@@ -39,7 +39,7 @@ pub fn write_jpg(filename string, width int, height int, channels int, data void
 
 
 pub fn (img Image) save_as_png(filename string) int {
-	return C.stbi_write_png(filename.str, img.width, img.height, img.channels, img.data, img.width * img.channels)
+	return C.stbi_write_png(filename.str, img.width, img.height, img.channels, img.data, img.width * int(img.channels))
 }
 
 pub fn (img Image) save_as_bmp(filename string) int {
@@ -84,7 +84,7 @@ pub fn write_jpg_to_func(cb fn(voidptr, voidptr, int), context voidptr, width in
 
 
 pub fn (img Image) save_as_png_to_func(cb fn(voidptr, voidptr, int), context voidptr) int {
-	return C.stbi_write_png_to_func(cb, context, img.width, img.height, img.channels, img.data, img.width * img.channels)
+	return C.stbi_write_png_to_func(cb, context, img.width, img.height, img.channels, img.data, img.width * int(img.channels))
 }
 
 pub fn (img Image) save_as_bmp_to_func(cb fn(voidptr, voidptr, int), context voidptr) int {

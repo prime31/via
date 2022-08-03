@@ -106,7 +106,8 @@ pub fn (m &MapRenderer) render_tilelayer(layer &TileLayer) {
 	mut i := 0
 	for y in 0..layer.height {
 		for x in 0..layer.width {
-			tile_id := layer.tiles[i++]
+			i++
+			tile_id := layer.tiles[i]
 			if !tile_id.empty() {
 				tile := tilerenderinfo(tile_id, m.map.tile_size)
 				vp := m.map.tilesets[0].viewport_for_tile(tile.id)
@@ -127,7 +128,8 @@ pub fn (m &MapRenderer) tilelayer_atlasbatch(layer &TileLayer) &graphics.AtlasBa
 	mut i := 0
 	for y in 0..layer.height {
 		for x in 0..layer.width {
-			tile_id := layer.tiles[i++]
+			i++
+			tile_id := layer.tiles[i]
 			if tile_id >= 0 {
 				tile := tilerenderinfo(tile_id, m.map.tile_size)
 				vp := m.map.tilesets[0].viewport_for_tile(tile.id)

@@ -3,12 +3,12 @@ module core
 // callbacks are manually translated
 
 // FILE
-pub type FileOpenCallback fn(name byteptr, filesize &u32, handle &voidptr, userdata voidptr) int
-pub type FileCloseCallback fn(handle voidptr, userdata voidptr) int
-pub type FileReadCallback fn(handle voidptr, buffer voidptr, sizebytes u32, bytesread &int, userdata voidptr) int
-pub type FileSeekCallback fn(handle voidptr, pos u32, userdata voidptr) int
-pub type FileAsyncreadCallback fn(info voidptr, userdata voidptr) int
-pub type FileAsyncCancelCallback fn(info voidptr, userdata voidptr) int
+pub type FileOpenCallback = fn(name byteptr, filesize &u32, handle &voidptr, userdata voidptr) int
+pub type FileCloseCallback = fn(handle voidptr, userdata voidptr) int
+pub type FileReadCallback = fn(handle voidptr, buffer voidptr, sizebytes u32, bytesread &int, userdata voidptr) int
+pub type FileSeekCallback = fn(handle voidptr, pos u32, userdata voidptr) int
+pub type FileAsyncreadCallback = fn(info voidptr, userdata voidptr) int
+pub type FileAsyncCancelCallback = fn(info voidptr, userdata voidptr) int
 
 
 

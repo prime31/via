@@ -64,7 +64,7 @@ pub fn spatialhash(cell_size int) &SpatialHash {
 	}
 }
 
-pub fn (sh mut SpatialHash) free() {
+pub fn (mut sh SpatialHash) free() {
 	for x := sh.bounds.x; x <= sh.bounds.right(); x++ {
 		for y := sh.bounds.y; y <= sh.bounds.bottom(); y++ {
 			cell := sh.cell_at_position(x, y, false)
@@ -106,7 +106,7 @@ fn (sh &SpatialHash) cell_coordsi(x, y int) (int, int) {
 	return math.ifloor(f32(x) * sh.inv_cell_size), math.ifloor(f32(y) * sh.inv_cell_size)
 }
 
-fn (sh mut SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell {
+fn (mut sh SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell {
 	key := int(get_hashed_key(x, y))
 	if sh.cells.has(key) {
 		return *Cell(sh.cells.get(key))
@@ -121,7 +121,7 @@ fn (sh mut SpatialHash) cell_at_position(x, y int, create_if_absent bool) &Cell 
 	}
 }
 
-fn (sh mut SpatialHash) expand_bounds(x, y, x1, y1 int) {
+fn (mut sh SpatialHash) expand_bounds(x, y, x1, y1 int) {
 	// expand our bounds to encompass the new collider
 	if !sh.bounds.contains(x, y) {
 		sh.bounds = sh.bounds.union_pt(x, y)
@@ -133,7 +133,7 @@ fn (sh mut SpatialHash) expand_bounds(x, y, x1, y1 int) {
 
 //#region Collider management
 
-pub fn (sh mut SpatialHash) add(collider Collider) int {
+pub fn (mut sh SpatialHash) add(collider Collider) int {
 	id := sh.id_counter++
 
 	bounds := collider.get_bounds()
@@ -154,7 +154,7 @@ pub fn (sh mut SpatialHash) add(collider Collider) int {
 	return id
 }
 
-pub fn (sh mut SpatialHash) remove(id int) {
+pub fn (mut sh SpatialHash) remove(id int) {
 	item := *HashItem(sh.items.remove(id))
 	p1x, p1y := sh.cell_coords(item.bounds.x, item.bounds.y)
 	p2x, p2y := sh.cell_coords(item.bounds.right(), item.bounds.bottom())
@@ -170,7 +170,7 @@ pub fn (sh mut SpatialHash) remove(id int) {
 	unsafe { free(item) }
 }
 
-pub fn (sh mut SpatialHash) update(id int, collider Collider) {
+pub fn (mut sh SpatialHash) update(id int, collider Collider) {
 	// fetch the item and its new bounds
 	mut item := *HashItem(sh.items.get(id))
 	bounds := collider.get_bounds()
@@ -424,7 +424,7 @@ fn (sh &SpatialHash) detect_collision(bounds &math.Rect, other_id int, goal_x, g
 	}
 }
 
-fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) []CollisionResult {
+fn (mut sh SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) []CollisionResult {
 	tl := math.min(goal_x, bounds.x)
 	tt := math.min(goal_y, bounds.y)
 	tr := math.max(goal_x + bounds.w, bounds.right())
@@ -435,8 +435,8 @@ fn (sh mut SpatialHash) project(id int, bounds &math.Rect, goal_x, goal_y f32) [
 	cl, ct := sh.cell_coords(tl, tt)
 	cw, ch := sh.cell_coords(tw, th)
 
-	mut visited := []int
-	mut collisions := []CollisionResult
+	mut visited := []int{}
+	mut collisions := []CollisionResult{}
 
 	for x := cl; x <= cw; x++ {
 		for y := ct; y <= ch; y++ {
@@ -474,7 +474,7 @@ pub fn (shh &SpatialHash) broadphase(id int, goal_x, goal_y f32) []CollisionResu
 	return sh.project(id, item.bounds, goal_x, goal_y)
 }
 
-pub fn (sh mut SpatialHash) check(id int, goal_x, goal_y f32) CollisionReponse {
+pub fn (mut sh SpatialHash) check(id int, goal_x, goal_y f32) CollisionReponse {
 	item := *HashItem(sh.items.get(id))
 
 	collisions := sh.project(id, item.bounds, goal_x, goal_y)
@@ -505,7 +505,7 @@ pub fn cross(sh &SpatialHash, col &CollisionResult) {
 
 //#endregion
 
-pub fn (sh mut SpatialHash) debug() {
+pub fn (mut sh SpatialHash) debug() {
 	println('---- SpatialHash ----')
 	for x := sh.bounds.x; x <= sh.bounds.right(); x++ {
 		for y := sh.bounds.y; y <= sh.bounds.bottom(); y++ {
@@ -524,7 +524,7 @@ pub fn (sh mut SpatialHash) debug() {
 	}
 }
 
-pub fn (sh mut SpatialHash) debug_draw() {
+pub fn (mut sh SpatialHash) debug_draw() {
 	half_size := f32(sh.cell_size) / 2.0
 	for x := sh.bounds.x; x <= sh.bounds.right(); x++ {
 		for y := sh.bounds.y; y <= sh.bounds.bottom(); y++ {

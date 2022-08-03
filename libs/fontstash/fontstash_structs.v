@@ -36,7 +36,7 @@ pub enum FonsErrorCode {
 pub struct C.FONSparams {
 	width int
 	height int
-	flags char
+	flags byte
 	userPtr voidptr
 	renderCreate fn(uptr voidptr, width int, height int) int
 	renderResize fn(uptr voidptr, width int, height int) int

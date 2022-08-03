@@ -210,9 +210,9 @@ fn C.igSliderScalarN(label byteptr, data_type int, p_data voidptr, components in
 fn C.igVSliderFloat(label byteptr, size C.ImVec2, v &f32, v_min f32, v_max f32, format byteptr, power f32) bool
 fn C.igVSliderInt(label byteptr, size C.ImVec2, v &int, v_min int, v_max int, format byteptr) bool
 fn C.igVSliderScalar(label byteptr, size C.ImVec2, data_type int, p_data voidptr, p_min voidptr, p_max voidptr, format byteptr, power f32) bool
-fn C.igInputText(label byteptr, buf byteptr, buf_size u32, flags int, callback fn(&ImGuiTextEditCallbackData) int, user_data voidptr) bool
-fn C.igInputTextMultiline(label byteptr, buf byteptr, buf_size u32, size C.ImVec2, flags int, callback fn(&ImGuiTextEditCallbackData) int, user_data voidptr) bool
-fn C.igInputTextWithHint(label byteptr, hint byteptr, buf byteptr, buf_size u32, flags int, callback fn(&ImGuiTextEditCallbackData) int, user_data voidptr) bool
+fn C.igInputText(label byteptr, buf byteptr, buf_size u32, flags int, callback fn(&C.ImGuiTextEditCallbackData) int, user_data voidptr) bool
+fn C.igInputTextMultiline(label byteptr, buf byteptr, buf_size u32, size C.ImVec2, flags int, callback fn(&C.ImGuiTextEditCallbackData) int, user_data voidptr) bool
+fn C.igInputTextWithHint(label byteptr, hint byteptr, buf byteptr, buf_size u32, flags int, callback fn(&C.ImGuiTextEditCallbackData) int, user_data voidptr) bool
 fn C.igInputFloat(label byteptr, v &f32, step f32, step_fast f32, format byteptr, flags int) bool
 fn C.igInputFloat2(label byteptr, v &f32, format byteptr, flags int) bool
 fn C.igInputFloat3(label byteptr, v &f32, format byteptr, flags int) bool
@@ -399,11 +399,11 @@ fn C.ImGuiIO_AddInputCharactersUTF8(self &C.ImGuiIO, str byteptr)
 fn C.ImGuiIO_ClearInputCharacters(self &C.ImGuiIO)
 fn C.ImGuiIO_ImGuiIO() &C.ImGuiIO
 fn C.ImGuiIO_destroy(self &C.ImGuiIO)
-fn C.ImGuiInputTextCallbackData_ImGuiInputTextCallbackData() &ImGuiTextEditCallbackData
-fn C.ImGuiInputTextCallbackData_destroy(self &ImGuiTextEditCallbackData)
-fn C.ImGuiInputTextCallbackData_DeleteChars(self &ImGuiTextEditCallbackData, pos int, bytes_count int)
-fn C.ImGuiInputTextCallbackData_InsertChars(self &ImGuiTextEditCallbackData, pos int, text byteptr, text_end byteptr)
-fn C.ImGuiInputTextCallbackData_HasSelection(self &ImGuiTextEditCallbackData) bool
+fn C.ImGuiInputTextCallbackData_ImGuiInputTextCallbackData() &C.ImGuiTextEditCallbackData
+fn C.ImGuiInputTextCallbackData_destroy(self &C.ImGuiTextEditCallbackData)
+fn C.ImGuiInputTextCallbackData_DeleteChars(self &C.ImGuiTextEditCallbackData, pos int, bytes_count int)
+fn C.ImGuiInputTextCallbackData_InsertChars(self &C.ImGuiTextEditCallbackData, pos int, text byteptr, text_end byteptr)
+fn C.ImGuiInputTextCallbackData_HasSelection(self &C.ImGuiTextEditCallbackData) bool
 fn C.ImGuiWindowClass_ImGuiWindowClass() &C.ImGuiWindowClass
 fn C.ImGuiWindowClass_destroy(self &C.ImGuiWindowClass)
 fn C.ImGuiPayload_ImGuiPayload() &C.ImGuiPayload

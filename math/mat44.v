@@ -86,7 +86,7 @@ pub fn (self Mat44) get(row int, column int) f32 {
     return self.data[row * 4 + column]
 }
 
-pub fn (self mut Mat44) set(row int, column int, val f32) {
+pub fn (mut self Mat44) set(row int, column int, val f32) {
     self.data[row * 4 + column] = val
 }
 
@@ -179,18 +179,18 @@ pub fn mat44_look_at(eye Vec3, center Vec3, up Vec3) Mat44 {
     result.data[1] = u.x
     result.data[5] = u.y
     result.data[9] = u.z
-    result.data[2] = -f.x
-    result.data[6] = -f.y
-    result.data[10] = -f.z
-    result.data[12] = -s.dot(eye)
-    result.data[13] = -u.dot(eye)
+    result.data[2] = -(f.x)
+    result.data[6] = -(f.y)
+    result.data[10] = -(f.z)
+    result.data[12] = -(s.dot(eye))
+    result.data[13] = -(u.dot(eye))
     result.data[14] = f.dot(eye)
 
     return result
 }
 
 // swap two elements within a Mat44
-fn (self mut Mat44) swap(i0 int, i1 int) {
+fn (mut self Mat44) swap(i0 int, i1 int) {
     tmp := self.data[i0]
     self.data[i0] = self.data[i1]
     self.data[i1] = tmp

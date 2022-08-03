@@ -1,5 +1,6 @@
 module gfx_imgui
 
+[typedef]
 pub struct C.sg_imgui_t {
 pub mut:
     init_tag u32

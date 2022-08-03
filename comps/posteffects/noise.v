@@ -60,16 +60,16 @@ fn noise_process(n mut Noise, tex &graphics.Texture, stack &graphics.EffectStack
 	stack.blit(tex, mut n.pip)
 }
 
-pub fn (n &Noise) add_to_stack(stack mut graphics.EffectStack) {
+pub fn (mut n &Noise) add_to_stack(stack graphics.EffectStack) {
 	stack.add(n, noise_process)
 }
 
-pub fn (n mut Noise) set_power(power f32) {
+pub fn (mut n Noise) set_power(power f32) {
 	n.power = power
 	n.pip.set_uniform(n.power_index, &n.power)
 }
 
-pub fn (n mut Noise) imgui() {
+pub fn (mut n Noise) imgui() {
 	C.igText(c'Noise')
 	if C.igDragFloat(c'Power', &n.power, 0.1, 0.01, 150.0, C.NULL, 1) {
 		n.set_power(n.power)

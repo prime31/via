@@ -8,7 +8,7 @@ pub const ( tb_import = gfx.used_import )
 
 pub struct TextBatch {
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	verts []math.Vertex
 	max_chars int
 	char_cnt int = 0
@@ -18,9 +18,13 @@ mut:
 }
 
 pub fn textbatch(max_chars int) &TextBatch {
+
+	//arr := utils.new_arr_with_default<math.Vertex>(max_chars * 4, max_chars * 4, math.Vertex{})
+	arr := []math.Vertex{len: max_chars * 4, cap: max_chars * 4, init: math.Vertex{}}
+
 	mut tb := &TextBatch{
 		// default colors to white
-		verts: utils.new_arr_with_default(max_chars * 4, max_chars * 4, math.Vertex{})
+		verts: arr
 		max_chars: max_chars
 		quad: math.quad(0, 0, 1, 1, 1, 1)
 	}
@@ -48,10 +52,12 @@ pub fn (tbb &TextBatch) end() {
 	tb.img.id = 0
 }
 
-fn (tb mut TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.Color) {
+fn (mut tb TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.Color) {
 	base_vert := tb.char_cnt * 4
 	tb.char_cnt++
-	matrix.transform_vec2_arr(&tb.verts[base_vert], &quad.positions[0], 4)
+	unsafe {
+		matrix.transform_vec2_arr(&tb.verts[base_vert], &quad.positions[0], 4)
+	}
 
 	for i in 0..4 {
 		tb.verts[base_vert + i].s = quad.texcoords[i].x
@@ -60,7 +66,7 @@ fn (tb mut TextBatch) draw_q_m(quad &math.Quad, matrix &math.Mat32, color &math.
 	}
 }
 
-pub fn (tb mut TextBatch) draw_text(font &fonts.FontBook, str string, config DrawConfig) {
+pub fn (mut tb TextBatch) draw_text(font &fonts.FontBook, str string, config DrawConfig) {
 	if !tb.ensure_capacity(str.len) { return }
 	if tb.img.id != font.img.id {
 		tb.flush()
@@ -72,7 +78,7 @@ pub fn (tb mut TextBatch) draw_text(font &fonts.FontBook, str string, config Dra
 
 	mut f := font
 	f.update_texture()
-	iter := C.FONStextIter{}
+	iter := C.FONStextIter{font: C.NULL}
 	C.fonsTextIterInit(font.stash, &iter, 0, 0, str.str, C.NULL)
 
 	fons_quad := C.FONSquad{}
@@ -94,16 +100,18 @@ pub fn (tb mut TextBatch) draw_text(font &fonts.FontBook, str string, config Dra
 	}
 }
 
-pub fn (tb mut TextBatch) flush() {
+pub fn (mut tb TextBatch) flush() {
 	total_quads := (tb.char_cnt - tb.last_appended_char_cnt)
 	if total_quads == 0 { return }
 
 	total_verts := total_quads * 4
-	tb.bindings.vertex_buffer_offsets[0] = sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_char_cnt * 4], sizeof(math.Vertex) * total_verts)
+	unsafe {
+		tb.bindings.vertex_buffer_offsets[0] = C.sg_append_buffer(tb.bindings.vertex_buffers[0], &tb.verts[tb.last_appended_char_cnt * 4], sizeof(math.Vertex) * u32(total_verts))
+	}
 	tb.last_appended_char_cnt = tb.char_cnt
 
-	sg_apply_bindings(&tb.bindings)
-	sg_draw(0, total_quads * 6, 1)
+	C.sg_apply_bindings(&tb.bindings)
+	C.sg_draw(0, total_quads * 6, 1)
 }
 
 pub fn (tb &TextBatch) free() {
@@ -112,6 +120,6 @@ pub fn (tb &TextBatch) free() {
 
 	unsafe {
 		tb.verts.free()
-		free(tb)
+		C.free(tb)
 	}
 }

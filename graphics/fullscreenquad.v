@@ -5,7 +5,7 @@ import via.libs.sokol.gfx
 
 pub struct FullscreenQuad {
 mut:
-	bindings sg_bindings
+	bindings C.sg_bindings
 	verts []math.Vertex
 	last_vert_update_frame u32
 	width int
@@ -20,8 +20,8 @@ pub fn fullscreenquad() &FullscreenQuad {
 		math.Vertex{0,0,	1,0,	math.Color{}}, // tr
 		math.Vertex{0,0, 	1,1,	math.Color{}}, // br
 		math.Vertex{0,0,	0,1,	math.Color{}}  // bl
-	]!
-	indices := [u16(0), 1, 2, 0, 2, 3]!
+	]//!
+	indices := [u16(0), 1, 2, 0, 2, 3]//!
 
 	mut mesh := &FullscreenQuad{
 		verts: verts.clone()
@@ -34,7 +34,7 @@ pub fn fullscreenquad() &FullscreenQuad {
 }
 
 // updates the verts to match the current window drawable size, should be called whenever the window is resized.
-pub fn (q mut FullscreenQuad) update_verts() {
+pub fn (mut q FullscreenQuad) update_verts() {
 	if q.last_vert_update_frame < time.frames() {
 		scaler := get_resolution_scaler()
 		if scaler.w != q.width || scaler.h != q.height {
@@ -47,7 +47,7 @@ pub fn (q mut FullscreenQuad) update_verts() {
 			q.verts[3].x = 0		// bl
 			q.verts[3].y = scaler.h
 
-			sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * q.verts.len)
+			C.sg_update_buffer(q.bindings.vertex_buffers[0], q.verts.data, sizeof(math.Vertex) * u32(q.verts.len))
 			q.last_vert_update_frame = time.frames()
 			q.width = scaler.w
 			q.height = scaler.h
@@ -55,13 +55,13 @@ pub fn (q mut FullscreenQuad) update_verts() {
 	}
 }
 
-pub fn (q mut FullscreenQuad) bind_texture(index int, tex Texture) {
+pub fn (mut q FullscreenQuad) bind_texture(index int, tex Texture) {
 	q.bindings.set_frag_image(index, tex.img)
 }
 
 pub fn (q &FullscreenQuad) draw() {
-	sg_apply_bindings(&q.bindings)
-	sg_draw(0, 6, 1)
+	C.sg_apply_bindings(&q.bindings)
+	C.sg_draw(0, 6, 1)
 }
 
 pub fn (q &FullscreenQuad) free() {
@@ -70,6 +70,6 @@ pub fn (q &FullscreenQuad) free() {
 
 	unsafe {
 		q.verts.free()
-		free(q)
+		C.free(q)
 	}
 }

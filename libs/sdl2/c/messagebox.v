@@ -36,19 +36,19 @@ pub:
 
 pub struct C.SDL_MessageBoxColorScheme {
 pub:
-	colors [5]SDL_MessageBoxColor
+	colors [5]C.SDL_MessageBoxColor
 }
 
 pub struct C.SDL_MessageBoxData {
 pub:
 	flags u32
-	window &SDL_Window
+	window &C.SDL_Window
 	title byteptr
 	message byteptr
 	numbuttons int
-	buttons &SDL_MessageBoxButtonData
-	colorScheme &SDL_MessageBoxColorScheme
+	buttons &C.SDL_MessageBoxButtonData
+	colorScheme &C.SDL_MessageBoxColorScheme
 }
 
-fn C.SDL_ShowMessageBox(messageboxdata &SDL_MessageBoxData, buttonid &int) int
-fn C.SDL_ShowSimpleMessageBox(flags u32, title byteptr, message byteptr, window &SDL_Window) int
+fn C.SDL_ShowMessageBox(messageboxdata &C.SDL_MessageBoxData, buttonid &int) int
+fn C.SDL_ShowSimpleMessageBox(flags u32, title byteptr, message byteptr, window &C.SDL_Window) int

@@ -35,7 +35,7 @@ pub fn world(bounds math.RectF) World {
 	return w
 }
 
-pub fn (w mut World) tick() {
+pub fn (mut w World) tick() {
 	w.update_timing()
 
 	if w.allow_drag {
@@ -72,7 +72,7 @@ pub fn (w mut World) tick() {
 	}
 }
 
-fn (w mut World) update_timing() {
+fn (mut w World) update_timing() {
 	w.left_over_time += time.dt()
 	w.iter_steps = math.itrunc(w.left_over_time / w.fixed_dt)
 	w.left_over_time -= f32(w.iter_steps) * w.fixed_dt
@@ -80,7 +80,7 @@ fn (w mut World) update_timing() {
 	w.iter_steps = math.imin(w.iter_steps, max_step_iters)
 }
 
-fn (w &World) constrain_particle_to_bounds(p mut Particle) {
+fn (mut w &World) constrain_particle_to_bounds(p Particle) {
 	mut temp_pos := p.pos
 
 	if p.radius == 0 {
@@ -114,7 +114,7 @@ fn (w &World) constrain_particle_to_bounds(p mut Particle) {
 	p.pos = temp_pos
 }
 
-fn (w mut World) handle_drag() {
+fn (mut w World) handle_drag() {
 	if input.mouse_pressed(.left) {
 		w.dragged_particle = w.nearest_particle(input.mouse_pos_scaledv())
 	} else if input.mouse_down(.left) {

@@ -63,7 +63,7 @@ pub fn (m &IntVoidptrMap) get(key int) voidptr {
 	return if idx != -1 { m.values[idx] } else { null_value }
 }
 
-pub fn (m mut IntVoidptrMap) put(key int, value voidptr) voidptr {
+pub fn (mut m IntVoidptrMap) put(key int, value voidptr) voidptr {
 	if key == free_key {
 		ret := m.free_value
 		if !m.has_free_key {
@@ -98,7 +98,7 @@ pub fn (m mut IntVoidptrMap) put(key int, value voidptr) voidptr {
 	return prev
 }
 
-pub fn (m mut IntVoidptrMap) remove(key int) voidptr {
+pub fn (mut m IntVoidptrMap) remove(key int) voidptr {
 	if key == free_key {
 		if !m.has_free_key {
 			return free_key
@@ -185,7 +185,7 @@ fn (m &IntVoidptrMap) put_index(key int) int {
 	return idx
 }
 
-fn (m mut IntVoidptrMap) shift_keys(ptr int) int {
+fn (mut m IntVoidptrMap) shift_keys(ptr int) int {
 	// shift entries with the same hash
 	mut pos := ptr
 	mut last := 0
@@ -219,7 +219,7 @@ fn (m mut IntVoidptrMap) shift_keys(ptr int) int {
 	return -1
 }
 
-fn (m mut IntVoidptrMap) rehash() {
+fn (mut m IntVoidptrMap) rehash() {
 	new_cap := m.keys.len * 2
 	m.threshold = int(f32(new_cap) * m.fill_factor)
 	m.mask = new_cap - 1

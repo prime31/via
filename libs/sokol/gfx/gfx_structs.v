@@ -44,103 +44,103 @@ pub struct C.sg_pipeline {
 pub:
     id u32
 }
-pub fn (p C.sg_pipeline) free() { sg_destroy_pipeline(p) }
+pub fn (p C.sg_pipeline) free() { C.sg_destroy_pipeline(p) }
 
 
 pub struct C.sg_bindings {
 pub mut:
     _start_canary u32
-    vertex_buffers [8]sg_buffer
+    vertex_buffers [8]C.sg_buffer
     vertex_buffer_offsets [8]int
     index_buffer C.sg_buffer
     index_buffer_offset int
-    vs_images [8]sg_image
-    fs_images [8]sg_image
+    vs_images [8]C.sg_image
+    fs_images [8]C.sg_image
     _end_canary u32
 }
 
-pub fn (b mut sg_bindings) set_vert_image(index int, img C.sg_image) {
+pub fn (mut b C.sg_bindings) set_vert_image(index int, img C.sg_image) {
     b.vs_images[index] = img
 }
 
-pub fn (b mut sg_bindings) set_frag_image(index int, img C.sg_image) {
+pub fn (mut b C.sg_bindings) set_frag_image(index int, img C.sg_image) {
     b.fs_images[index] = img
 }
 
 pub fn (b &C.sg_bindings) update_vert_buffer(index int, data voidptr, element_size int, element_count int) {
-    sg_update_buffer(b.vertex_buffers[index], data, element_size * element_count)
+    C.sg_update_buffer(b.vertex_buffers[index], data, element_size * element_count)
 }
 
 pub fn (b &C.sg_bindings) append_vert_buffer(index int, data voidptr, element_size int, element_count int) int {
-    return sg_append_buffer(b.vertex_buffers[index], data, element_size * element_count)
+    return C.sg_append_buffer(b.vertex_buffers[index], data, element_size * element_count)
 }
 
 pub fn (b &C.sg_bindings) update_index_buffer(data voidptr, element_size int, element_count int) {
-    sg_update_buffer(b.index_buffer, data, element_size * element_count)
+    C.sg_update_buffer(b.index_buffer, data, element_size * element_count)
 }
 
 pub fn (b &C.sg_bindings) append_index_buffer(data voidptr, element_size int, element_count int) int {
-    return sg_append_buffer(b.index_buffer, data, element_size * element_count)
+    return C.sg_append_buffer(b.index_buffer, data, element_size * element_count)
 }
 
 
 pub struct C.sg_shader_desc {
 pub mut:
     _start_canary u32
-    attrs [16]sg_shader_attr_desc
+    attrs [16]C.sg_shader_attr_desc
     vs C.sg_shader_stage_desc
     fs C.sg_shader_stage_desc
     label byteptr = &byte(0)
     _end_canary u32
 }
 
-pub fn (desc mut C.sg_shader_desc) set_vert_src(src string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_src(src string) &C.sg_shader_desc {
     desc.vs.source = src.str
     return desc
 }
 
-pub fn (desc mut C.sg_shader_desc) set_frag_src(src string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_src(src string) &C.sg_shader_desc {
     desc.fs.source = src.str
     return desc
 }
 
-pub fn (desc mut C.sg_shader_desc) set_vert_image(index int, name string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_image(index int, name string) &C.sg_shader_desc {
     desc.vs.images[index].name = name.str
     desc.vs.images[index].@type = ._2d
     return desc
 }
 
-pub fn (desc mut C.sg_shader_desc) set_frag_image(index int, name string) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_image(index int, name string) &C.sg_shader_desc {
     desc.fs.images[index].name = name.str
     desc.fs.images[index].@type = ._2d
     return desc
 }
 
-pub fn (desc mut C.sg_shader_desc) set_vert_uniform_block_size(block_index, size int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_uniform_block_size(block_index, size int) &C.sg_shader_desc {
     desc.vs.uniform_blocks[block_index].size = size
     return desc
 }
 
-pub fn (desc mut C.sg_shader_desc) set_frag_uniform_block_size(block_index, size int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_uniform_block_size(block_index, size int) &C.sg_shader_desc {
     desc.fs.uniform_blocks[block_index].size = size
     return desc
 }
 
-pub fn (desc mut C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_vert_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
     desc.vs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
 	desc.vs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
     desc.vs.uniform_blocks[block_index].uniforms[uniform_index].array_count = array_count
     return desc
 }
 
-pub fn (desc mut C.sg_shader_desc) set_frag_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
+pub fn (mut desc C.sg_shader_desc) set_frag_uniform(block_index int, uniform_index int, name string, @type UniformType, array_count int) &C.sg_shader_desc {
     desc.fs.uniform_blocks[block_index].uniforms[uniform_index].name = name.str
 	desc.fs.uniform_blocks[block_index].uniforms[uniform_index].@type = @type
     return desc
 }
 
 pub fn (desc &C.sg_shader_desc) make_shader() C.sg_shader {
-    return sg_make_shader(desc)
+    return C.sg_make_shader(desc)
 }
 
 
@@ -157,11 +157,11 @@ pub mut:
     byte_code &byte
     byte_code_size int
     entry byteptr
-    uniform_blocks [4]sg_shader_uniform_block_desc
-    images [12]sg_shader_image_desc
+    uniform_blocks [4]C.sg_shader_uniform_block_desc
+    images [12]C.sg_shader_image_desc
 }
 
-pub fn (desc mut C.sg_shader_stage_desc) set_image(index int, name string) C.sg_shader_stage_desc {
+pub fn (mut desc C.sg_shader_stage_desc) set_image(index int, name string) &C.sg_shader_stage_desc {
     desc.images[index].name = name.str
     desc.images[index].@type = ._2d
     return desc
@@ -171,7 +171,7 @@ pub fn (desc mut C.sg_shader_stage_desc) set_image(index int, name string) C.sg_
 pub struct C.sg_shader_uniform_block_desc {
 pub mut:
     size int
-    uniforms [16]sg_shader_uniform_desc
+    uniforms [16]C.sg_shader_uniform_desc
 }
 
 pub struct C.sg_shader_uniform_desc {
@@ -197,13 +197,13 @@ pub struct C.sg_shader {
 pub:
     id u32
 }
-pub fn (s C.sg_shader) free() { sg_destroy_shader(s) }
+pub fn (s C.sg_shader) free() { C.sg_destroy_shader(s) }
 
 
 pub struct C.sg_pass_desc {
 pub mut:
     _start_canary u32
-    color_attachments [4]sg_attachment_desc
+    color_attachments [4]C.sg_attachment_desc
     depth_stencil_attachment C.sg_attachment_desc
     label byteptr = &byte(0)
     _end_canary u32
@@ -216,7 +216,7 @@ pub struct C.sg_pass_info {
 pub struct C.sg_pass_action {
 pub mut:
     _start_canary u32
-    colors [4]sg_color_attachment_action
+    colors [4]C.sg_color_attachment_action
     depth C.sg_depth_attachment_action
     stencil C.sg_stencil_attachment_action
     _end_canary u32
@@ -225,7 +225,7 @@ pub mut:
 pub struct C.sg_pass {
     id u32
 }
-pub fn (p C.sg_pass) free() { sg_destroy_pass(p) }
+pub fn (p C.sg_pass) free() { C.sg_destroy_pass(p) }
 
 
 pub struct C.sg_buffer_desc {
@@ -250,7 +250,7 @@ pub struct C.sg_buffer_info {}
 pub struct C.sg_buffer {
     id u32
 }
-pub fn (b C.sg_buffer) free() { sg_destroy_buffer(b) }
+pub fn (b C.sg_buffer) free() { C.sg_destroy_buffer(b) }
 
 
 pub union DepthLayers {
@@ -299,7 +299,7 @@ pub mut:
 pub struct C.sg_image_info {
 pub mut:
     slot C.sg_slot_info            /* resource pool slot info */
-    upd_frame_index u32            /* frame index of last sg_update_image() */
+    upd_frame_index u32            /* frame index of last C.sg_update_image() */
     num_slots int                  /* number of renaming-slots for dynamically updated images */
     active_slot int                /* currently active write-slot for dynamically updated images */
 }
@@ -308,12 +308,12 @@ pub struct C.sg_image {
 pub mut:
     id u32
 }
-pub fn (i C.sg_image) free() { sg_destroy_image(i) }
+pub fn (i C.sg_image) free() { C.sg_destroy_image(i) }
 
 
 pub struct C.sg_image_content {
 pub mut:
-    subimage [6][16]sg_subimage_content
+    subimage [6][16]C.sg_subimage_content
 }
 
 pub struct C.sg_subimage_content {
@@ -345,8 +345,8 @@ pub:
 
 pub struct C.sg_layout_desc {
 pub mut:
-    buffers [8]sg_buffer_layout_desc
-    attrs [16]sg_vertex_attr_desc
+    buffers [8]C.sg_buffer_layout_desc
+    attrs [16]C.sg_vertex_attr_desc
 }
 
 pub struct C.sg_buffer_layout_desc {
@@ -364,8 +364,8 @@ pub mut:
 }
 
 pub struct C.sg_depth_stencil_state {
-    stencil_front sg_stencil_state
-    stencil_back sg_stencil_state
+    stencil_front C.sg_stencil_state
+    stencil_back C.sg_stencil_state
     depth_compare_func CompareFunc
     depth_write_enabled bool
     stencil_enabled bool
@@ -414,7 +414,7 @@ pub mut:
     val [4]f32
 }
 
-pub fn (action mut C.sg_color_attachment_action) set_color_values(r, g, b, a f32) {
+pub fn (mut action C.sg_color_attachment_action) set_color_values(r, g, b, a f32) {
     action.val[0] = r
     action.val[1] = g
     action.val[2] = b

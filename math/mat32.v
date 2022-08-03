@@ -9,7 +9,7 @@ module math
  * 1: cos		3: scaleY	5: transY
  */
 pub struct Mat32 {
-pub:
+pub mut:
     data [6]f32
 }
 
@@ -66,8 +66,8 @@ pub fn mat32_translate(x, y f32) Mat32 {
 
 pub fn mat32_rotate(angle f32) Mat32 {
 	mut result := mat32_zero()
-    c := cosf(angle)
-    s := sinf(angle)
+    c := C.cosf(angle)
+    s := C.sinf(angle)
 
 	result.data[0] = c
 	result.data[1] = s
@@ -120,8 +120,8 @@ pub fn mat32_ortho_off_center(width, height int) Mat32 {
 	half_h := int(f32(height) / 2)
 
     mut result := mat32_identity()
-    result.data[0] = 2.0 / (half_w + half_w)
-    result.data[3] = 2.0 / (-half_h - half_h)
+    result.data[0] = 2.0 / f32(half_w + half_w)
+    result.data[3] = 2.0 / f32(-half_h - half_h)
     result.data[4] = (-half_w + half_w) / (-half_w - half_w)
     result.data[5] = (half_h - half_h) / (half_h + half_h)
     return result
@@ -133,9 +133,9 @@ pub fn mat32_transform(x, y, angle, sx, sy, ox, oy f32) Mat32 {
     return result
 }
 
-pub fn (m mut Mat32) set_transform(x, y, angle, sx, sy, ox, oy f32) {
-    c := cosf(angle)
-    s := sinf(angle)
+pub fn (mut m Mat32) set_transform(x, y, angle, sx, sy, ox, oy f32) {
+    c := C.cosf(angle)
+    s := C.sinf(angle)
 
 	// matrix multiplication carried out on paper:
 	// |1    x| |c -s  | |sx     | |1   -ox|
@@ -206,12 +206,12 @@ pub fn (self &Mat32) inverse() Mat32 {
     return res
 }
 
-pub fn (m mut Mat32) translate(x, y f32) {
+pub fn (mut m Mat32) translate(x, y f32) {
     m.data[4] = m.data[0] * x + m.data[2] * y + m.data[4]
     m.data[5] = m.data[1] * x + m.data[3] * y + m.data[5]
 }
 
-pub fn (m mut Mat32) rotate(rads f32) {
+pub fn (mut m Mat32) rotate(rads f32) {
     sin, cos := sincos(rads)
     nm0 := m.data[0] * cos + m.data[2] * sin
     nm1 := m.data[1] * cos + m.data[3] * sin
@@ -222,7 +222,7 @@ pub fn (m mut Mat32) rotate(rads f32) {
     m.data[1] = nm1
 }
 
-pub fn (m mut Mat32) scale(x, y f32) {
+pub fn (mut m Mat32) scale(x, y f32) {
     m.data[0] *= x
     m.data[1] *= x
     m.data[2] *= y
