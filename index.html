@@ -2,9 +2,8 @@
 <html lang="en">
 
 <head>
-  <meta name="description" content="Webpage description goes here" />
   <meta charset="utf-8">
-  <title>Change_me</title>
+  <title>THE TITLE SHOULD BE SOMETHING MORE RELEVANT</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
@@ -13,7 +12,24 @@
 <div>STUFF HERE</div>
 
 <script>
+function isArmMac() {
+    if (!navigator.platform.startsWith("Mac")) return false;
 
+    try {
+        var canvas = document.createElement('canvas');
+        var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        var renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+
+        return renderer.includes('M1') || renderer.includes('M2') || renderer.includes('M3') || renderer.includes('M4');
+    } catch (e) { return false; }
+}
+
+if (isArmMac()) {
+    window.location = "com.sgn.cookiejam://?data=WHATEVER";
+} else {
+	window.location = "https://cookiejam.page.link/?apn=air.com.sgn.cookiejam.gp&isi=727296976&ibi=com.sgn.cookiejam&link=https%3A%2F%2Fwww.jamcity.com%2Fgame%2Fcookie-jam%3Fdata%3DWHATEVER";
+}
 </script>
 
 </body>
