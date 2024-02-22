@@ -11,16 +11,16 @@
 
 <script>
 function isArmMac() {
-    if (!navigator.platform.startsWith("Mac")) return false;
+	if (!navigator.platform.startsWith("Mac")) return false;
 
-    try {
-        var canvas = document.createElement('canvas');
-        var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-        var renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-
-        return renderer.includes('M1') || renderer.includes('M2') || renderer.includes('M3') || renderer.includes('M4');
-    } catch (e) { return false; }
+	try {
+		var canvas = document.createElement('canvas');
+		var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+		var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+		var renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+		
+		return renderer.includes('M1') || renderer.includes('M2') || renderer.includes('M3') || renderer.includes('M4');
+	} catch (e) { return false; }
 }
 
 if (isArmMac()) {
