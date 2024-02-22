@@ -35,10 +35,6 @@ function isArmMac() {
 
 if (isArmMac()) {
 	window.location = "com.sgn.cookiejam://?data=WHATEVER";
-
-	setTimeout(function(){
-	    self.close();
-	}, 10000);
 } else if (isMobile()) {
 	window.location = "https://cookiejam.page.link/?apn=air.com.sgn.cookiejam.gp&isi=727296976&ibi=com.sgn.cookiejam&link=https%3A%2F%2Fwww.jamcity.com%2Fgame%2Fcookie-jam%3Fdata%3DWHATEVER";
 } else {
