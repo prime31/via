@@ -2,15 +2,64 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>THE TITLE SHOULD BE SOMETHING MORE RELEVANT</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8">
+	<title>Cookie Jam</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background-image: url(https://mindjolt-a.akamaihd.net/fs/cookie-jam/static/FB_APP_BG.8b54e0579590c740d30ba3115666407cf8721cd3.jpg);
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            margin: 0;
+        }
+        body > div {
+            background-image: url(https://mindjolt-a.akamaihd.net/fs/cookie-jam/static/LoadingSplash/en-US.525ba95294aee896af6ea9e9391b0c93822f4060.png);
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+            position: relative
+        }
+        .button {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            padding: 12px 24px;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            background: #00e823;
+            background: -webkit-gradient(linear, left top, left bottom, from(#00e823), to(#388511));
+            background: -moz-linear-gradient(top, #00e823, #388511);
+            background: linear-gradient(to bottom, #00e823, #388511);
+            text-shadow: #591717 1px 1px 1px;
+            font: normal normal bold 20px arial;
+            color: #ffffff;
+            text-decoration: none;
+            position: absolute;
+            bottom: 60px;
+            left: 300px;
+        }
+        .button:hover,
+        .button:focus {
+            background: #00ff2a;
+            background: -webkit-gradient(linear, left top, left bottom, from(#00ff2a), to(#43a014));
+            background: -moz-linear-gradient(top, #00ff2a, #43a014);
+            background: linear-gradient(to bottom, #00ff2a, #43a014);
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .button:active {
+            background: #008b15;
+            background: -webkit-gradient(linear, left top, left bottom, from(#008b15), to(#388511));
+            background: -moz-linear-gradient(top, #008b15, #388511);
+            background: linear-gradient(to bottom, #008b15, #388511);
+        }
+    </style>
 </head>
 
 <body>
-	<div>
-		<a id="fb_link">Open Cookie Jam on Facebook</a>
-	</div>
+    <div>
+        <a id="fb_link" class="button" href="#">Click here to play</a>
+    </div>
 
 	
 <script>
