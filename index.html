@@ -66,6 +66,7 @@
 const url_params = new URLSearchParams(window.location.search).toString();
 
 function isMobile() {
+	 if (navigator.userAgent.match(/Mac/) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2) return true;
     return /Android|iPad|iPhone|iPod/.test(navigator.userAgent ||navigator.vendor|| window.opera);
 }
 
