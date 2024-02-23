@@ -94,7 +94,10 @@ if (isArmMac()) {
 } else if (isMobile()) {
 	const base_firebase_url = 'https://cookiejam.page.link/?apn=air.com.sgn.cookiejam.gp&isi=727296976&ibi=com.sgn.cookiejam&link=https%3A%2F%2Fwww.jamcity.com%2Fgame%2Fcookie-jam%3F';
 	const url_params = new URLSearchParams(window.location.search);
-	window.location = base_firebase_url + encodeURIComponent(url_params);
+	const final_url = base_firebase_url + encodeURIComponent(url_params);
+	
+	document.getElementById('fb_link').setAttribute('href', final_url);
+	window.location = final_url;
 } else {
 	window.location = getFacebookUrl();
 }
